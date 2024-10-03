@@ -16,6 +16,17 @@
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
       # "vscodevim.vim"
+      "13xforever.language-x86-64-assembly"
+      "bbenoist.Doxygen"
+      "cheshirekow.cmake-format"
+      "cschlosser.doxdocgen"
+      "franneck94.c-cpp-runner"
+      "franneck94.vscode-c-cpp-config"
+      "franneck94.vscode-c-cpp-dev-extension-pack"
+      "jeff-hykin.better-cpp-syntax"
+      "PROxZIMA.sweetdracula"
+      "twxs.cmake"
+      "vadimcn.vscode-lldb"
     ];
     # Enable previews
     previews = {
