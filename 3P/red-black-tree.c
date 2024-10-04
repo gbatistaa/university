@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NEGRO 0
-#define RUBRO 1
+enum Cores {
+    RUBRO,
+    NEGRO
+};
 
 typedef struct no {
     int valor;
     struct no *pai, *esq, *dir;
     // cor == 1 para rubro e 0 para negro
-    int cor;
+    enum Cores;
 } tipoNo;
 
 typedef struct arvore {
