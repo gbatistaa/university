@@ -9,7 +9,6 @@ enum Cores {
 typedef struct no {
     int valor;
     struct no *pai, *esq, *dir;
-    // cor == 1 para rubro e 0 para negro
     enum Cores cor;
 } tipoNo;
 
@@ -47,9 +46,10 @@ void rotacaoEsquerda(tipoArvore *arvore, tipoNo *no) {
 void rotacaoDireita(tipoArvore *arvore, tipoNo *no) {
     tipoNo *esq = no->esq; // Filho da esquerda do nó
     
-    no->esq = esq->dir; // O novo direito de esq vira o filho esquerdo do nó
+    no->esq = esq->dir; // O filho direito de esq vira o filho esquerdo do nó
 
-    // Se o filho direito de esq (filho direito do nó rotacionado) existir, atualize seu pai para nó
+    //  Se o filho direito de esq (filho direito do filho esquerdo de nó rotacionado)
+    //  existir, atualize seu pai para nó: 
     if (esq->dir != NULL) {
         esq->dir->pai = no;
     }
@@ -92,7 +92,7 @@ void verificarCorrecoesInsercao(tipoArvore *arvore, tipoNo *no) {
     // Caso 2 e 3: Verificar o tio
     tipoNo *avo = no->pai->pai;
 
-    // Não tem avo, o pai do nó é a raiz
+    // Não tem avô, o pai do nó é a raiz
     if (avo == NULL) {
         return;
     }
@@ -116,13 +116,13 @@ void verificarCorrecoesInsercao(tipoArvore *arvore, tipoNo *no) {
     } else {
         // Caso 3: O tio é negro (ou NULL)
 
-        // nó é filho da direita do pai e
-        // pai é filho da esquerda do avo
+        // Casos ativados em rotação dupla
+        // Pai está em uma posição invertida do filho (nó adicionado)
         if (no == no->pai->dir && no->pai == avo->esq) {
             // Rotação para a esquerda no pai
             printf("Rotacionando pai (%d) para esquerda\n", no->pai->valor);
             rotacaoEsquerda(arvore, no->pai);
-            no = no->esq;  // Ajuste do novo nó
+            no = no->esq; // Ajuste do novo nó
         } else if (no == no->pai->esq && no->pai == avo->dir) {
             // Rotação para a direita no pai
             printf("Rotacionando pai (%d) para direita\n", no->pai->valor);
@@ -130,7 +130,7 @@ void verificarCorrecoesInsercao(tipoArvore *arvore, tipoNo *no) {
             no = no->dir;  // Ajuste do novo nó
         }
 
-        // Caso 3 (continuação): Rotação simples
+        // Caso 3 (continuação): Rotação simples no avô
         if (no == no->pai->esq) {
             // se o nó é filho da esquerda do pai, rotação para a direita no avo
             printf("Rotacionando avô (%d) para direita\n", avo->valor);
@@ -148,8 +148,10 @@ void verificarCorrecoesInsercao(tipoArvore *arvore, tipoNo *no) {
         printf("Avô (%d) virou rubro\n", avo->valor);
         avo->cor = RUBRO;
     }
+    return;
 }
 
+// Inserção de um nó na árvore rubro-negra
 tipoNo* inserirNo(tipoNo* raiz, tipoNo* novo) {
     if (raiz == NULL) {
         return novo;
@@ -169,6 +171,8 @@ tipoNo* inserirNo(tipoNo* raiz, tipoNo* novo) {
 }
 
 void criarNo(tipoArvore *arvore, int valor) {
+
+    // Alocação de memória para o novo nó da árvore
     tipoNo *novo = (tipoNo*) malloc(sizeof(tipoNo));
     novo->valor = valor;
     novo->esq = NULL;
@@ -178,6 +182,7 @@ void criarNo(tipoArvore *arvore, int valor) {
 
     printf("\n\nCriando nó (%d) RUBRO\n", valor);
 
+    // Verificação se a árvore existe
     if (arvore->raiz == NULL) {
         printf("Nó (%d) é raiz\n", novo->valor);
     }
