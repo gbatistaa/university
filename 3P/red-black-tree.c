@@ -10,7 +10,7 @@ typedef struct no {
     int valor;
     struct no *pai, *esq, *dir;
     // cor == 1 para rubro e 0 para negro
-    enum Cores;
+    enum Cores cor;
 } tipoNo;
 
 typedef struct arvore {
@@ -47,9 +47,9 @@ void rotacaoEsquerda(tipoArvore *arvore, tipoNo *no) {
 void rotacaoDireita(tipoArvore *arvore, tipoNo *no) {
     tipoNo *esq = no->esq; // Filho da esquerda do nó
     
-    no->esq = esq->dir; // Filho direito de esq vira o filho esquerdo do nó
+    no->esq = esq->dir; // O novo direito de esq vira o filho esquerdo do nó
 
-    // Se o filho direito de esq existir, atualize seu pai para nó
+    // Se o filho direito de esq (filho direito do nó rotacionado) existir, atualize seu pai para nó
     if (esq->dir != NULL) {
         esq->dir->pai = no;
     }
@@ -79,7 +79,7 @@ void verificarCorrecoesInsercao(tipoArvore *arvore, tipoNo *no) {
     // Caso raiz seja Rubro, vira negra
     if (no == arvore->raiz && no->cor == RUBRO) {
         printf("Raiz (%d) virou negro\n\n", no->valor);
-        no->cor = 0;
+        no->cor = NEGRO;
         return;
     }
 
