@@ -27,6 +27,8 @@
       "PROxZIMA.sweetdracula"
       "twxs.cmake"
       "vadimcn.vscode-lldb"
+      "danielpinto8zz6.c-cpp-compile-run"
+      "ms-vscode.cpptools-themes"
     ];
     # Enable previews
     previews = {
