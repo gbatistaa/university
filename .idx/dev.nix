@@ -8,6 +8,7 @@
     pkgs.gcc
     pkgs.zsh
     pkgs.git
+    pkgs.sudo
     pkgs.git-credential-manager
   ];
   # Sets environment variables in the workspace
