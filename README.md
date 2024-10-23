@@ -46,6 +46,8 @@ Feel free to explore the code and suggest improvements! If you find any bugs or 
 
 ---
 
-**Author:** Gabriel Batista Barbosa
-**University:** Federal University of Sergipe (UFS)
-**Degree:** Computer Science
+```bash
+Author: Gabriel Batista Barbosa
+University: Federal University of Sergipe (UFS)
+Degree: Computer Science
+```
