@@ -92,6 +92,6 @@ int main() {
       case 3:
         int leafsTotalSum = sumTreeLeafs(root);
         printf("Soma de todas as folhas: %d", leafsTotalSum);
-
-  } while (op != 0);
+    } while (op != 0);
+  }
 }
