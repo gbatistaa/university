@@ -43,6 +43,23 @@ BinaryNode *insertBinaryNode(BinaryNode *root, int value) {
   return root;
 }
 
+// Function the sums all the leafs values in a binary search tree
+int sumTreeLeafs(BinaryNode *root) {
+
+  // Base case
+  if (root == NULL)
+    return 0;
+
+  // Operations
+  if (root->leftChild == NULL && root->rightChild == NULL)
+    return root->value;
+  else {
+    int sumLeft = sumTreeLeafs(root->leftChild);
+    int sumRight = sumTreeLeafs(root->rightChild);
+    return sumLeft + sumRight;
+  }
+}
+
 int main() {
   int op, value;
   BinaryNode *root = NULL;
@@ -52,6 +69,7 @@ int main() {
     printf("\n** Árvore Binária de Busca **\n");
     printf("1. Inserir\n");
     printf("2. Exibir\n");
+    printf("3. Exibir soma de todas as folhas\n");
     printf("0. Sair\n");
     printf("Escolha uma opção: ");
     scanf("%d", &op);
@@ -71,6 +89,9 @@ int main() {
           printf("Árvore sem elementos.\n");
         else
           printInOrder(root);
-    }
+      case 3:
+        int leafsTotalSum = sumTreeLeafs(root);
+        printf("Soma de todas as folhas: %d", leafsTotalSum);
+
   } while (op != 0);
 }
