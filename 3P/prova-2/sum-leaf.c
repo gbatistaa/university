@@ -22,7 +22,7 @@ int printInOrder(BinaryNode *root) {
     return EXIT_SUCCESS;
   } else {
     printInOrder(root->leftChild);
-    printf("%d", root->value);
+    printf(" %d", root->value);
     printInOrder(root->rightChild);
   }
 }
@@ -48,25 +48,29 @@ int main() {
   BinaryNode *root = NULL;
 
   do {
-    printf("** Árvore Binária de Busca **\n");
+    printf("\n");
+    printf("\n** Árvore Binária de Busca **\n");
     printf("1. Inserir\n");
     printf("2. Exibir\n");
-    printf("3. Sair\n");
+    printf("0. Sair\n");
     printf("Escolha uma opção: ");
     scanf("%d", &op);
 
     switch(op) {
       case 0:
-        printf("Fim da execução\n");
+        printf("\nFim da execução\n");
         break;
       case 1:
-        printf("Digite um valor: ");
+        printf("\nDigite um valor: ");
         scanf(" %d", &value);
         root = insertBinaryNode(root, value);
         break;
       case 2:
-        printf("Imprimindo árvore em ordem: \n");
-        
+        printf("\nImprimindo árvore em ordem: \n");
+        if(root == NULL)
+          printf("Árvore sem elementos.\n");
+        else
+          printInOrder(root);
     }
   } while (op != 0);
 }
