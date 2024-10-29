@@ -89,9 +89,11 @@ int main() {
           printf("Árvore sem elementos.\n");
         else
           printInOrder(root);
+        break;
       case 3:
         int leafsTotalSum = sumTreeLeafs(root);
-        printf("Soma de todas as folhas: %d", leafsTotalSum);
+        printf("\nSoma de todas as folhas: %d\n", leafsTotalSum);
+        break;
     }
   } while (op != 0);
 }
