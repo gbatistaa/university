@@ -94,6 +94,8 @@ int main() {
         int leafsTotalSum = sumTreeLeafs(root);
         printf("\nSoma de todas as folhas: %d\n", leafsTotalSum);
         break;
+      default:
+        printf("Opção Inválida!\n");
     }
   } while (op != 0);
 }
