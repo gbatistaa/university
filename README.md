@@ -30,7 +30,7 @@ This repository is organized by course and semester. Each folder contains specif
 
 ```bash
 1. Clone this repository:
-    git clone https://github.com/yourusername/your-repository.git
+    git clone https://github.com/gbatistaa/university
 
 2. Navigate to the folder corresponding to the course or semester you're interested in:
     cd Semester-3/Object-Oriented-Programming
