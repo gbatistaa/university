@@ -1,17 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+FILE *input;
 
 typedef struct container {
   char *code;
   char *cnpj;
-  float weight;
+  int weight;
 } Container;
 
-void merge(int array[], int left, int mid, int right) {
+void merge(Container array[], int left, int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
-  int leftSubArray[n1], rightSubArray[n2];
+  Container leftSubArray[n1], rightSubArray[n2];
 
   for (int i = 0; i < n1; i++)
     leftSubArray[i] = array[left + i];
@@ -23,7 +25,7 @@ void merge(int array[], int left, int mid, int right) {
   int k = left;
 
   while (i < n1 && j < n2) {
-    if (leftSubArray[i] <= rightSubArray[j]) {
+    if (leftSubArray[i].weight <= rightSubArray[j].weight) {
       array[k] = leftSubArray[i];
       i++;
     } else {
@@ -45,7 +47,7 @@ void merge(int array[], int left, int mid, int right) {
   }
 }
 
-void mergeSort(int arr[], int left, int right) {
+void mergeSort(Container arr[], int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
@@ -56,7 +58,110 @@ void mergeSort(int arr[], int left, int right) {
   }
 }
 
+// Function to manage the input file
+void readInputAndCreateContainerList(Container **containerList) {
+  input = fopen("porto.txt", "r");
+
+  int i = 0;
+  char fileLineContent[50];
+  while (fgets(fileLineContent, 50, input)) {
+
+    if (strlen(fileLineContent) <= 3) {
+      continue; // Ignora linhas muito curtas
+    }
+
+    // printf("%s | %lu\n", auxiliar, strlen(auxiliar));
+
+    // 0 indicates code, 1 cnpj and 2 indicates weight
+    int propStatus = 0, j = 0;
+    char *currentCode = (char *)malloc(sizeof(char));
+    char *currentCnpj = (char *)malloc(sizeof(char));
+    char *currentWeightString = (char *)malloc(sizeof(char));
+    int currentWeight;
+
+    size_t currentSize = sizeof(char);
+
+    for (int k = 0; k < sizeof(fileLineContent); k++) {
+      switch (propStatus) {
+
+      // Saving the container code
+      case 0:
+        if (fileLineContent[k] == ' ') {
+          propStatus++;
+          currentCnpj[j + 1] = '\0';
+          j = 0;
+          currentSize = 0;
+        } else {
+          currentCode[j] = fileLineContent[k];
+          currentCode =
+              (char *)realloc(currentCode, currentSize + sizeof(char));
+          currentSize += sizeof(char);
+          j++;
+        }
+        break;
+
+      // Saving the container cnpj
+      case 1:
+        if (fileLineContent[k] == ' ') {
+          propStatus++;
+          currentCode[j + 1] = '\0';
+          j = 0;
+          currentSize = 0;
+        } else {
+          currentCnpj[j] = fileLineContent[k];
+          currentCnpj =
+              (char *)realloc(currentCnpj, currentSize + sizeof(char));
+          currentSize += sizeof(char);
+          j++;
+        }
+        break;
+
+      // Saving the container weight
+      case 2:
+        if (fileLineContent[k] == ' ') {
+          propStatus++;
+          currentWeightString[j + 1] = '\0';
+          j = 0;
+          currentSize = 0;
+        } else {
+          currentWeightString[j] = fileLineContent[k];
+          currentWeightString =
+              (char *)realloc(currentWeightString, currentSize + sizeof(char));
+          currentSize += sizeof(char);
+          j++;
+        }
+        break;
+      }
+    }
+    currentWeight = atoi(currentWeightString);
+
+    // Writing the camps from the container struct
+    containerList[i]->code = (char *)malloc(strlen(currentCode) + 1);
+    containerList[i]->cnpj = (char *)malloc(strlen(currentCnpj) + 1);
+
+    strcpy(containerList[i]->code, currentCode);
+    strcpy(containerList[i]->cnpj, currentCnpj);
+    containerList[i]->weight = currentWeight;
+    i++;
+  }
+}
+
 int main() {
-  printf("");
+  Container *containers[20];
+  int containersListSize = sizeof(containers) / sizeof(containers[0]), i = 0;
+
+  for (i = 0; i < 20; i++) {
+    containers[i] = (Container *)malloc(sizeof(Container));
+    containers[i]->code = NULL;
+    containers[i]->cnpj = NULL;
+  }
+
+  readInputAndCreateContainerList(containers);
+
+  for (int i = 0; i < 11; i++) {
+    printf("%s | %s | %d", containers[i]->code, containers[i]->cnpj,
+           containers[i]->weight);
+    printf("\n");
+  }
   return EXIT_SUCCESS;
 }
