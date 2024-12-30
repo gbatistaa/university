@@ -20,7 +20,6 @@ This repository is organized by course and semester. Each folder contains specif
 
 ```bash
 - **C/C++**
-- **Java**
 - **JavaScript**
 - **HTML/CSS**
 - **Shell Scripting**
