@@ -156,6 +156,8 @@ int main() {
     containers[i]->cnpj = NULL;
   }
 
+  printf("Eu sou");
+
   readInputAndCreateContainerList(containers);
 
   for (int i = 0; i < 11; i++) {
