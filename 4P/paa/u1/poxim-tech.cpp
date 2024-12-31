@@ -75,7 +75,6 @@ int writeContainerProp(string *props[], char character, int &propSts) {
 
 int readInputAndCreateContainerLists(fstream &file,
                                      vector<Container> *contPointers[]) {
-  vector<Container> containers = {};
   string fileLine;
   int currContainerIndex = 0;
 
@@ -107,7 +106,6 @@ int readInputAndCreateContainerLists(fstream &file,
     newContainer.code = newCode;
     newContainer.weight = newWeightNumeric;
 
-    containers.push_back(newContainer);
     contPointers[currContainerIndex]->push_back(newContainer);
   }
 
