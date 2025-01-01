@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream> // This is the library to manipulate files
@@ -32,10 +33,13 @@ vector<Container> filterRegisteredContainersForInspection(
   return duplicatedContainers;
 }
 
-bool hasDifferentCnjp(Container container, vector<Container> inspectioneds) {
+bool hasDifferentCnjp(Container container, vector<Container> inspectioneds,
+                      Container *cont = NULL) {
   for (Container inspectioned : inspectioneds) {
-    if (container.cnpj == inspectioned.cnpj)
+    if (container.cnpj == inspectioned.cnpj) {
+      cont = &container;
       return true;
+    }
   }
   return false;
 }
@@ -58,15 +62,31 @@ void mergeContainers(vector<Container> &registereds,
   int k = left;
   Container containerLeft, containerRight;
 
-  // Sorting the containers by cnpj and weight diference:
+  // Sorting the containers by CNPJ and weight diference:
   while (i < n1 && j < n2) {
     containerLeft = leftSubVector[i];
     containerRight = rightSubVector[j];
+    Container *containerPtr;
 
-    if (containerLeft.cnpj != containerRight.cnpj) {
-      registereds[k] = leftSubVector[i];
+    // Case 1: Both containers has different CNPJ
+    if (hasDifferentCnjp(containerLeft, inspectioneds) &&
+        hasDifferentCnjp(containerRight, inspectioneds)) {
+      registereds[k] = containerLeft;
       i++;
-    } else {
+    }
+
+    // Case 2: Only one of the containers has different CNPJ
+    else if (hasDifferentCnjp(containerLeft, inspectioneds, containerPtr) ||
+             hasDifferentCnjp(containerRight, inspectioneds, containerPtr)) {
+      registereds[k] = *containerPtr;
+      if (containerPtr == &containerLeft)
+        i++;
+      else
+        j++;
+    }
+
+    // Case 3: None of the containers has different registered CNPJ
+    else {
       registereds[k] = rightSubVector[j];
       j++;
     }
