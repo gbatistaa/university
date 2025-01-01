@@ -32,16 +32,18 @@ vector<Container> filterRegisteredContainersForInspection(
   return duplicatedContainers;
 }
 
-void merge(vector<Container> &vector, int left, int mid, int right) {
+void mergeContainers(vector<Container> &registered,
+                     vector<Container> inspectioned, int left, int mid,
+                     int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
   Container leftSubVector[n1], rightSubVector[n2];
 
   for (int i = 0; i < n1; i++)
-    leftSubVector[i] = vector[left + i];
+    leftSubVector[i] = registered[left + i];
   for (int j = 0; j < n2; j++)
-    rightSubVector[j] = vector[mid + 1 + j];
+    rightSubVector[j] = registered[mid + 1 + j];
 
   int i = 0;
   int j = 0;
@@ -49,35 +51,39 @@ void merge(vector<Container> &vector, int left, int mid, int right) {
 
   while (i < n1 && j < n2) {
     if (leftSubVector[i].cnpj != rightSubVector[j].cnpj) {
-      vector[k] = leftSubVector[i];
+      registered[k] = leftSubVector[i];
       i++;
     } else {
-      vector[k] = rightSubVector[j];
+      registered[k] = rightSubVector[j];
       j++;
     }
     k++;
   }
+
   while (i < n1) {
-    vector[k] = leftSubVector[i];
+    registered[k] = leftSubVector[i];
     i++;
     k++;
   }
 
   while (j < n2) {
-    vector[k] = rightSubVector[j];
+    registered[k] = rightSubVector[j];
     j++;
     k++;
   }
 }
 
-int sortContainersForInspection(vector<Container> vector, int left, int right) {
+// If this algorithym works pass it to a estableized version:
+int sortContainersForInspection(vector<Container> &registered,
+                                vector<Container> inspectioned, int left,
+                                int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
-    sortContainersForInspection(vector, left, mid);
-    sortContainersForInspection(vector, mid + 1, right);
+    sortContainersForInspection(registered, inspectioned, left, mid);
+    sortContainersForInspection(registered, inspectioned, mid + 1, right);
 
-    merge(vector, left, mid, right);
+    mergeContainers(registered, inspectioned, left, mid, right);
   }
   return EXIT_SUCCESS;
 }
