@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#define FAIL -1;
+
 using namespace std;
 
 typedef struct container {
@@ -42,6 +44,24 @@ bool hasDifferentCnjp(Container container, vector<Container> inspectioneds,
     }
   }
   return false;
+}
+
+float calculateDifPercent(int n1, int n2) {
+  int dif = n1 - n2;
+  float percentage = (float)dif / n1 * 100;
+  return abs(percentage);
+}
+
+float calcContainerWeightDifPercent(Container container,
+                                    vector<Container> inspectioneds) {
+  for (Container inspectioned : inspectioneds) {
+    if (container.code == inspectioned.code) {
+      float difPercent =
+          calculateDifPercent(container.weight, inspectioned.weight);
+      return difPercent;
+    }
+  }
+  return FAIL;
 }
 
 void mergeContainers(vector<Container> &registereds,
@@ -86,10 +106,8 @@ void mergeContainers(vector<Container> &registereds,
     }
 
     // Case 3: None of the containers has different registered CNPJ
-    else {
-      registereds[k] = rightSubVector[j];
-      j++;
-    }
+    else
+      () {}
     k++;
   }
 
@@ -172,12 +190,6 @@ int readInputAndCreateContainerLists(fstream &file,
   }
 
   return EXIT_SUCCESS;
-}
-
-float calculateWeightDifPercent(int entryWeight, int exitWeight) {
-  int diference = entryWeight - exitWeight;
-  float percentage = (float)diference / entryWeight * 100;
-  return abs(percentage);
 }
 
 int main() {
