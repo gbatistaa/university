@@ -13,11 +13,30 @@ typedef struct container {
   int weight;
 } Container;
 
-void merge(vector<int> &vector, int left, int mid, int right) {
+vector<Container> filterRegisteredContainersForInspection(
+    vector<Container> registeredContainers,
+    vector<Container> containersToInspection) {
+
+  vector<Container> duplicatedContainers = {};
+
+  for (Container registered : registeredContainers) {
+    for (Container toInspec : containersToInspection) {
+
+      // Verification to see if the registered container is gonna be
+      // inspectioned
+      if (registered.code == toInspec.code) {
+        duplicatedContainers.push_back(registered);
+      }
+    }
+  }
+  return duplicatedContainers;
+}
+
+void merge(vector<Container> &vector, int left, int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
-  int leftSubVector[n1], rightSubVector[n2];
+  Container leftSubVector[n1], rightSubVector[n2];
 
   for (int i = 0; i < n1; i++)
     leftSubVector[i] = vector[left + i];
@@ -29,7 +48,7 @@ void merge(vector<int> &vector, int left, int mid, int right) {
   int k = left;
 
   while (i < n1 && j < n2) {
-    if (leftSubVector[i] <= rightSubVector[j]) {
+    if (leftSubVector[i].cnpj != rightSubVector[j].cnpj) {
       vector[k] = leftSubVector[i];
       i++;
     } else {
@@ -51,15 +70,16 @@ void merge(vector<int> &vector, int left, int mid, int right) {
   }
 }
 
-void mergeSort(vector<int> *vector, int left, int right) {
+int sortContainersForInspection(vector<Container> vector, int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
-    mergeSort(vector, left, mid);
-    mergeSort(vector, mid + 1, right);
+    sortContainersForInspection(vector, left, mid);
+    sortContainersForInspection(vector, mid + 1, right);
 
-    merge(*vector, left, mid, right);
+    merge(vector, left, mid, right);
   }
+  return EXIT_SUCCESS;
 }
 
 int writeContainerProp(string *props[], char character, int &propSts) {
