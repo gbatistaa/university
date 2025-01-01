@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -46,6 +47,18 @@ bool hasDifferentCnjp(Container container, vector<Container> inspectioneds,
   return false;
 }
 
+bool areFloatsEqual(float a, float b, float e = 1e-6) {
+  return fabs(a - b) < e;
+}
+
+bool isLessThan(float a, float b, float e = 1e-6) {
+  return (a < b) && fabs(a - b) > e;
+}
+
+bool isGreaterThan(float a, float b, float e = 1e-6) {
+  return (a > b) && fabs(a - b) > e;
+}
+
 float calculateDifPercent(int n1, int n2) {
   int dif = n1 - n2;
   float percentage = (float)dif / n1 * 100;
@@ -53,11 +66,14 @@ float calculateDifPercent(int n1, int n2) {
 }
 
 float calcContainerWeightDifPercent(Container container,
-                                    vector<Container> inspectioneds) {
+                                    vector<Container> inspectioneds,
+                                    Container *pointer = nullptr) {
   for (Container inspectioned : inspectioneds) {
     if (container.code == inspectioned.code) {
       float difPercent =
           calculateDifPercent(container.weight, inspectioned.weight);
+      if (isLessThan(difPercent, 10))
+        pointer = &container;
       return difPercent;
     }
   }
@@ -86,7 +102,7 @@ void mergeContainers(vector<Container> &registereds,
   while (i < n1 && j < n2) {
     containerLeft = leftSubVector[i];
     containerRight = rightSubVector[j];
-    Container *containerPtr;
+    Container *containerPtr = nullptr;
 
     // Case 1: Both containers has different CNPJ
     if (hasDifferentCnjp(containerLeft, inspectioneds) &&
@@ -106,8 +122,29 @@ void mergeContainers(vector<Container> &registereds,
     }
 
     // Case 3: None of the containers has different registered CNPJ
-    else
-      () {}
+    else {
+      Container *contPointer = nullptr;
+      float difContL = calcContainerWeightDifPercent(
+          containerLeft, inspectioneds, contPointer);
+      float difContR = calcContainerWeightDifPercent(
+          containerRight, inspectioneds, contPointer);
+
+      // Case 3.1: Both containers has more than 10% of inspectioned difference
+      if (contPointer == nullptr) {
+        // Case 3.1.1: Both containers are available for inspection and are
+        // equals
+        if (areFloatsEqual(difContL, difContR)) {
+          registereds[k] = containerLeft;
+          i++;
+
+          // Equals but right container weight is bigger
+        } else if (isGreaterThan(difContL, difContR)) {
+        }
+        // Equals but right container weight is bigger
+        else if (isLessThan(difContL, difContR)) {
+        }
+      }
+    }
     k++;
   }
 
