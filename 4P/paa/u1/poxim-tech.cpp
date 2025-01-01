@@ -144,29 +144,33 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  // vector<Container> containers;
-  // vector<Container> fiscalizedContainers;
+  vector<Container> registeredContainers;
+  vector<Container> fiscalizedContainers;
 
-  // vector<Container> *containersPointers[2] = {&containers,
-  //                                             &fiscalizedContainers};
+  vector<Container> *containersPointers[2] = {&registeredContainers,
+                                              &fiscalizedContainers};
 
-  // readInputAndCreateContainerLists(input, containersPointers);
+  readInputAndCreateContainerLists(input, containersPointers);
 
-  // cout << "----------Registered Containers----------\n\n";
-  // for (int i = 0; i < containers.size(); i++) {
-  //   cout << "Container " << i + 1 << ": \n\n";
-  //   cout << "CNPJ: " << containers.at(i).cnpj << "\n";
-  //   cout << "Code: " << containers.at(i).code << "\n";
-  //   cout << "Weight: " << containers.at(i).weight << " kg\n\n";
-  // }
+  vector<Container> duplicatedContainers =
+      filterRegisteredContainersForInspection(registeredContainers,
+                                              fiscalizedContainers);
 
-  // cout << "----------Fiscalized Containers----------\n\n";
-  // for (int i = 0; i < fiscalizedContainers.size(); i++) {
-  //   cout << "Container " << i + 1 << ": \n\n";
-  //   cout << "CNPJ: " << fiscalizedContainers.at(i).cnpj << "\n";
-  //   cout << "Code: " << fiscalizedContainers.at(i).code << "\n";
-  //   cout << "Weight: " << fiscalizedContainers.at(i).weight << " kg\n\n";
-  // }
+  cout << "----------Registered Containers----------\n\n";
+  for (int i = 0; i < registeredContainers.size(); i++) {
+    cout << "Container " << i + 1 << ": \n\n";
+    cout << "CNPJ: " << registeredContainers.at(i).cnpj << "\n";
+    cout << "Code: " << registeredContainers.at(i).code << "\n";
+    cout << "Weight: " << registeredContainers.at(i).weight << " kg\n\n";
+  }
+
+  cout << "----------Fiscalized Containers----------\n\n";
+  for (int i = 0; i < fiscalizedContainers.size(); i++) {
+    cout << "Container " << i + 1 << ": \n\n";
+    cout << "CNPJ: " << fiscalizedContainers.at(i).cnpj << "\n";
+    cout << "Code: " << fiscalizedContainers.at(i).code << "\n";
+    cout << "Weight: " << fiscalizedContainers.at(i).weight << " kg\n\n";
+  }
 
   return EXIT_SUCCESS;
 }
