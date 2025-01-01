@@ -32,8 +32,16 @@ vector<Container> filterRegisteredContainersForInspection(
   return duplicatedContainers;
 }
 
-void mergeContainers(vector<Container> &registered,
-                     vector<Container> inspectioned, int left, int mid,
+bool hasDifferentCnjp(Container container, vector<Container> inspectioneds) {
+  for (Container inspectioned : inspectioneds) {
+    if (container.cnpj == inspectioned.cnpj)
+      return true;
+  }
+  return false;
+}
+
+void mergeContainers(vector<Container> &registereds,
+                     vector<Container> inspectioneds, int left, int mid,
                      int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
@@ -41,49 +49,58 @@ void mergeContainers(vector<Container> &registered,
   Container leftSubVector[n1], rightSubVector[n2];
 
   for (int i = 0; i < n1; i++)
-    leftSubVector[i] = registered[left + i];
+    leftSubVector[i] = registereds[left + i];
   for (int j = 0; j < n2; j++)
-    rightSubVector[j] = registered[mid + 1 + j];
+    rightSubVector[j] = registereds[mid + 1 + j];
 
   int i = 0;
   int j = 0;
   int k = left;
+  Container containerLeft, containerRight;
 
+  // Sorting the containers by cnpj and weight diference:
   while (i < n1 && j < n2) {
-    if (leftSubVector[i].cnpj != rightSubVector[j].cnpj) {
-      registered[k] = leftSubVector[i];
+    containerLeft = leftSubVector[i];
+    containerRight = rightSubVector[j];
+
+    if (containerLeft.cnpj != containerRight.cnpj) {
+      registereds[k] = leftSubVector[i];
       i++;
     } else {
-      registered[k] = rightSubVector[j];
+      registereds[k] = rightSubVector[j];
       j++;
     }
     k++;
   }
 
+  // Wrtiting the remaining containers on the vector:
   while (i < n1) {
-    registered[k] = leftSubVector[i];
+    containerLeft = leftSubVector[i];
+
+    registereds[k] = containerLeft;
     i++;
     k++;
   }
-
   while (j < n2) {
-    registered[k] = rightSubVector[j];
+    containerRight = rightSubVector[j];
+
+    registereds[k] = containerRight;
     j++;
     k++;
   }
 }
 
 // If this algorithym works pass it to a estableized version:
-int sortContainersForInspection(vector<Container> &registered,
-                                vector<Container> inspectioned, int left,
+int sortContainersForInspection(vector<Container> &registereds,
+                                vector<Container> inspectioneds, int left,
                                 int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
-    sortContainersForInspection(registered, inspectioned, left, mid);
-    sortContainersForInspection(registered, inspectioned, mid + 1, right);
+    sortContainersForInspection(registereds, inspectioneds, left, mid);
+    sortContainersForInspection(registereds, inspectioneds, mid + 1, right);
 
-    mergeContainers(registered, inspectioned, left, mid, right);
+    mergeContainers(registereds, inspectioneds, left, mid, right);
   }
   return EXIT_SUCCESS;
 }
