@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream> // This is the library to manipulate files
@@ -112,6 +111,12 @@ int readInputAndCreateContainerLists(fstream &file,
   return EXIT_SUCCESS;
 }
 
+float calculateWeightDifPercent(int entryWeight, int exitWeight) {
+  int diference = entryWeight - exitWeight;
+  float percentage = (float)diference / entryWeight * 100;
+  return abs(percentage);
+}
+
 int main() {
   fstream input("poxim-tech.txt");
   if (!input.is_open()) {
@@ -119,29 +124,29 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  vector<Container> containers;
-  vector<Container> fiscalizedContainers;
+  // vector<Container> containers;
+  // vector<Container> fiscalizedContainers;
 
-  vector<Container> *containersPointers[2] = {&containers,
-                                              &fiscalizedContainers};
+  // vector<Container> *containersPointers[2] = {&containers,
+  //                                             &fiscalizedContainers};
 
-  readInputAndCreateContainerLists(input, containersPointers);
+  // readInputAndCreateContainerLists(input, containersPointers);
 
-  cout << "----------Registered Containers----------\n\n";
-  for (int i = 0; i < containers.size(); i++) {
-    cout << "Container " << i + 1 << ": \n\n";
-    cout << "CNPJ: " << containers.at(i).cnpj << "\n";
-    cout << "Code: " << containers.at(i).code << "\n";
-    cout << "Weight: " << containers.at(i).weight << " kg\n\n";
-  }
+  // cout << "----------Registered Containers----------\n\n";
+  // for (int i = 0; i < containers.size(); i++) {
+  //   cout << "Container " << i + 1 << ": \n\n";
+  //   cout << "CNPJ: " << containers.at(i).cnpj << "\n";
+  //   cout << "Code: " << containers.at(i).code << "\n";
+  //   cout << "Weight: " << containers.at(i).weight << " kg\n\n";
+  // }
 
-  cout << "----------Fiscalized Containers----------\n\n";
-  for (int i = 0; i < fiscalizedContainers.size(); i++) {
-    cout << "Container " << i + 1 << ": \n\n";
-    cout << "CNPJ: " << fiscalizedContainers.at(i).cnpj << "\n";
-    cout << "Code: " << fiscalizedContainers.at(i).code << "\n";
-    cout << "Weight: " << fiscalizedContainers.at(i).weight << " kg\n\n";
-  }
+  // cout << "----------Fiscalized Containers----------\n\n";
+  // for (int i = 0; i < fiscalizedContainers.size(); i++) {
+  //   cout << "Container " << i + 1 << ": \n\n";
+  //   cout << "CNPJ: " << fiscalizedContainers.at(i).cnpj << "\n";
+  //   cout << "Code: " << fiscalizedContainers.at(i).code << "\n";
+  //   cout << "Weight: " << fiscalizedContainers.at(i).weight << " kg\n\n";
+  // }
 
   return EXIT_SUCCESS;
 }
