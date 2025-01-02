@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream> // This is the library to manipulate files
+#include <fstream> 
 #include <iostream>
 #include <string>
 #include <vector>
