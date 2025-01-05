@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream> 
+#include <fstream> // This is the library to manipulate files
 #include <iostream>
 #include <string>
 #include <vector>
@@ -67,21 +67,22 @@ float calculateDifPercent(int n1, int n2) {
 
 float calcContainerWeightDifPercent(Container container,
                                     vector<Container> inspectioneds,
-                                    Container *pointer = nullptr) {
+                                    vector<Container *> &notAbles) {
   for (Container inspectioned : inspectioneds) {
     if (container.code == inspectioned.code) {
       float difPercent =
           calculateDifPercent(container.weight, inspectioned.weight);
       if (isLessThan(difPercent, 10))
-        pointer = &container;
+        notAbles.push_back(&container);
       return difPercent;
     }
   }
   return FAIL;
 }
 
-void mergeContainers(vector<Container> &registereds,
-                     vector<Container> inspectioneds, int left, int mid,
+void mergeContainers(vector<Container> registereds,
+                     vector<Container> inspectioneds,
+                     vector<Container> &irregulars, int left, int mid,
                      int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
@@ -107,14 +108,14 @@ void mergeContainers(vector<Container> &registereds,
     // Case 1: Both containers has different CNPJ
     if (hasDifferentCnjp(containerLeft, inspectioneds) &&
         hasDifferentCnjp(containerRight, inspectioneds)) {
-      registereds[k] = containerLeft;
+      irregulars[k] = containerLeft;
       i++;
     }
 
     // Case 2: Only one of the containers has different CNPJ
     else if (hasDifferentCnjp(containerLeft, inspectioneds, containerPtr) ||
              hasDifferentCnjp(containerRight, inspectioneds, containerPtr)) {
-      registereds[k] = *containerPtr;
+      irregulars[k] = *containerPtr;
       if (containerPtr == &containerLeft)
         i++;
       else
@@ -123,25 +124,39 @@ void mergeContainers(vector<Container> &registereds,
 
     // Case 3: None of the containers has different registered CNPJ
     else {
-      Container *contPointer = nullptr;
-      float difContL = calcContainerWeightDifPercent(
-          containerLeft, inspectioneds, contPointer);
-      float difContR = calcContainerWeightDifPercent(
-          containerRight, inspectioneds, contPointer);
+      vector<Container *> notAbles;
+      float difContL =
+          calcContainerWeightDifPercent(containerLeft, inspectioneds, notAbles);
+      float difContR = calcContainerWeightDifPercent(containerRight,
+                                                     inspectioneds, notAbles);
 
       // Case 3.1: Both containers has more than 10% of inspectioned difference
-      if (contPointer == nullptr) {
+      if (notAbles.empty()) {
         // Case 3.1.1: Both containers are available for inspection and are
         // equals
         if (areFloatsEqual(difContL, difContR)) {
-          registereds[k] = containerLeft;
+          irregulars[k] = containerLeft;
           i++;
 
-          // Equals but right container weight is bigger
+          // Case 3.1.2: Both available but right container weight is bigger
         } else if (isGreaterThan(difContL, difContR)) {
+          irregulars[k] = containerLeft;
+          i++;
         }
-        // Equals but right container weight is bigger
+        // Case 3.1.3: Both available but right container weight is bigger
         else if (isLessThan(difContL, difContR)) {
+          irregulars[k] = containerRight;
+          j++;
+        }
+
+        // Case 3.2: Only one of the containers are available for inspection
+      } else if (notAbles.size() == 1) {
+        if (notAbles.at(0) == &containerLeft) {
+          irregulars[k] = containerLeft;
+          i++;
+        } else {
+          irregulars[k] = containerRight;
+          j++;
         }
       }
     }
@@ -152,30 +167,33 @@ void mergeContainers(vector<Container> &registereds,
   while (i < n1) {
     containerLeft = leftSubVector[i];
 
-    registereds[k] = containerLeft;
+    irregulars[k] = containerLeft;
     i++;
     k++;
   }
   while (j < n2) {
     containerRight = rightSubVector[j];
 
-    registereds[k] = containerRight;
+    irregulars[k] = containerRight;
     j++;
     k++;
   }
 }
 
 // If this algorithym works pass it to a estableized version:
-int sortContainersForInspection(vector<Container> &registereds,
-                                vector<Container> inspectioneds, int left,
+int sortContainersForInspection(vector<Container> registereds,
+                                vector<Container> inspectioneds,
+                                vector<Container> &irregulars, int left,
                                 int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
-    sortContainersForInspection(registereds, inspectioneds, left, mid);
-    sortContainersForInspection(registereds, inspectioneds, mid + 1, right);
+    sortContainersForInspection(registereds, inspectioneds, irregulars, left,
+                                mid);
+    sortContainersForInspection(registereds, inspectioneds, irregulars, mid + 1,
+                                right);
 
-    mergeContainers(registereds, inspectioneds, left, mid, right);
+    mergeContainers(registereds, inspectioneds, irregulars, left, mid, right);
   }
   return EXIT_SUCCESS;
 }
@@ -247,6 +265,8 @@ int main() {
   vector<Container> duplicatedContainers =
       filterRegisteredContainersForInspection(registeredContainers,
                                               fiscalizedContainers);
+  vector<Container> irregulars;
+  irregulars.resize(duplicatedContainers.size());
 
   cout << "----------Registered Containers----------\n\n";
   for (int i = 0; i < registeredContainers.size(); i++) {
