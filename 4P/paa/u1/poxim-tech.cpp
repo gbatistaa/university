@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#define FAIL -1;
+#define FAIL -1
 
 using namespace std;
 
@@ -115,7 +115,11 @@ void mergeContainers(vector<Container> registereds,
     // Case 2: Only one of the containers has different CNPJ
     else if (hasDifferentCnjp(containerLeft, inspectioneds, containerPtr) ||
              hasDifferentCnjp(containerRight, inspectioneds, containerPtr)) {
-      irregulars[k] = *containerPtr;
+
+      if (containerPtr != nullptr) {
+        irregulars[k] = *containerPtr;
+      }
+
       if (containerPtr == &containerLeft)
         i++;
       else
@@ -266,6 +270,9 @@ int main() {
       filterRegisteredContainersForInspection(registeredContainers,
                                               fiscalizedContainers);
   vector<Container> irregulars;
+
+  sortContainersForInspection(registeredContainers, duplicatedContainers,
+                              irregulars, 0, registeredContainers.size() - 1);
   irregulars.resize(duplicatedContainers.size());
 
   cout << "----------Registered Containers----------\n\n";
@@ -282,6 +289,14 @@ int main() {
     cout << "CNPJ: " << fiscalizedContainers.at(i).cnpj << "\n";
     cout << "Code: " << fiscalizedContainers.at(i).code << "\n";
     cout << "Weight: " << fiscalizedContainers.at(i).weight << " kg\n\n";
+  }
+
+  cout << "----------Irregulars Containers----------\n\n";
+  for (int i = 0; i < irregulars.size(); i++) {
+    cout << "Container " << i + 1 << ": \n\n";
+    cout << "CNPJ: " << irregulars.at(i).cnpj << "\n";
+    cout << "Code: " << irregulars.at(i).code << "\n";
+    cout << "Weight: " << irregulars.at(i).weight << " kg\n\n";
   }
 
   return EXIT_SUCCESS;
