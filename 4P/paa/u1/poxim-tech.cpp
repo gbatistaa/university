@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <exception>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <string>
@@ -31,26 +32,13 @@ public:
 class Irregular : public Container {
 public:
   Irregularity irregularity;
-};
-
-class IrregularCNPJ : public Irregular {
 
 public:
   string irregularityMessage;
 };
 
-class IrregularWeight : public Irregular {
-
-public:
-  float irregularityPercentage;
-};
-
 bool areFloatsEqual(float a, float b, float e = 1e-6) {
   return fabs(a - b) < e;
-}
-
-bool isLessThan(float a, float b, float e = 1e-6) {
-  return (a < b) && fabs(a - b) > e;
 }
 
 bool isGreaterThan(float a, float b, float e = 1e-6) {
@@ -90,8 +78,11 @@ bool hasDifferentCnjp(Container container, map<string, Container> fiscalizeds,
                       string &msg) {
   if (fiscalizeds.find(container.code) != fiscalizeds.end()) {
     Container fiscalized = fiscalizeds.at(container.code);
-    if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj)
+    if (container.code == fiscalized.code &&
+        container.cnpj != fiscalized.cnpj) {
+      msg = container.cnpj + "<->" + fiscalized.cnpj;
       return true;
+    }
   }
   return false;
 }
@@ -172,7 +163,7 @@ vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
     float weightDif = calcContainerWeightDifPercent(duplicated, fiscalizeds);
 
     if (difCnpj) {
-      IrregularCNPJ newCnpjIrr;
+      Irregular newCnpjIrr;
       newCnpjIrr.code = duplicated.code;
       newCnpjIrr.cnpj = duplicated.cnpj;
       newCnpjIrr.weight = duplicated.weight;
@@ -182,12 +173,16 @@ vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
     }
 
     else if (isGreaterThan(weightDif, 10)) {
-      IrregularWeight newWeightIrr;
+      ostringstream oss;
+      oss << fixed << setprecision(0) << weightDif;
+      string irrMsg = "(" + oss.str() + "%)";
+
+      Irregular newWeightIrr;
       newWeightIrr.code = duplicated.code;
       newWeightIrr.cnpj = duplicated.cnpj;
       newWeightIrr.weight = duplicated.weight;
       newWeightIrr.irregularity = WEIGHT;
-      newWeightIrr.irregularityPercentage = weightDif;
+      newWeightIrr.irregularityMessage = irrMsg;
       irregulars.push_back(newWeightIrr);
     }
   }
@@ -195,7 +190,9 @@ vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
   return irregulars;
 }
 
-void merge(vector<Irregular> &vec, int left, int mid, int right) {
+void mergeIrregularContainers(vector<Irregular> &vec,
+                              map<string, Container> fiscalizeds, int left,
+                              int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
@@ -203,23 +200,44 @@ void merge(vector<Irregular> &vec, int left, int mid, int right) {
   vector<Irregular> leftVec(n1), rightVec(n2);
 
   // Copiar os dados para os vetores temporários
-  for (int i = 0; i < n1; i++)
-    leftVec[i] = vec[left + i];
-  for (int i = 0; i < n2; i++)
-    rightVec[i] = vec[mid + 1 + i];
+  for (int a = 0; a < n1; a++)
+    leftVec[a] = vec[left + a];
+  for (int b = 0; b < n2; b++)
+    rightVec[b] = vec[mid + 1 + b];
 
   // Mesclar os vetores temporários de volta ao vetor original
   int i = 0, j = 0, k = left;
 
   while (i < n1 && j < n2) {
-    if (leftVec.at(i).irregularity < rightVec.at(i).irregularity) {
-      vec[k] = leftVec[i];
+    Irregularity leftIrregularity = leftVec.at(i).irregularity;
+    Irregularity rightIrregularity = rightVec.at(j).irregularity;
+
+    // Comparsion to prioritize the CNPJ irregularity:
+    if (leftIrregularity > rightIrregularity) {
+      vec[k++] = leftVec.at(i);
       i++;
+    } else if (leftIrregularity == rightIrregularity) {
+      if (leftIrregularity == CNPJ) {
+        vec[k++] = leftVec.at(i);
+        i++;
+      } else {
+        float leftWeightDif =
+            calcContainerWeightDifPercent(leftVec.at(i), fiscalizeds);
+        float rightWeightDif =
+            calcContainerWeightDifPercent(rightVec.at(j), fiscalizeds);
+
+        if (areFloatsEqual(leftWeightDif, rightWeightDif) ||
+            isGreaterThan(leftWeightDif, rightWeightDif)) {
+          vec[k++] = leftVec.at(i);
+        } else {
+          vec[k++] = rightVec.at(j);
+          j++;
+        }
+      }
     } else {
-      vec[k] = rightVec[j];
+      vec[k++] = rightVec.at(j);
       j++;
     }
-    k++;
   }
 
   // Copiar os elementos restantes de leftVec, se houver
@@ -238,16 +256,18 @@ void merge(vector<Irregular> &vec, int left, int mid, int right) {
 }
 
 // Função de ordenação Merge Sort
-void mergeSort(vector<Irregular> &vec, int left, int right) {
+void sortIrregularContainers(vector<Irregular> &vec,
+                             map<string, Container> fiscalizeds, int left,
+                             int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
     // Ordenar a primeira e a segunda metades
-    mergeSort(vec, left, mid);
-    mergeSort(vec, mid + 1, right);
+    sortIrregularContainers(vec, fiscalizeds, left, mid);
+    sortIrregularContainers(vec, fiscalizeds, mid + 1, right);
 
     // Mesclar as metades ordenadas
-    merge(vec, left, mid, right);
+    mergeIrregularContainers(vec, fiscalizeds, left, mid, right);
   }
 }
 
@@ -275,6 +295,8 @@ int main() {
   vector<Irregular> irregulars =
       addIrregularContainer(fiscalizedsMap, duplicatedContainers);
 
+  sortIrregularContainers(irregulars, fiscalizedsMap, 0, irregulars.size() - 1);
+
   cout << "----------Duplicated Containers----------\n\n";
   for (int i = 0; i < duplicatedContainers.size(); i++) {
     cout << "Container " << i + 1 << ": \n\n";
@@ -289,9 +311,7 @@ int main() {
     cout << "Code: " << irregulars.at(i).code << "\n";
     cout << "CNPJ: " << irregulars.at(i).cnpj << "\n";
     cout << "Weight: " << irregulars.at(i).weight << " kg\n";
-    cout << "Irregularity: "
-         << (irregulars.at(i).irregularity == WEIGHT ? "Weight\n\n"
-                                                     : "CNPJ\n\n");
+    cout << "Irregularity: " << irregulars.at(i).irregularityMessage << "\n\n";
   }
 
   // mergeSort(irregulars, 0, irregulars.size() - 1);
