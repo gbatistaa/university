@@ -1,9 +1,10 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <exception>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -12,55 +13,37 @@
 using namespace std;
 
 enum Irregularity {
-  CNPJ,
   WEIGHT,
+  CNPJ,
 };
 
-typedef struct container {
+class Container {
+public:
   string code;
-  string cnpj;
-  int weight;
-} Container;
 
-typedef struct irregular {
-  string code;
+public:
   string cnpj;
+
+public:
   int weight;
+};
+
+class Irregular : public Container {
+public:
   Irregularity irregularity;
+};
+
+class IrregularCNPJ : public Irregular {
+
+public:
   string irregularityMessage;
-} Irregular;
+};
 
-vector<Container> filterRegisteredContainersForInspection(
-    vector<Container> registeredContainers,
-    vector<Container> containersToInspection) {
+class IrregularWeight : public Irregular {
 
-  vector<Container> duplicatedContainers = {};
-
-  for (Container registered : registeredContainers) {
-    for (Container toInspec : containersToInspection) {
-
-      // Verification to see if the registered container is gonna be
-      // inspectioned
-
-      if (registered.code == toInspec.code) {
-        duplicatedContainers.push_back(registered);
-      }
-    }
-  }
-  return duplicatedContainers;
-}
-
-bool hasDifferentCnjp(Container container, vector<Container> inspectioneds,
-                      string &msg) {
-  for (Container inspectioned : inspectioneds) {
-    if (container.code == inspectioned.code &&
-        container.cnpj != inspectioned.cnpj) {
-      msg = container.cnpj + "<->" + inspectioned.cnpj;
-      return true;
-    }
-  }
-  return false;
-}
+public:
+  float irregularityPercentage;
+};
 
 bool areFloatsEqual(float a, float b, float e = 1e-6) {
   return fabs(a - b) < e;
@@ -80,53 +63,52 @@ float calculateDifPercent(int n1, int n2) {
   return abs(percentage);
 }
 
-float calcContainerWeightDifPercent(Container container,
-                                    vector<Container> inspectioneds) {
-  for (Container inspectioned : inspectioneds) {
-    if (container.code == inspectioned.code) {
-      float difPercent =
-          calculateDifPercent(container.weight, inspectioned.weight);
-      return difPercent;
+vector<Container>
+filterRegisteredContainersForInspection(vector<Container> registereds,
+                                        map<string, Container> fiscalizeds) {
+  vector<Container> duplicateds = {};
+  for (Container registered : registereds) {
+    // Verifies if the container registered was put to fiscalization
+    if (fiscalizeds.find(registered.code) != fiscalizeds.end()) {
+      if (registered.code == fiscalizeds.at(registered.code).code)
+        duplicateds.push_back(registered);
     }
   }
-  return EXIT_FAILURE;
+  return duplicateds;
 }
 
-vector<Irregular> addIrregularContainer(vector<Container> fiscalizeds,
-                                        vector<Container> duplicateds) {
-  vector<Irregular> irregulars = {};
-  string irrMsg;
+map<string, Container> createContainerMap(vector<Container> containerVector) {
+  map<string, Container> newContainerMap;
 
-  for (Container duplicated : duplicateds) {
+  for (Container container : containerVector)
+    newContainerMap.insert({container.code, container});
 
-    bool difCnpj = hasDifferentCnjp(duplicated, fiscalizeds, irrMsg);
-    float weightDif = calcContainerWeightDifPercent(duplicated, fiscalizeds);
+  return newContainerMap;
+}
 
-    if (difCnpj) {
-      Irregular newIrregular;
-      newIrregular.code = duplicated.code;
-      newIrregular.cnpj = duplicated.cnpj;
-      newIrregular.weight = duplicated.weight;
-      newIrregular.irregularity = CNPJ;
-      newIrregular.irregularityMessage = irrMsg;
-      irregulars.push_back(newIrregular);
-    }
-
-    else if (isGreaterThan(weightDif, 10)) {
-      ostringstream oss;
-      oss << fixed << setprecision(1) << weightDif;
-
-      Irregular newIrregular;
-      newIrregular.code = duplicated.code;
-      newIrregular.cnpj = duplicated.cnpj;
-      newIrregular.weight = duplicated.weight;
-      newIrregular.irregularity = WEIGHT;
-      newIrregular.irregularityMessage = "(" + oss.str() + "%" + ")";
-      irregulars.push_back(newIrregular);
-    }
+bool hasDifferentCnjp(Container container, map<string, Container> fiscalizeds,
+                      string &msg) {
+  if (fiscalizeds.find(container.code) != fiscalizeds.end()) {
+    Container fiscalized = fiscalizeds.at(container.code);
+    if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj)
+      return true;
   }
+  return false;
+}
 
-  return irregulars;
+float calcContainerWeightDifPercent(Container container,
+                                    map<string, Container> fiscalizeds) {
+  try {
+    Container fiscalized = fiscalizeds.at(container.code);
+    if (container.code == fiscalized.code) {
+      float weightDif =
+          calculateDifPercent(container.weight, fiscalized.weight);
+      return weightDif;
+    }
+    return EXIT_SUCCESS;
+  } catch (const exception &e) {
+    return EXIT_FAILURE;
+  }
 }
 
 int writeContainerProp(string *props[], char character, int &propSts) {
@@ -179,6 +161,96 @@ int readInputAndCreateContainerLists(fstream &file,
   return EXIT_SUCCESS;
 }
 
+vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
+                                        vector<Container> duplicateds) {
+  vector<Irregular> irregulars = {};
+  string irrMsg;
+
+  for (Container duplicated : duplicateds) {
+
+    bool difCnpj = hasDifferentCnjp(duplicated, fiscalizeds, irrMsg);
+    float weightDif = calcContainerWeightDifPercent(duplicated, fiscalizeds);
+
+    if (difCnpj) {
+      IrregularCNPJ newCnpjIrr;
+      newCnpjIrr.code = duplicated.code;
+      newCnpjIrr.cnpj = duplicated.cnpj;
+      newCnpjIrr.weight = duplicated.weight;
+      newCnpjIrr.irregularity = CNPJ;
+      newCnpjIrr.irregularityMessage = irrMsg;
+      irregulars.push_back(newCnpjIrr);
+    }
+
+    else if (isGreaterThan(weightDif, 10)) {
+      IrregularWeight newWeightIrr;
+      newWeightIrr.code = duplicated.code;
+      newWeightIrr.cnpj = duplicated.cnpj;
+      newWeightIrr.weight = duplicated.weight;
+      newWeightIrr.irregularity = WEIGHT;
+      newWeightIrr.irregularityPercentage = weightDif;
+      irregulars.push_back(newWeightIrr);
+    }
+  }
+
+  return irregulars;
+}
+
+void merge(vector<Irregular> &vec, int left, int mid, int right) {
+  int n1 = mid - left + 1;
+  int n2 = right - mid;
+
+  // Vetores temporários
+  vector<Irregular> leftVec(n1), rightVec(n2);
+
+  // Copiar os dados para os vetores temporários
+  for (int i = 0; i < n1; i++)
+    leftVec[i] = vec[left + i];
+  for (int i = 0; i < n2; i++)
+    rightVec[i] = vec[mid + 1 + i];
+
+  // Mesclar os vetores temporários de volta ao vetor original
+  int i = 0, j = 0, k = left;
+
+  while (i < n1 && j < n2) {
+    if (leftVec.at(i).irregularity < rightVec.at(i).irregularity) {
+      vec[k] = leftVec[i];
+      i++;
+    } else {
+      vec[k] = rightVec[j];
+      j++;
+    }
+    k++;
+  }
+
+  // Copiar os elementos restantes de leftVec, se houver
+  while (i < n1) {
+    vec[k] = leftVec[i];
+    i++;
+    k++;
+  }
+
+  // Copiar os elementos restantes de rightVec, se houver
+  while (j < n2) {
+    vec[k] = rightVec[j];
+    j++;
+    k++;
+  }
+}
+
+// Função de ordenação Merge Sort
+void mergeSort(vector<Irregular> &vec, int left, int right) {
+  if (left < right) {
+    int mid = left + (right - left) / 2;
+
+    // Ordenar a primeira e a segunda metades
+    mergeSort(vec, left, mid);
+    mergeSort(vec, mid + 1, right);
+
+    // Mesclar as metades ordenadas
+    merge(vec, left, mid, right);
+  }
+}
+
 int main() {
   fstream input("poxim-tech.txt");
   if (!input.is_open()) {
@@ -194,22 +266,14 @@ int main() {
 
   readInputAndCreateContainerLists(input, containersPointers);
 
-  cout << "----------Registered Containers----------\n\n";
-  for (int i = 0; i < registeredContainers.size(); i++) {
-    cout << "Container " << i + 1 << ": \n\n";
-    cout << "Code: " << registeredContainers.at(i).code << "\n";
-    cout << "CNPJ: " << registeredContainers.at(i).cnpj << "\n";
-    cout << "Weight: " << registeredContainers.at(i).weight << " kg\n\n";
-  }
+  map<string, Container> fiscalizedsMap =
+      createContainerMap(fiscalizedContainers);
 
   vector<Container> duplicatedContainers =
       filterRegisteredContainersForInspection(registeredContainers,
-                                              fiscalizedContainers);
+                                              fiscalizedsMap);
   vector<Irregular> irregulars =
-      addIrregularContainer(fiscalizedContainers, duplicatedContainers);
-  // sortContainersForInspection(duplicatedContainers, fiscalizedContainers,
-  //                             irregulars, 0, duplicatedContainers.size() -
-  //                             1);
+      addIrregularContainer(fiscalizedsMap, duplicatedContainers);
 
   cout << "----------Duplicated Containers----------\n\n";
   for (int i = 0; i < duplicatedContainers.size(); i++) {
@@ -218,13 +282,6 @@ int main() {
     cout << "CNPJ: " << duplicatedContainers.at(i).cnpj << "\n";
     cout << "Weight: " << duplicatedContainers.at(i).weight << " kg\n\n";
   }
-  cout << "----------Fiscalized Containers----------\n\n";
-  for (int i = 0; i < fiscalizedContainers.size(); i++) {
-    cout << "Container " << i + 1 << ": \n\n";
-    cout << "Code: " << fiscalizedContainers.at(i).code << "\n";
-    cout << "CNPJ: " << fiscalizedContainers.at(i).cnpj << "\n";
-    cout << "Weight: " << fiscalizedContainers.at(i).weight << " kg\n\n";
-  }
 
   cout << "----------Irregulars Containers----------\n\n";
   for (int i = 0; i < irregulars.size(); i++) {
@@ -232,8 +289,12 @@ int main() {
     cout << "Code: " << irregulars.at(i).code << "\n";
     cout << "CNPJ: " << irregulars.at(i).cnpj << "\n";
     cout << "Weight: " << irregulars.at(i).weight << " kg\n";
-    cout << "Irregularity: " << irregulars.at(i).irregularityMessage << "\n\n";
+    cout << "Irregularity: "
+         << (irregulars.at(i).irregularity == WEIGHT ? "Weight\n\n"
+                                                     : "CNPJ\n\n");
   }
+
+  // mergeSort(irregulars, 0, irregulars.size() - 1);
 
   return EXIT_SUCCESS;
 }
