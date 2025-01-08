@@ -35,10 +35,6 @@ public:
   string irregularityMessage;
 };
 
-bool areFloatsEqual(float a, float b, float e = 1e-6) {
-  return fabs(a - b) < e;
-}
-
 bool isGreaterThan(float a, float b, float e = 1e-6) {
   return (a > b) && fabs(a - b) > e;
 }
