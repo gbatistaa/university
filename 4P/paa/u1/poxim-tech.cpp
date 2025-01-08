@@ -37,6 +37,11 @@ public:
   string irregularityMessage;
 };
 
+class IrregularWeight : public Irregular {
+public:
+  float bruteWeightDif;
+};
+
 bool areFloatsEqual(float a, float b, float e = 1e-6) {
   return fabs(a - b) < e;
 }
@@ -94,6 +99,7 @@ float calcContainerWeightDifPercent(Container container,
     if (container.code == fiscalized.code) {
       float weightDif =
           calculateDifPercent(container.weight, fiscalized.weight);
+      // *bruteWeightDif = fabs(container.weight - fiscalized.weight);
       return weightDif;
     }
     return EXIT_SUCCESS;
@@ -229,6 +235,7 @@ void mergeIrregularContainers(vector<Irregular> &vec,
         if (areFloatsEqual(leftWeightDif, rightWeightDif) ||
             isGreaterThan(leftWeightDif, rightWeightDif)) {
           vec[k++] = leftVec.at(i);
+          i++;
         } else {
           vec[k++] = rightVec.at(j);
           j++;
@@ -240,14 +247,12 @@ void mergeIrregularContainers(vector<Irregular> &vec,
     }
   }
 
-  // Copiar os elementos restantes de leftVec, se houver
   while (i < n1) {
     vec[k] = leftVec[i];
     i++;
     k++;
   }
 
-  // Copiar os elementos restantes de rightVec, se houver
   while (j < n2) {
     vec[k] = rightVec[j];
     j++;
