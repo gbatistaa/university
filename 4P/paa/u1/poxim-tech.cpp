@@ -160,8 +160,9 @@ int readInputAndCreateContainerLists(fstream &file,
   return EXIT_SUCCESS;
 }
 
-vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
-                                        vector<Container> duplicateds) {
+vector<Irregular>
+createIrregularContainersList(map<string, Container> fiscalizeds,
+                              vector<Container> duplicateds) {
   vector<Irregular> irregulars = {};
   string irrMsg;
 
@@ -200,9 +201,9 @@ vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
   return irregulars;
 }
 
-void mergeIrregularContainers(vector<Irregular> &vec,
-                              map<string, Container> fiscalizeds, int left,
-                              int mid, int right) {
+int mergeIrregularContainers(vector<Irregular> &vec,
+                             map<string, Container> fiscalizeds, int left,
+                             int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
@@ -264,6 +265,7 @@ void mergeIrregularContainers(vector<Irregular> &vec,
     j++;
     k++;
   }
+  return EXIT_SUCCESS;
 }
 
 // Função de ordenação Merge Sort
@@ -304,7 +306,7 @@ int main() {
       filterRegisteredContainersForInspection(registeredContainers,
                                               fiscalizedsMap);
   vector<Irregular> irregulars =
-      addIrregularContainer(fiscalizedsMap, duplicatedContainers);
+      createIrregularContainersList(fiscalizedsMap, duplicatedContainers);
 
   sortIrregularContainers(irregulars, fiscalizedsMap, 0, irregulars.size() - 1);
 
@@ -324,8 +326,6 @@ int main() {
     cout << "Weight: " << irregulars.at(i).weight << " kg\n";
     cout << "Irregularity: " << irregulars.at(i).irregularityMessage << "\n\n";
   }
-
-  // mergeSort(irregulars, 0, irregulars.size() - 1);
 
   return EXIT_SUCCESS;
 }
