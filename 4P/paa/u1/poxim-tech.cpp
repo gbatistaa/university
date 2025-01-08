@@ -93,13 +93,14 @@ bool hasDifferentCnjp(Container container, map<string, Container> fiscalizeds,
 }
 
 float calcContainerWeightDifPercent(Container container,
-                                    map<string, Container> fiscalizeds) {
+                                    map<string, Container> fiscalizeds,
+                                    float &bruteWeightDif) {
   try {
     Container fiscalized = fiscalizeds.at(container.code);
     if (container.code == fiscalized.code) {
       float weightDif =
           calculateDifPercent(container.weight, fiscalized.weight);
-      // *bruteWeightDif = fabs(container.weight - fiscalized.weight);
+      bruteWeightDif = fabs(container.weight - fiscalized.weight);
       return weightDif;
     }
     return EXIT_SUCCESS;
@@ -152,6 +153,7 @@ int readInputAndCreateContainerLists(fstream &file,
     newContainer.cnpj = newCnpj;
     newContainer.weight = newWeightNumeric;
 
+    // Adding the new container in the containers list:
     contPointers[currContainerIndex]->push_back(newContainer);
   }
 
@@ -164,9 +166,10 @@ vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
   string irrMsg;
 
   for (Container duplicated : duplicateds) {
-
+    float weightDif;
     bool difCnpj = hasDifferentCnjp(duplicated, fiscalizeds, irrMsg);
-    float weightDif = calcContainerWeightDifPercent(duplicated, fiscalizeds);
+    float weightDifPercent =
+        calcContainerWeightDifPercent(duplicated, fiscalizeds, weightDif);
 
     if (difCnpj) {
       Irregular newCnpjIrr;
@@ -178,10 +181,11 @@ vector<Irregular> addIrregularContainer(map<string, Container> fiscalizeds,
       irregulars.push_back(newCnpjIrr);
     }
 
-    else if (isGreaterThan(weightDif, 10)) {
+    else if (isGreaterThan(weightDifPercent, 10)) {
       ostringstream oss;
+      oss << fixed << setprecision(0) << weightDifPercent;
       oss << fixed << setprecision(0) << weightDif;
-      string irrMsg = "(" + oss.str() + "%)";
+      string irrMsg = to_string(weightDif) + " kg" + " (" + oss.str() + "%)";
 
       Irregular newWeightIrr;
       newWeightIrr.code = duplicated.code;
@@ -227,10 +231,12 @@ void mergeIrregularContainers(vector<Irregular> &vec,
         vec[k++] = leftVec.at(i);
         i++;
       } else {
-        float leftWeightDif =
-            calcContainerWeightDifPercent(leftVec.at(i), fiscalizeds);
-        float rightWeightDif =
-            calcContainerWeightDifPercent(rightVec.at(j), fiscalizeds);
+        float weightDifL, weightDifR;
+
+        float leftWeightDif = calcContainerWeightDifPercent(
+            leftVec.at(i), fiscalizeds, weightDifL);
+        float rightWeightDif = calcContainerWeightDifPercent(
+            rightVec.at(j), fiscalizeds, weightDifR);
 
         if (areFloatsEqual(leftWeightDif, rightWeightDif) ||
             isGreaterThan(leftWeightDif, rightWeightDif)) {
