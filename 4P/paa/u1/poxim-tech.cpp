@@ -9,8 +9,6 @@
 #include <string>
 #include <vector>
 
-#define FAIL -1
-
 using namespace std;
 
 enum Irregularity {
@@ -35,11 +33,6 @@ public:
 
 public:
   string irregularityMessage;
-};
-
-class IrregularWeight : public Irregular {
-public:
-  float bruteWeightDif;
 };
 
 bool areFloatsEqual(float a, float b, float e = 1e-6) {
@@ -183,10 +176,10 @@ createIrregularContainersList(map<string, Container> fiscalizeds,
     }
 
     else if (isGreaterThan(weightDifPercent, 10)) {
-      ostringstream oss;
-      oss << fixed << setprecision(0) << weightDifPercent;
-      oss << fixed << setprecision(0) << weightDif;
-      string irrMsg = to_string(weightDif) + " kg" + " (" + oss.str() + "%)";
+      ostringstream difPerc, bruteDif;
+      difPerc << fixed << setprecision(0) << weightDifPercent;
+      bruteDif << fixed << setprecision(0) << weightDif;
+      string irrMsg = bruteDif.str() + "kg(" + difPerc.str() + "%)";
 
       Irregular newWeightIrr;
       newWeightIrr.code = duplicated.code;
@@ -224,30 +217,9 @@ int mergeIrregularContainers(vector<Irregular> &vec,
     Irregularity rightIrregularity = rightVec.at(j).irregularity;
 
     // Comparsion to prioritize the CNPJ irregularity:
-    if (leftIrregularity > rightIrregularity) {
+    if (leftIrregularity >= rightIrregularity) {
       vec[k++] = leftVec.at(i);
       i++;
-    } else if (leftIrregularity == rightIrregularity) {
-      if (leftIrregularity == CNPJ) {
-        vec[k++] = leftVec.at(i);
-        i++;
-      } else {
-        float weightDifL, weightDifR;
-
-        float leftWeightDif = calcContainerWeightDifPercent(
-            leftVec.at(i), fiscalizeds, weightDifL);
-        float rightWeightDif = calcContainerWeightDifPercent(
-            rightVec.at(j), fiscalizeds, weightDifR);
-
-        if (areFloatsEqual(leftWeightDif, rightWeightDif) ||
-            isGreaterThan(leftWeightDif, rightWeightDif)) {
-          vec[k++] = leftVec.at(i);
-          i++;
-        } else {
-          vec[k++] = rightVec.at(j);
-          j++;
-        }
-      }
     } else {
       vec[k++] = rightVec.at(j);
       j++;
@@ -310,21 +282,8 @@ int main() {
 
   sortIrregularContainers(irregulars, fiscalizedsMap, 0, irregulars.size() - 1);
 
-  cout << "----------Duplicated Containers----------\n\n";
-  for (int i = 0; i < duplicatedContainers.size(); i++) {
-    cout << "Container " << i + 1 << ": \n\n";
-    cout << "Code: " << duplicatedContainers.at(i).code << "\n";
-    cout << "CNPJ: " << duplicatedContainers.at(i).cnpj << "\n";
-    cout << "Weight: " << duplicatedContainers.at(i).weight << " kg\n\n";
-  }
-
-  cout << "----------Irregulars Containers----------\n\n";
   for (int i = 0; i < irregulars.size(); i++) {
-    cout << "Container " << i + 1 << ": \n\n";
-    cout << "Code: " << irregulars.at(i).code << "\n";
-    cout << "CNPJ: " << irregulars.at(i).cnpj << "\n";
-    cout << "Weight: " << irregulars.at(i).weight << " kg\n";
-    cout << "Irregularity: " << irregulars.at(i).irregularityMessage << "\n\n";
+    cout << irregulars.at(i).irregularityMessage << "\n";
   }
 
   return EXIT_SUCCESS;
