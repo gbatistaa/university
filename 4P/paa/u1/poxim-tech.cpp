@@ -234,8 +234,6 @@ filterRegisteredContainersForInspection(ContainerList *registereds,
       // Verifies if the registered container was fiscalized:
       if (registereds->list[i].code ==
           fiscalizedsMap.at(registereds->list[i].code).code) {
-        cout << "Container " + registereds->list[i].code + " was registered"
-             << endl;
 
         // Increments the duplicated containers list size:
 
@@ -243,17 +241,10 @@ filterRegisteredContainersForInspection(ContainerList *registereds,
         Container *resizedList = (Container *)realloc(
             duplicateds->list, duplicateds->size * sizeof(Container));
 
-        cout << "Duplicateds list size incremented to: " << duplicateds->size
-             << endl;
-
         duplicateds->list = resizedList;
 
         // Add the duplicated container in the list last position:
         duplicateds->list[duplicateds->size - 1] = registereds->list[i];
-
-        cout << "New duplicated container: "
-             << duplicateds->list[duplicateds->size - 1].code + "\n"
-             << endl;
       }
     } catch (const exception &e) {
       cerr << e.what() << endl;
@@ -268,7 +259,6 @@ hashmap<Container> createContainerMap(ContainerList *fiscalizeds,
   for (int i = 0; i < fiscSize; i++) {
     newContainerMap.hash_insert(fiscalizeds->list[i].code,
                                 fiscalizeds->list[i]);
-    cout << newContainerMap.at(fiscalizeds->list[i].code).code << endl;
   }
   return newContainerMap;
 }
@@ -478,8 +468,7 @@ int readInputAndCreateContainerLists(fstream &file,
     // Adding the new container in the containers list:
     Container *newArray = (Container *)malloc(sizeof(Container) * newListSize);
     if (newArray == NULL) {
-      cerr << "Error on memory allocation\n";
-      exit(EXIT_FAILURE);
+      return EXIT_FAILURE;
     }
 
     for (int x = 0; x < prevListSize; x++) {
@@ -499,7 +488,6 @@ int readInputAndCreateContainerLists(fstream &file,
 int main() {
   fstream input("poxim-tech.txt");
   if (!input.is_open()) {
-    cout << "Error on file Opening.";
     return EXIT_FAILURE;
   }
 
@@ -523,23 +511,8 @@ int main() {
   hashmap<Container> fiscalizedsMap =
       createContainerMap(fiscalizedContainers, fiscalizedContainers->size);
 
-  cout << "----------Fiscalized Containers HashMap----------\n\n";
-  for (int i = 0; i < fiscalizedContainers->size; i++) {
-    cout << fiscalizedsMap.at(fiscalizedContainers->list[i].code).code << endl;
-    cout << fiscalizedsMap.at(fiscalizedContainers->list[i].code).cnpj << endl;
-    cout << fiscalizedsMap.at(fiscalizedContainers->list[i].code).weight << "\n"
-         << endl;
-  }
   ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
       registeredContainers, registeredContainers->size, fiscalizedsMap);
-
-  cout << "----------Duplicated Containers----------\n\n";
-  for (int i = 0; i < duplicatedContainers->size; i++) {
-    cout << "Code: " << duplicatedContainers->list[i].code << "\n";
-    cout << "CNPJ: " << duplicatedContainers->list[i].cnpj << "\n";
-    cout << "Weight: " << duplicatedContainers->list[i].weight << " kg"
-         << "\n\n";
-  }
 
   IrregularList *irregulars = createIrregularContainersList(
       fiscalizedsMap, duplicatedContainers, duplicatedContainers->size);
@@ -547,13 +520,8 @@ int main() {
   sortIrregularContainers(irregulars->list, fiscalizedsMap, 0,
                           irregulars->size - 1);
 
-  cout << "----------Irregulars Containers----------\n\n";
   for (int i = 0; i < irregulars->size; i++) {
-    cout << "Code: " << irregulars->list[i].cnpj << "\n";
-    cout << "CNPJ: " << irregulars->list[i].code << "\n";
-    cout << "Weight: " << irregulars->list[i].weight << " kg" << "\n";
-    cout << "Irregularity Message: " << irregulars->list[i].irregularityMessage
-         << "\n\n";
+    cout << irregulars->list[i].irregularityMessage << endl;
   }
 
   return EXIT_SUCCESS;
