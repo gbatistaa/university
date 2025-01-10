@@ -172,7 +172,7 @@ public:
         // If reaches a null pointer the key were not created:
         throw runtime_error("Key not found");
       } catch (const exception &e) {
-        cerr << e.what() << endl;
+        return Value();
       }
     }
     return Value();
@@ -212,15 +212,47 @@ float calculateDifPercent(int n1, int n2) {
   return abs(percentage);
 }
 
-vector<Container>
-filterRegisteredContainersForInspection(vector<Container> registereds,
-                                        map<string, Container> fiscalizeds) {
-  vector<Container> duplicateds = {};
-  for (Container registered : registereds) {
-    // Verifies if the container registered was put to fiscalization
-    if (fiscalizeds.find(registered.code) != fiscalizeds.end()) {
-      if (registered.code == fiscalizeds.at(registered.code).code)
-        duplicateds.push_back(registered);
+ContainerList *
+filterRegisteredContainersForInspection(ContainerList *registereds,
+                                        int registeredsSize,
+                                        hashmap<Container> fiscalizedsMap) {
+  ContainerList *duplicateds = (ContainerList *)malloc(sizeof(ContainerList));
+  if (!duplicateds) {
+    exit(EXIT_FAILURE);
+  }
+  duplicateds->list = nullptr;
+  duplicateds->size = 0;
+
+  Container *newDuplicatedsList = (Container *)malloc(sizeof(Container));
+  duplicateds->list = newDuplicatedsList;
+  for (int i = 0; i < registeredsSize; i++) {
+    try {
+      // Verifies if the registered container was fiscalized:
+      if (registereds->list[i].code ==
+          fiscalizedsMap.at(registereds->list[i].code).code) {
+        cout << "Container " + registereds->list[i].code + " was registered"
+             << endl;
+
+        // Increments the duplicated containers list size:
+
+        duplicateds->size++;
+        Container *resizedList = (Container *)realloc(
+            duplicateds->list, duplicateds->size * sizeof(Container));
+
+        cout << "Duplicateds list size incremented to: " << duplicateds->size
+             << endl;
+
+        duplicateds->list = resizedList;
+
+        // Add the duplicated container in the list last position:
+        duplicateds->list[duplicateds->size - 1] = registereds->list[i];
+
+        cout << "New duplicated container: "
+             << duplicateds->list[duplicateds->size - 1].code + "\n"
+             << endl;
+      }
+    } catch (const exception &e) {
+      cerr << e.what() << endl;
     }
   }
   return duplicateds;
@@ -267,10 +299,9 @@ float calcContainerWeightDifPercent(Container container,
   }
 }
 
-vector<Irregular>
-createIrregularContainersList(map<string, Container> fiscalizeds,
-                              vector<Container> duplicateds) {
-  vector<Irregular> irregulars = {};
+Irregular *createIrregularContainersList(hashmap<Container> fiscalizeds,
+                                         vector<Container> duplicateds) {
+  Irregular *irregulars;
   string irrMsg;
 
   for (Container duplicated : duplicateds) {
@@ -286,7 +317,6 @@ createIrregularContainersList(map<string, Container> fiscalizeds,
       newCnpjIrr.weight = duplicated.weight;
       newCnpjIrr.irregularity = CNPJ;
       newCnpjIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
-      irregulars.push_back(newCnpjIrr);
     }
 
     else if (isGreaterThan(weightDifPercent, 10)) {
@@ -466,22 +496,6 @@ int main() {
 
   readInputAndCreateContainerLists(input, containersPointers);
 
-  cout << "----------Registered Containers----------\n\n";
-  for (int i = 0; i < registeredContainers->size; i++) {
-    cout << "Code: " << registeredContainers->list[i].code << "\n";
-    cout << "CNPJ: " << registeredContainers->list[i].cnpj << "\n";
-    cout << "Weight: " << registeredContainers->list[i].weight << " kg"
-         << "\n\n";
-  }
-
-  cout << "----------Fiscalized Containers----------\n\n";
-  for (int i = 0; i < fiscalizedContainers->size; i++) {
-    cout << "Code: " << fiscalizedContainers->list[i].code << "\n";
-    cout << "CNPJ: " << fiscalizedContainers->list[i].cnpj << "\n";
-    cout << "Weight: " << fiscalizedContainers->list[i].weight << " kg"
-         << "\n\n";
-  }
-
   hashmap<Container> fiscalizedsMap =
       createContainerMap(fiscalizedContainers, fiscalizedContainers->size);
 
@@ -492,12 +506,19 @@ int main() {
     cout << fiscalizedsMap.at(fiscalizedContainers->list[i].code).weight << "\n"
          << endl;
   }
-  //  vector<Container> duplicatedContainers =
-  //     filterRegisteredContainersForInspection(registeredContainers,
-  //                                             fiscalizedsMap);
-  // vector<Irregular> irregulars =
-  //     createIrregularContainersList(fiscalizedsMap,
-  //     duplicatedContainers);
+  ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
+      registeredContainers, registeredContainers->size, fiscalizedsMap);
+
+  cout << "----------Duplicated Containers----------\n\n";
+  for (int i = 0; i < duplicatedContainers->size; i++) {
+    cout << "Code: " << duplicatedContainers->list[i].code << "\n";
+    cout << "CNPJ: " << duplicatedContainers->list[i].cnpj << "\n";
+    cout << "Weight: " << duplicatedContainers->list[i].weight << " kg"
+         << "\n\n";
+  }
+
+  vector<Irregular> irregulars =
+      createIrregularContainersList(fiscalizedsMap, duplicatedContainers);
 
   // sortIrregularContainers(irregulars, fiscalizedsMap, 0,
   // irregulars.size() - 1);
