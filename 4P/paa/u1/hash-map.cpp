@@ -4,6 +4,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <string>
 
 using namespace std;
@@ -44,26 +45,24 @@ private:
       // Copying the current previous map element:
       linked_pair *curr_copy = &map[i];
       while (curr_copy != nullptr) {
-        linked_pair *copy_pair = (linked_pair *)malloc(sizeof(linked_pair));
-        copy_pair->pair.key = curr_copy->pair.key;
-        cout << "Key Copied: " << copy_pair->pair.key << endl;
-        copy_pair->pair.value = curr_copy->pair.value;
-        cout << "Value copied to:" << &copy_pair->pair.value;
-        copy_pair->next = nullptr;
 
         int hash_index = hash_function(curr_copy->pair.key, map_size);
+        linked_pair *curr_pair = &new_map[hash_index];
 
         // Verifying if already has element in the hash index:
-        if (new_map[hash_index].pair.key != "") {
+        if (curr_pair->pair.key != "") {
+          linked_pair *copy_pair = (linked_pair *)malloc(sizeof(linked_pair));
+          copy_pair->pair = curr_copy->pair;
+          copy_pair->next = nullptr;
 
           // Scanning until it reaches the last element of the linked list:
-          linked_pair *curr_pair = &new_map[i];
           while (curr_pair->next != nullptr) {
             curr_pair = curr_pair->next;
           }
           curr_pair->next = copy_pair;
         } else {
-          new_map[hash_index] = *copy_pair;
+          curr_pair->pair = curr_copy->pair;
+          curr_pair->next = nullptr;
         }
 
         // Passing to the next element of the previous map colision linked list:
@@ -140,7 +139,7 @@ public:
         linked_pair *curr_pair = &map[i];
 
         // Scanning all of the collided pairs:
-        while (curr_pair->next != nullptr) {
+        while (curr_pair->next != nullptr && curr_pair->next->pair.key != "") {
           cout << " --> " << curr_pair->next->pair.key << " | "
                << curr_pair->next->pair.value;
           curr_pair = curr_pair->next;
@@ -176,16 +175,38 @@ public:
   }
 };
 
+string generate_random_string(size_t length) {
+  const string charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  random_device rd;
+  mt19937 generator(rd());
+  uniform_int_distribution<> distribution(0, charset.size() - 1);
+
+  string random_string;
+  for (size_t i = 0; i < length; ++i) {
+    random_string += charset[distribution(generator)];
+  }
+  return random_string;
+}
+
 int main() {
   hashmap<int> hashmap1;
-  hashmap1.hash_insert("kleber", 78);
-  hashmap1.hash_insert("gabriel", 20);
-  hashmap1.hash_insert("julia", 51);
-  hashmap1.hash_insert("samara", 8);
-  hashmap1.hash_insert("caio", 16);
-  hashmap1.hash_insert("roberta", 192);
-  hashmap1.hash_insert("victor", 48);
-  hashmap1.hash_insert("sofhia", 91);
+
+  size_t hash_map_size;
+  cout << "Type the random generated strings quantity: ";
+  cin >> hash_map_size;
+
+  random_device rd;
+  mt19937 generator(rd());
+  uniform_int_distribution<> length_dist(6, 20);
+  uniform_int_distribution<> value_dist(1, 1000);
+
+  for (int i = 0; i < hash_map_size; ++i) {
+    size_t random_length = length_dist(generator);
+    string random_string = generate_random_string(random_length);
+    int random_value = value_dist(generator);
+    hashmap1.hash_insert(random_string, random_value);
+  }
 
   hashmap1.print_hash_map();
 
