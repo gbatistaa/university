@@ -6,7 +6,6 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <map>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -202,6 +201,11 @@ typedef struct containerList {
   int size;
 } ContainerList;
 
+typedef struct irregularList {
+  Irregular *list;
+  int size;
+} IrregularList;
+
 bool isGreaterThan(float a, float b, float e = 1e-6) {
   return (a > b) && fabs(a - b) > e;
 }
@@ -269,21 +273,18 @@ hashmap<Container> createContainerMap(ContainerList *fiscalizeds,
   return newContainerMap;
 }
 
-bool hasDifferentCnjp(Container container, map<string, Container> fiscalizeds,
+bool hasDifferentCnjp(Container container, hashmap<Container> fiscalizeds,
                       string &msg) {
-  if (fiscalizeds.find(container.code) != fiscalizeds.end()) {
-    Container fiscalized = fiscalizeds.at(container.code);
-    if (container.code == fiscalized.code &&
-        container.cnpj != fiscalized.cnpj) {
-      msg = container.cnpj + "<->" + fiscalized.cnpj;
-      return true;
-    }
+  Container fiscalized = fiscalizeds.at(container.code);
+  if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj) {
+    msg = container.cnpj + "<->" + fiscalized.cnpj;
+    return true;
   }
   return false;
 }
 
 float calcContainerWeightDifPercent(Container container,
-                                    map<string, Container> fiscalizeds,
+                                    hashmap<Container> fiscalizeds,
                                     float &bruteWeightDif) {
   try {
     Container fiscalized = fiscalizeds.at(container.code);
@@ -299,12 +300,20 @@ float calcContainerWeightDifPercent(Container container,
   }
 }
 
-Irregular *createIrregularContainersList(hashmap<Container> fiscalizeds,
-                                         vector<Container> duplicateds) {
-  Irregular *irregulars;
+IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
+                                             ContainerList *duplicateds,
+                                             int duplicatedsSize) {
   string irrMsg;
+  IrregularList *irregulars = (IrregularList *)malloc(sizeof(IrregularList));
+  irregulars->size = 0;
+  irregulars->list = nullptr;
 
-  for (Container duplicated : duplicateds) {
+  Irregular *irrList = (Irregular *)malloc(sizeof(Irregular));
+  irregulars->list = irrList;
+
+  for (int i = 0; i < duplicatedsSize; i++) {
+    Container duplicated = duplicateds->list[i];
+
     float weightDif;
     bool difCnpj = hasDifferentCnjp(duplicated, fiscalizeds, irrMsg);
     float weightDifPercent =
@@ -317,9 +326,18 @@ Irregular *createIrregularContainersList(hashmap<Container> fiscalizeds,
       newCnpjIrr.weight = duplicated.weight;
       newCnpjIrr.irregularity = CNPJ;
       newCnpjIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
+
+      irregulars->size++;
+
+      Irregular *resizedIrrList = (Irregular *)realloc(
+          irregulars->list, sizeof(Irregular) * irregulars->size);
+      irregulars->list = resizedIrrList;
+
+      irregulars->list[irregulars->size - 1] = newCnpjIrr;
     }
 
     else if (isGreaterThan(weightDifPercent, 10)) {
+
       ostringstream difPerc, bruteDif;
       difPerc << fixed << setprecision(0) << weightDifPercent;
       bruteDif << fixed << setprecision(0) << weightDif;
@@ -331,53 +349,59 @@ Irregular *createIrregularContainersList(hashmap<Container> fiscalizeds,
       newWeightIrr.weight = duplicated.weight;
       newWeightIrr.irregularity = WEIGHT;
       newWeightIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
-      irregulars.push_back(newWeightIrr);
+
+      irregulars->size++;
+
+      Irregular *resizedIrrList = (Irregular *)realloc(
+          irregulars->list, sizeof(Irregular) * irregulars->size);
+      irregulars->list = resizedIrrList;
+      irregulars->list[irregulars->size - 1] = newWeightIrr;
     }
   }
 
   return irregulars;
 }
 
-int mergeIrregularContainers(vector<Irregular> &vec,
-                             map<string, Container> fiscalizeds, int left,
-                             int mid, int right) {
+int mergeIrregularContainers(Irregular *irregulars,
+                             hashmap<Container> fiscalizeds, int left, int mid,
+                             int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
   // Vetores temporários
-  vector<Irregular> leftVec(n1), rightVec(n2);
+  Irregular leftVec[n1], rightVec[n2];
 
   // Copiar os dados para os vetores temporários
   for (int a = 0; a < n1; a++)
-    leftVec[a] = vec[left + a];
+    leftVec[a] = irregulars[left + a];
   for (int b = 0; b < n2; b++)
-    rightVec[b] = vec[mid + 1 + b];
+    rightVec[b] = irregulars[mid + 1 + b];
 
   // Mesclar os vetores temporários de volta ao vetor original
   int i = 0, j = 0, k = left;
 
   while (i < n1 && j < n2) {
-    Irregularity leftIrregularity = leftVec.at(i).irregularity;
-    Irregularity rightIrregularity = rightVec.at(j).irregularity;
+    Irregularity leftIrregularity = leftVec[i].irregularity;
+    Irregularity rightIrregularity = rightVec[j].irregularity;
 
     // Comparsion to prioritize the CNPJ irregularity:
     if (leftIrregularity >= rightIrregularity) {
-      vec[k++] = leftVec.at(i);
+      irregulars[k++] = leftVec[i];
       i++;
     } else {
-      vec[k++] = rightVec.at(j);
+      irregulars[k++] = rightVec[j];
       j++;
     }
   }
 
   while (i < n1) {
-    vec[k] = leftVec[i];
+    irregulars[k] = leftVec[i];
     i++;
     k++;
   }
 
   while (j < n2) {
-    vec[k] = rightVec[j];
+    irregulars[k] = rightVec[j];
     j++;
     k++;
   }
@@ -385,18 +409,18 @@ int mergeIrregularContainers(vector<Irregular> &vec,
 }
 
 // Função de ordenação Merge Sort
-void sortIrregularContainers(vector<Irregular> &vec,
-                             map<string, Container> fiscalizeds, int left,
+void sortIrregularContainers(Irregular *irregulars,
+                             hashmap<Container> fiscalizeds, int left,
                              int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
     // Ordenar a primeira e a segunda metades
-    sortIrregularContainers(vec, fiscalizeds, left, mid);
-    sortIrregularContainers(vec, fiscalizeds, mid + 1, right);
+    sortIrregularContainers(irregulars, fiscalizeds, left, mid);
+    sortIrregularContainers(irregulars, fiscalizeds, mid + 1, right);
 
     // Mesclar as metades ordenadas
-    mergeIrregularContainers(vec, fiscalizeds, left, mid, right);
+    mergeIrregularContainers(irregulars, fiscalizeds, left, mid, right);
   }
 }
 
@@ -517,15 +541,20 @@ int main() {
          << "\n\n";
   }
 
-  vector<Irregular> irregulars =
-      createIrregularContainersList(fiscalizedsMap, duplicatedContainers);
+  IrregularList *irregulars = createIrregularContainersList(
+      fiscalizedsMap, duplicatedContainers, duplicatedContainers->size);
 
-  // sortIrregularContainers(irregulars, fiscalizedsMap, 0,
-  // irregulars.size() - 1);
+  sortIrregularContainers(irregulars->list, fiscalizedsMap, 0,
+                          irregulars->size - 1);
 
-  // for (int i = 0; i < irregulars.size(); i++) {
-  //   cout << irregulars.at(i).irregularityMessage << "\n";
-  // }
+  cout << "----------Irregulars Containers----------\n\n";
+  for (int i = 0; i < irregulars->size; i++) {
+    cout << "Code: " << irregulars->list[i].cnpj << "\n";
+    cout << "CNPJ: " << irregulars->list[i].code << "\n";
+    cout << "Weight: " << irregulars->list[i].weight << " kg" << "\n";
+    cout << "Irregularity Message: " << irregulars->list[i].irregularityMessage
+         << "\n\n";
+  }
 
   return EXIT_SUCCESS;
 }
