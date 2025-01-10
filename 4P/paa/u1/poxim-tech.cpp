@@ -49,26 +49,24 @@ private:
       // Copying the current previous map element:
       linked_pair *curr_copy = &map[i];
       while (curr_copy != nullptr) {
-        linked_pair *copy_pair = (linked_pair *)malloc(sizeof(linked_pair));
-        copy_pair->pair.key = curr_copy->pair.key;
-        cout << "Key Copied: " << copy_pair->pair.key << endl;
-        copy_pair->pair.value = curr_copy->pair.value;
-        cout << "Value copied to:" << &copy_pair->pair.value;
-        copy_pair->next = nullptr;
 
         int hash_index = hash_function(curr_copy->pair.key, map_size);
+        linked_pair *curr_pair = &new_map[hash_index];
 
         // Verifying if already has element in the hash index:
-        if (new_map[hash_index].pair.key != "") {
+        if (curr_pair->pair.key != "") {
+          linked_pair *copy_pair = (linked_pair *)malloc(sizeof(linked_pair));
+          copy_pair->pair = curr_copy->pair;
+          copy_pair->next = nullptr;
 
           // Scanning until it reaches the last element of the linked list:
-          linked_pair *curr_pair = &new_map[i];
           while (curr_pair->next != nullptr) {
             curr_pair = curr_pair->next;
           }
           curr_pair->next = copy_pair;
         } else {
-          new_map[hash_index] = *copy_pair;
+          curr_pair->pair = curr_copy->pair;
+          curr_pair->next = nullptr;
         }
 
         // Passing to the next element of the previous map colision linked list:
@@ -145,7 +143,7 @@ public:
         linked_pair *curr_pair = &map[i];
 
         // Scanning all of the collided pairs:
-        while (curr_pair->next != nullptr) {
+        while (curr_pair->next != nullptr && curr_pair->next->pair.key != "") {
           cout << " --> " << curr_pair->next->pair.key << " | "
                << curr_pair->next->pair.value;
           curr_pair = curr_pair->next;
