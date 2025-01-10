@@ -41,24 +41,33 @@ private:
       if (map[i].pair.key == "")
         continue;
 
-      int hash_index = hash_function(map[i].pair.key, map_size);
-
       // Copying the current previous map element:
-      linked_pair *copy_pair = (linked_pair *)malloc(sizeof(linked_pair));
-      copy_pair->pair.key = map[i].pair.key;
-      copy_pair->pair.value = map[i].pair.value;
-      copy_pair->next = map[i].next;
+      linked_pair *curr_copy = &map[i];
+      while (curr_copy != nullptr) {
+        linked_pair *copy_pair = (linked_pair *)malloc(sizeof(linked_pair));
+        copy_pair->pair.key = curr_copy->pair.key;
+        cout << "Key Copied: " << copy_pair->pair.key << endl;
+        copy_pair->pair.value = curr_copy->pair.value;
+        cout << "Value copied to:" << &copy_pair->pair.value;
+        copy_pair->next = nullptr;
 
-      // Colision treatment:
-      if (new_map[hash_index].pair.key != "") {
-        linked_pair *curr_pair = &new_map[hash_index];
-        // Scanning until it reaches the last element of the linked list:
-        while (curr_pair->next != nullptr) {
-          curr_pair = curr_pair->next;
+        int hash_index = hash_function(curr_copy->pair.key, map_size);
+
+        // Verifying if already has element in the hash index:
+        if (new_map[hash_index].pair.key != "") {
+
+          // Scanning until it reaches the last element of the linked list:
+          linked_pair *curr_pair = &new_map[i];
+          while (curr_pair->next != nullptr) {
+            curr_pair = curr_pair->next;
+          }
+          curr_pair->next = copy_pair;
+        } else {
+          new_map[hash_index] = *copy_pair;
         }
-        curr_pair->next = copy_pair;
-      } else {
-        new_map[hash_index] = *copy_pair;
+
+        // Passing to the next element of the previous map colision linked list:
+        curr_copy = curr_copy->next;
       }
     }
     map = new_map;
@@ -150,21 +159,20 @@ public:
     else {
       linked_pair *curr_pair = &map[hash_index];
       try {
-        if (curr_pair->next != nullptr) {
-          while (curr_pair->next->pair.key != key) {
-            if (curr_pair->next == nullptr)
-              break;
-            else
-              curr_pair = curr_pair->next;
+        while (curr_pair != nullptr) {
+          if (curr_pair->pair.key == key) {
+            return curr_pair->pair.value;
           }
-          return curr_pair->next->pair.value;
-        } else
-          throw;
+          curr_pair = curr_pair->next;
+        }
+
+        // If reaches a null pointer the key were not created:
+        throw runtime_error("Key not found");
       } catch (const exception &e) {
         cerr << e.what() << endl;
       }
     }
-    return EXIT_FAILURE;
+    return Value();
   }
 };
 
