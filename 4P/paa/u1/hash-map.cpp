@@ -127,15 +127,16 @@ public:
   int print_hash_map() {
     for (int i = 0; i < map_size; i++) {
       if (map[i].pair.key != "") {
-        cout << map[i].pair.key << " | " << map[i].pair.value << endl;
+        cout << map[i].pair.key << " | " << map[i].pair.value;
         linked_pair *curr_pair = &map[i];
 
         // Scanning all of the collided pairs:
         while (curr_pair->next != nullptr) {
-          cout << curr_pair->next->pair.key << " | "
-               << curr_pair->next->pair.value << endl;
+          cout << " --> " << curr_pair->next->pair.key << " | "
+               << curr_pair->next->pair.value;
           curr_pair = curr_pair->next;
         }
+        cout << endl;
       }
     }
     return EXIT_SUCCESS;
