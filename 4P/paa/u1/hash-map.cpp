@@ -32,7 +32,7 @@ private:
   int re_hash() {
     // Doubleing the size of the hashmap array:
     size_t prev_map_size = map_size;
-    map_size = (size_t)map_size * sqrt(5);
+    map_size = (size_t)map_size * 2;
     linked_pair *new_map = (linked_pair *)calloc(map_size, sizeof(linked_pair));
 
     // Re-hashing all the elements:
