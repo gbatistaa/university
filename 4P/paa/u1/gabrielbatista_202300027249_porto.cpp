@@ -13,7 +13,7 @@ using namespace std;
 
 template <typename Value> class hashmap {
 private:
-  size_t elements_num;
+  int elements_num;
   float density;
 
   typedef struct key_value {
@@ -33,8 +33,8 @@ private:
 
   int re_hash() {
     // Doubleing the size of the hashmap array:
-    size_t prev_map_size = map_size;
-    map_size = (size_t)map_size * sqrt(5);
+    int prev_map_size = map_size;
+    map_size = (int)map_size * sqrt(5);
     linked_pair *new_map = (linked_pair *)calloc(map_size, sizeof(linked_pair));
 
     // Re-hashing all the elements:
@@ -84,7 +84,7 @@ private:
   }
 
 public:
-  size_t map_size;
+  int map_size;
 
   // Hash Map constructor:
   hashmap() {
