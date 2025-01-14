@@ -330,7 +330,7 @@ IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
       ostringstream difPerc, bruteDif;
       difPerc << fixed << setprecision(0) << weightDifPercent;
       bruteDif << fixed << setprecision(0) << weightDif;
-      string irrMsg = bruteDif.str() + "kg(" + difPerc.str() + "%)";
+      string irrMsg = bruteDif.str() + "kg(" +  + "%)";
 
       Irregular newWeightIrr;
       newWeightIrr.code = duplicated.code;
@@ -484,8 +484,8 @@ int readInputAndCreateContainerLists(fstream &file,
   return EXIT_SUCCESS;
 }
 
-int main() {
-  fstream input("poxim-tech.txt");
+int main(int argc, char *argv[2]) {
+  fstream input(argv[0]);
   if (!input.is_open()) {
     return EXIT_FAILURE;
   }
@@ -522,6 +522,5 @@ int main() {
   for (int i = 0; i < irregulars->size; i++) {
     cout << irregulars->list[i].irregularityMessage << endl;
   }
-
   return EXIT_SUCCESS;
 }
