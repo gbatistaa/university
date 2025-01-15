@@ -330,7 +330,7 @@ IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
       ostringstream difPerc, bruteDif;
       difPerc << fixed << setprecision(0) << weightDifPercent;
       bruteDif << fixed << setprecision(0) << weightDif;
-      string irrMsg = bruteDif.str() + "kg(" +  + "%)";
+      string irrMsg = bruteDif.str() + "kg(" + difPerc.str() + "%)";
 
       Irregular newWeightIrr;
       newWeightIrr.code = duplicated.code;
@@ -484,9 +484,17 @@ int readInputAndCreateContainerLists(fstream &file,
   return EXIT_SUCCESS;
 }
 
-int main(int argc, char *argv[2]) {
-  fstream input(argv[0]);
+int main(int argc, char *argv[3]) {
+  fstream input(argv[1]);  // Input File
+  fstream output(argv[2]); // Output file
+
   if (!input.is_open()) {
+    cerr << "erro" << endl;
+    return EXIT_FAILURE;
+  }
+
+  if (!output.is_open()) {
+    cerr << "erro" << endl;
     return EXIT_FAILURE;
   }
 
@@ -520,6 +528,7 @@ int main(int argc, char *argv[2]) {
                           irregulars->size - 1);
 
   for (int i = 0; i < irregulars->size; i++) {
+    output << irregulars->list[i].irregularityMessage << endl;
     cout << irregulars->list[i].irregularityMessage << endl;
   }
   return EXIT_SUCCESS;
