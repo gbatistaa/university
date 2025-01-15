@@ -1,8 +1,9 @@
+#include <chrono>
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <exception>
-#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <string>
@@ -190,12 +191,14 @@ string generate_random_string(size_t length) {
 }
 
 int main() {
+
   hashmap<int> hashmap1;
 
   size_t hash_map_size;
   cout << "Type the random generated strings quantity: ";
   cin >> hash_map_size;
 
+  auto start_time = chrono::high_resolution_clock::now();
   random_device rd;
   mt19937 generator(rd());
   uniform_int_distribution<> length_dist(6, 20);
@@ -209,6 +212,14 @@ int main() {
   }
 
   hashmap1.print_hash_map();
+
+  auto end_time = chrono::high_resolution_clock::now();
+  auto duration =
+      chrono::duration_cast<chrono::duration<double>>(end_time - start_time);
+
+  cout << fixed << setprecision(5);
+  cout << "\nExecution time: " << duration.count() * 1000 << " ms | "
+       << duration.count() << " s" << endl;
 
   return EXIT_SUCCESS;
 }
