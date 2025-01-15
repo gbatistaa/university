@@ -274,13 +274,14 @@ bool hasDifferentCnjp(Container container, hashmap<Container> fiscalizeds,
 
 float calcContainerWeightDifPercent(Container container,
                                     hashmap<Container> fiscalizeds,
-                                    float &bruteWeightDif) {
+                                    float *bruteWeightDif = nullptr) {
   try {
     Container fiscalized = fiscalizeds.at(container.code);
     if (container.code == fiscalized.code) {
       float weightDif =
           calculateDifPercent(container.weight, fiscalized.weight);
-      bruteWeightDif = fabs(container.weight - fiscalized.weight);
+      if (bruteWeightDif != nullptr)
+        *bruteWeightDif = fabs(container.weight - fiscalized.weight);
       return weightDif;
     }
     return EXIT_SUCCESS;
@@ -306,7 +307,7 @@ IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
     float weightDif;
     bool difCnpj = hasDifferentCnjp(duplicated, fiscalizeds, irrMsg);
     float weightDifPercent =
-        calcContainerWeightDifPercent(duplicated, fiscalizeds, weightDif);
+        calcContainerWeightDifPercent(duplicated, fiscalizeds, &weightDif);
 
     if (difCnpj) {
       Irregular newCnpjIrr;
@@ -374,25 +375,39 @@ int mergeIrregularContainers(Irregular *irregulars,
     Irregularity rightIrregularity = rightVec[j].irregularity;
 
     // Comparsion to prioritize the CNPJ irregularity:
-    if (leftIrregularity >= rightIrregularity) {
-      irregulars[k++] = leftVec[i];
-      i++;
+    if (leftIrregularity > rightIrregularity) {
+      irregulars[k++] = leftVec[i++];
+
+      // Comparision to prioritize the container with the bigger weight
+      // irregularity:
+    } else if (leftIrregularity == rightIrregularity) {
+      if (leftIrregularity == WEIGHT) {
+        int weightIrrL =
+            round(calcContainerWeightDifPercent(leftVec[i], fiscalizeds));
+        int weightIrrR =
+            round(calcContainerWeightDifPercent(rightVec[j], fiscalizeds));
+
+        if (isGreaterThan(weightIrrL, weightIrrR) || weightIrrL == weightIrrR) {
+          irregulars[k++] = leftVec[i++];
+        } else {
+          irregulars[k++] = rightVec[j++];
+        }
+      } else {
+        irregulars[k++] = leftVec[i++];
+      }
+      // Comparision to prioritize the container with CNPJ irregularity that
+      // comes first on the register list:
     } else {
-      irregulars[k++] = rightVec[j];
-      j++;
+      irregulars[k++] = rightVec[j++];
     }
   }
 
   while (i < n1) {
-    irregulars[k] = leftVec[i];
-    i++;
-    k++;
+    irregulars[k++] = leftVec[i++];
   }
 
   while (j < n2) {
-    irregulars[k] = rightVec[j];
-    j++;
-    k++;
+    irregulars[k++] = rightVec[j++];
   }
   return EXIT_SUCCESS;
 }
