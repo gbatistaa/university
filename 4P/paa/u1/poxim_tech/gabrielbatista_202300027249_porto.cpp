@@ -111,7 +111,7 @@ public:
     density = (float)elements_num / map_size;
 
     // Condition to verify if the resizing is needed (more than 75%):
-    if (isGreaterThan(density, 0.75)) {
+    if (isGreaterThan(density, 0.95)) {
       re_hash();
     }
 
