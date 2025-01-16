@@ -80,7 +80,7 @@ private:
     int hash_index = 0;
     for (char letter : key)
       hash_index += letter;
-    return hash_index % list_size;
+    return (13 * hash_index * 37) % 113 % list_size;
   }
 
 public:
