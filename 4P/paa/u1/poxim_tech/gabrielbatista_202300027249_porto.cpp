@@ -448,14 +448,14 @@ int readInputAndCreateContainerLists(ifstream &file,
   int currContainerIndex = 0;
 
   // Ignoring the first line of the file
-  getline(file, fileLine);
-
+  int currVectorSize;
   while (getline(file, fileLine)) {
     int lineSize = fileLine.length();
 
-    // Verification to create the next container list
+    // Verification to get the number of the containers in the new list
     if (lineSize <= 3) {
-      currContainerIndex++;
+      currVectorSize = stoi(fileLine);
+      contPointers[currContainerIndex] = new ContainerList[currVectorSize];
       continue;
     }
 
@@ -476,28 +476,8 @@ int readInputAndCreateContainerLists(ifstream &file,
     newContainer.cnpj = newCnpj;
     newContainer.weight = newWeightNumeric;
 
-    // Incrementing the new containers list size and storing the previous value:
-    int prevListSize = contPointers[currContainerIndex]->size;
-
-    contPointers[currContainerIndex]->size++;
-
-    int newListSize = contPointers[currContainerIndex]->size;
-
-    // Adding the new container in the containers list:
-    Container *newArray = new Container[newListSize];
-    if (newArray == NULL) {
-      return EXIT_FAILURE;
-    }
-
-    for (int x = 0; x < prevListSize; x++) {
-      newArray[x] = contPointers[currContainerIndex]->list[x];
-    }
-
-    // Reallocating the pointer to the new array:
-    contPointers[currContainerIndex]->list = newArray;
-
     // Adding the new element to the last position of the container list:
-    contPointers[currContainerIndex]->list[newListSize - 1] = newContainer;
+    contPointers[currContainerIndex]->list[currVectorSize - 1] = newContainer;
   }
 
   return EXIT_SUCCESS;
