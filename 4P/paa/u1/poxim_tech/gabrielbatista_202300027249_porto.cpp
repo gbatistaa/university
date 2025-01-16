@@ -448,7 +448,7 @@ int readInputAndCreateContainerLists(ifstream &file,
   int currContainerIndex = 0;
 
   // Ignoring the first line of the file
-  int currVectorSize;
+  int currVectorSize = 0;
   while (getline(file, fileLine)) {
     int lineSize = fileLine.length();
 
