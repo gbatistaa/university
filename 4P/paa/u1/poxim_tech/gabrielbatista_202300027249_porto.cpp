@@ -35,7 +35,7 @@ private:
     // Doubleing the size of the hashmap array:
     int prev_map_size = map_size;
     map_size = (int)map_size * sqrt(5);
-    linked_pair *new_map = (linked_pair *)calloc(map_size, sizeof(linked_pair));
+    linked_pair *new_map = new linked_pair[map_size];
 
     // Re-hashing all the elements:
     for (int i = 0; i < prev_map_size; i++) {
@@ -53,7 +53,7 @@ private:
 
         // Verifying if already has element in the hash index:
         if (curr_pair->pair.key != "") {
-          linked_pair *copy_pair = (linked_pair *)malloc(sizeof(linked_pair));
+          linked_pair *copy_pair = new linked_pair[1];
           copy_pair->pair = curr_copy->pair;
           copy_pair->next = nullptr;
 
@@ -90,7 +90,7 @@ public:
   hashmap() {
     elements_num = 0;
     map_size = 2;
-    map = (linked_pair *)calloc(map_size, sizeof(linked_pair));
+    map = new linked_pair[map_size];
   };
 
   linked_pair *map;
@@ -103,7 +103,7 @@ public:
     kv.key = key;
     kv.value = value;
 
-    linked_pair *new_pair = (linked_pair *)malloc(sizeof(linked_pair));
+    linked_pair *new_pair = new linked_pair[1];
     new_pair->pair = kv;
     new_pair->next = nullptr;
 
@@ -219,14 +219,14 @@ ContainerList *
 filterRegisteredContainersForInspection(ContainerList *registereds,
                                         int registeredsSize,
                                         hashmap<Container> fiscalizedsMap) {
-  ContainerList *duplicateds = (ContainerList *)malloc(sizeof(ContainerList));
+  ContainerList *duplicateds = new ContainerList[1];
   if (!duplicateds) {
     exit(EXIT_FAILURE);
   }
   duplicateds->list = nullptr;
   duplicateds->size = 0;
 
-  Container *newDuplicatedsList = (Container *)malloc(sizeof(Container));
+  Container *newDuplicatedsList = new Container[1];
   duplicateds->list = newDuplicatedsList;
   for (int i = 0; i < registeredsSize; i++) {
     try {
@@ -235,10 +235,12 @@ filterRegisteredContainersForInspection(ContainerList *registereds,
           fiscalizedsMap.at(registereds->list[i].code).code) {
 
         // Increments the duplicated containers list size:
-
         duplicateds->size++;
-        Container *resizedList = (Container *)realloc(
-            duplicateds->list, duplicateds->size * sizeof(Container));
+
+        Container *resizedList = new Container[duplicateds->size];
+        for (int i = 0; i < duplicateds->size - 1; i++) {
+          resizedList[i] = duplicateds->list[i];
+        }
 
         duplicateds->list = resizedList;
 
@@ -294,11 +296,10 @@ IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
                                              ContainerList *duplicateds,
                                              int duplicatedsSize) {
   string irrMsg;
-  IrregularList *irregulars = (IrregularList *)malloc(sizeof(IrregularList));
+  IrregularList *irregulars = new IrregularList[1];
   irregulars->size = 0;
-  irregulars->list = nullptr;
 
-  Irregular *irrList = (Irregular *)malloc(sizeof(Irregular));
+  Irregular *irrList = new Irregular[1];
   irregulars->list = irrList;
 
   for (int i = 0; i < duplicatedsSize; i++) {
@@ -316,13 +317,14 @@ IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
       newCnpjIrr.weight = duplicated.weight;
       newCnpjIrr.irregularity = CNPJ;
       newCnpjIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
-
       irregulars->size++;
 
-      Irregular *resizedIrrList = (Irregular *)realloc(
-          irregulars->list, sizeof(Irregular) * irregulars->size);
-      irregulars->list = resizedIrrList;
+      Irregular *resizedIrrList = new Irregular[irregulars->size];
+      for (int i = 0; i < irregulars->size - 1; i++) {
+        resizedIrrList[i] = irregulars->list[i];
+      }
 
+      irregulars->list = resizedIrrList;
       irregulars->list[irregulars->size - 1] = newCnpjIrr;
     }
 
@@ -339,11 +341,13 @@ IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
       newWeightIrr.weight = duplicated.weight;
       newWeightIrr.irregularity = WEIGHT;
       newWeightIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
-
       irregulars->size++;
 
-      Irregular *resizedIrrList = (Irregular *)realloc(
-          irregulars->list, sizeof(Irregular) * irregulars->size);
+      Irregular *resizedIrrList = new Irregular[irregulars->size];
+      for (int i = 0; i < irregulars->size - 1; i++) {
+        resizedIrrList[i] = irregulars->list[i];
+      }
+
       irregulars->list = resizedIrrList;
       irregulars->list[irregulars->size - 1] = newWeightIrr;
     }
@@ -480,7 +484,7 @@ int readInputAndCreateContainerLists(fstream &file,
     int newListSize = contPointers[currContainerIndex]->size;
 
     // Adding the new container in the containers list:
-    Container *newArray = (Container *)malloc(sizeof(Container) * newListSize);
+    Container *newArray = new Container[newListSize];
     if (newArray == NULL) {
       return EXIT_FAILURE;
     }
@@ -513,17 +517,13 @@ int main(int argc, char *argv[3]) {
     return EXIT_FAILURE;
   }
 
-  ContainerList *registeredContainers =
-      (ContainerList *)malloc(sizeof(ContainerList));
+  ContainerList *registeredContainers = new ContainerList[1];
   registeredContainers->size = 0;
-  registeredContainers->list =
-      (Container *)malloc(sizeof(Container) * registeredContainers->size);
+  registeredContainers->list = new Container[registeredContainers->size];
 
-  ContainerList *fiscalizedContainers =
-      (ContainerList *)malloc(sizeof(ContainerList));
+  ContainerList *fiscalizedContainers = new ContainerList[1];
   fiscalizedContainers->size = 0;
-  fiscalizedContainers->list =
-      (Container *)malloc(sizeof(Container) * fiscalizedContainers->size);
+  fiscalizedContainers->list = new Container[fiscalizedContainers->size];
 
   ContainerList *containersPointers[2] = {registeredContainers,
                                           fiscalizedContainers};
