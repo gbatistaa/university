@@ -442,7 +442,7 @@ int writeContainerProp(string *props[], char character, int &propSts) {
   return EXIT_SUCCESS;
 }
 
-int readInputAndCreateContainerLists(fstream &file,
+int readInputAndCreateContainerLists(ifstream &file,
                                      ContainerList **contPointers) {
   string fileLine;
   int currContainerIndex = 0;
@@ -504,8 +504,8 @@ int readInputAndCreateContainerLists(fstream &file,
 }
 
 int main(int argc, char *argv[3]) {
-  fstream input(argv[1]);  // Input File
-  fstream output(argv[2]); // Output file
+  ifstream input(argv[1]);  // Input File
+  ofstream output(argv[2]); // Output file
 
   if (!input.is_open()) {
     cerr << "erro" << endl;
