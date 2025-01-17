@@ -446,20 +446,27 @@ int readInputAndCreateContainerLists(ifstream &file,
                                      ContainerList **contPointers) {
   string fileLine;
   int currContainerIndex = 0;
-
-  // Ignoring the first line of the file
+  int currIndex = 0;
   int currVectorSize = 0;
+  ContainerList *currContainerList = contPointers[currContainerIndex];
+  currContainerIndex = -1;
   while (getline(file, fileLine)) {
     int lineSize = fileLine.length();
 
-    // Verification to get the number of the containers in the new list
-    if (lineSize <= 3) {
+    // Verification to get the number of the containers in the new list:
+    cout << "funcionou" << endl;
+    cout << fileLine << endl;
+    if (lineSize <= 10) {
       currVectorSize = stoi(fileLine);
-      contPointers[currContainerIndex] = new ContainerList[currVectorSize];
+      cout << currVectorSize << endl;
+      currContainerList = new ContainerList;
+      currContainerList->size = currVectorSize;
+      currContainerList->list = new Container[currVectorSize];
+      currContainerIndex++;
+      currIndex = 0;
       continue;
     }
 
-    Container newContainer;
     string newCnpj, newCode, newWeight;
     int newWeightNumeric, propStatus = 0;
     string *props[3] = {&newCode, &newCnpj, &newWeight};
@@ -471,13 +478,12 @@ int readInputAndCreateContainerLists(ifstream &file,
     }
     newWeightNumeric = stoi(newWeight);
 
-    // Writing the colected data in the props of the new container:
-    newContainer.code = newCode;
-    newContainer.cnpj = newCnpj;
-    newContainer.weight = newWeightNumeric;
-
     // Adding the new element to the last position of the container list:
-    contPointers[currContainerIndex]->list[currVectorSize - 1] = newContainer;
+    contPointers[currContainerIndex]->list[currIndex].code = newCode;
+    contPointers[currContainerIndex]->list[currIndex].cnpj = newCnpj;
+    contPointers[currContainerIndex]->list[currIndex].weight = newWeightNumeric;
+
+    currIndex++;
   }
 
   return EXIT_SUCCESS;
