@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <string>
 
@@ -90,40 +91,39 @@ public:
     return root;
   }
 
+  Node *insertIte(Container newContainer, Node *root) {
+    Node **current = &root;
+    int newNodeCode = calculateCode(newContainer.code);
+    while (*current != nullptr) {
+      int currentCode = calculateCode((*current)->value.code);
+      if (currentCode < newNodeCode)
+        current = &(*current)->leftChild;
+      else if (currentCode > newNodeCode)
+        current = &(*current)->rightChild;
+      else {
+      }
+    }
+    *current = createNode(newContainer);
+    return root;
+  }
+
   Node *at(Node *root, Container value) {
     Node *current = root;
     while (current != nullptr) {
       int code = calculateCode(value.code);
       int currentCode = calculateCode(current->value.code);
       if (currentCode < code) {
-        cout << "O root code de " + current->value.code + " (" << currentCode
-             << ") é menor que o code de " + value.code + " (" << code << ")"
-             << endl;
-        cout << "Procurando na árvore esquerda..." << endl;
         current = current->leftChild;
       } else if (currentCode > code) {
-        cout << "O root code de " + current->value.code + " (" << currentCode
-             << ") é maior que o code de " + value.code + " (" << code << ")"
-             << endl;
-        cout << "Procurando na árvore direita..." << endl;
         current = current->rightChild;
       } else {
-        cout << "O root code de " + current->value.code + " (" << currentCode
-             << ") é igual ao code de " + value.code + " (" << code << ")"
-             << endl;
-        cout << "Procurando na árvore esquerda...\n" << endl;
         Node *currNode = current;
         while (currNode != nullptr) {
           if (currNode->value.code == value.code) {
-            cout << "Nó com código (" + value.code + ") encontrado!\n" << endl;
             return currNode;
           }
-          cout << "Nó com código (" + currNode->value.code +
-                      ") tem mesmo ascii, mas é diferente!"
-               << endl;
           currNode = currNode->leftChild;
         }
-        cout << "Nó com código (" + value.code + ") não encontrado\n" << endl;
         return nullptr;
       }
     }
@@ -173,14 +173,11 @@ ContainerList *filterRegisteredContainersForInspection(
 
         // Increments the duplicated containers list size:
         duplicateds->size++;
-
         Container *resizedList = new Container[duplicateds->size];
         for (int i = 0; i < duplicateds->size - 1; i++) {
           resizedList[i] = duplicateds->list[i];
         }
-
         duplicateds->list = resizedList;
-
         // Add the duplicated container in the list last position:
         duplicateds->list[duplicateds->size - 1] = registereds->list[i];
       }
@@ -190,7 +187,6 @@ ContainerList *filterRegisteredContainersForInspection(
   }
   return duplicateds;
 }
-
 bst *createContainerBST(ContainerList *fiscalizeds, int fiscSize) {
   bst *newContainerBST = new bst();
 
@@ -200,7 +196,6 @@ bst *createContainerBST(ContainerList *fiscalizeds, int fiscSize) {
   }
   return newContainerBST;
 }
-
 bool hasDifferentCnjp(Container container, bst *fiscalizeds, string &msg) {
   Container fiscalized = fiscalizeds->at(fiscalizeds->root, container)->value;
   if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj) {
@@ -209,7 +204,6 @@ bool hasDifferentCnjp(Container container, bst *fiscalizeds, string &msg) {
   }
   return false;
 }
-
 float calcContainerWeightDifPercent(Container container, bst *fiscalizeds,
                                     float *bruteWeightDif = nullptr) {
   try {
@@ -226,7 +220,6 @@ float calcContainerWeightDifPercent(Container container, bst *fiscalizeds,
     return EXIT_FAILURE;
   }
 }
-
 IrregularList *createIrregularContainersList(bst *fiscalizeds,
                                              ContainerList *duplicateds,
                                              int duplicatedsSize) {
