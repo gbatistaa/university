@@ -8,9 +8,11 @@
 #include <iostream>
 #include <ostream>
 #include <string>
+#include <unordered_map>
 
 using namespace std;
 
+<<<<<<< HEAD
 template <typename Value> class bst {
 private:
   typedef struct tree {
@@ -72,10 +74,9 @@ float calculateDifPercent(int n1, int n2) {
   return abs(percentage);
 }
 
-ContainerList *
-filterRegisteredContainersForInspection(ContainerList *registereds,
-                                        int registeredsSize,
-                                        hashmap<Container> fiscalizedsMap) {
+ContainerList *filterRegisteredContainersForInspection(
+    ContainerList *registereds, int registeredsSize,
+    unordered_map<string, Container> fiscalizedsMap) {
   ContainerList *duplicateds = new ContainerList[1];
   if (!duplicateds) {
     exit(EXIT_FAILURE);
@@ -111,16 +112,21 @@ filterRegisteredContainersForInspection(ContainerList *registereds,
   return duplicateds;
 }
 
-hashmap<Container> createContainerMap(ContainerList *fiscalizeds,
-                                      int fiscSize) {
-  hashmap<Container> newContainerMap;
+unordered_map<string, Container> createContainerMap(ContainerList *fiscalizeds,
+                                                    int fiscSize) {
+  unordered_map<string, Container> newContainerMap;
   for (int i = 0; i < fiscSize; i++) {
+<<<<<<< HEAD
     newContainerMap.insert(fiscalizeds->list[i].code, fiscalizeds->list[i]);
+=======
+    newContainerMap[fiscalizeds->list[i].code] = fiscalizeds->list[i];
+>>>>>>> 305432b6f78b80826ce3bef77098756f6fa075dc
   }
   return newContainerMap;
 }
 
-bool hasDifferentCnjp(Container container, hashmap<Container> fiscalizeds,
+bool hasDifferentCnjp(Container container,
+                      unordered_map<string, Container> fiscalizeds,
                       string &msg) {
   Container fiscalized = fiscalizeds.at(container.code);
   if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj) {
@@ -130,9 +136,9 @@ bool hasDifferentCnjp(Container container, hashmap<Container> fiscalizeds,
   return false;
 }
 
-float calcContainerWeightDifPercent(Container container,
-                                    hashmap<Container> fiscalizeds,
-                                    float *bruteWeightDif = nullptr) {
+float calcContainerWeightDifPercent(
+    Container container, unordered_map<string, Container> fiscalizeds,
+    float *bruteWeightDif = nullptr) {
   try {
     Container fiscalized = fiscalizeds.at(container.code);
     if (container.code == fiscalized.code) {
@@ -148,9 +154,9 @@ float calcContainerWeightDifPercent(Container container,
   }
 }
 
-IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
-                                             ContainerList *duplicateds,
-                                             int duplicatedsSize) {
+IrregularList *
+createIrregularContainersList(unordered_map<string, Container> fiscalizeds,
+                              ContainerList *duplicateds, int duplicatedsSize) {
   string irrMsg;
   IrregularList *irregulars = new IrregularList[1];
   irregulars->size = 0;
@@ -213,8 +219,8 @@ IrregularList *createIrregularContainersList(hashmap<Container> fiscalizeds,
 }
 
 int mergeIrregularContainers(Irregular *irregulars,
-                             hashmap<Container> fiscalizeds, int left, int mid,
-                             int right) {
+                             unordered_map<string, Container> fiscalizeds,
+                             int left, int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
@@ -274,8 +280,8 @@ int mergeIrregularContainers(Irregular *irregulars,
 
 // Função de ordenação Merge Sort
 void sortIrregularContainers(Irregular *irregulars,
-                             hashmap<Container> fiscalizeds, int left,
-                             int right) {
+                             unordered_map<string, Container> fiscalizeds,
+                             int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
@@ -314,11 +320,15 @@ int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
   (*fiscs)->size = 0;
   (*fiscs)->list = nullptr;
 
+  ContainerList **currList = nullptr;
   while (getline(file, fileLine)) {
     size_t lineSize = fileLine.length();
 
     // Determine the current list
+<<<<<<< HEAD
     ContainerList **currList;
+=======
+>>>>>>> 305432b6f78b80826ce3bef77098756f6fa075dc
 
     // If the line contains the size of the container list
     if (lineSize <= 10) {
@@ -379,11 +389,10 @@ int main(int argc, char *argv[3]) {
 
   ContainerList *registeredContainers = nullptr;
   ContainerList *fiscalizedContainers = nullptr;
-
   readInputAndCreateContainerLists(input, &registeredContainers,
                                    &fiscalizedContainers);
 
-  hashmap<Container> fiscalizedsMap =
+  unordered_map<string, Container> fiscalizedsMap =
       createContainerMap(fiscalizedContainers, fiscalizedContainers->size);
 
   ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
