@@ -87,22 +87,37 @@ public:
     return root;
   }
 
-  bool binarySearch(Node *root, Container newValue) {
+  bool binarySearch(Node *root, Container value) {
     if (root == nullptr)
       return false;
-    int code = calculateCode(newValue.code);
-    if (calculateCode(root->value.code) < code)
-      return binarySearch(root->leftChild, newValue);
-    else if (calculateCode(root->value.code) > code)
-      return binarySearch(root->rightChild, newValue);
-    else {
+    int code = calculateCode(value.code);
+    int rootCode = calculateCode(root->value.code);
+    if (rootCode < code) {
+      cout << "O root code (" << rootCode << ") é menor que o code (" << code
+           << ")" << endl;
+      cout << "Procurando na árvore esquerda..." << endl;
+      return binarySearch(root->leftChild, value);
+    } else if (rootCode > code) {
+      cout << "O root code (" << rootCode << ") é maior que o code (" << code
+           << ")" << endl;
+      cout << "Procurando na árvore direita..." << endl;
+      return binarySearch(root->rightChild, value);
+    } else {
+      cout << "\nO root code (" << rootCode << ") é igual ao code (" << code
+           << ")" << endl;
+      cout << "Procurando na árvore esquerda...\n" << endl;
       Node *currNode = root;
       while (currNode != nullptr) {
-        if (currNode->value.code == newValue.code) {
+        if (currNode->value.code == value.code) {
+          cout << "Nó com código (" + value.code + ") encontrado!\n" << endl;
           return true;
         }
+        cout << "Nó com código (" + currNode->value.code +
+                    ") tem mesmo ascii, mas é diferente!"
+             << endl;
         currNode = currNode->leftChild;
       }
+      cout << "Nó com código (" + value.code + ") não encontrado\n" << endl;
       return false;
     };
   }
