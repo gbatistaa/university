@@ -11,152 +11,24 @@
 
 using namespace std;
 
-template <typename Value> class hashmap {
+template <typename Value> class bst {
 private:
-  int elements_num;
-  float density;
+  typedef struct tree {
+    int size;
+    struct tree *root;
+  } Tree;
 
-  typedef struct key_value {
-    string key;
+  typedef struct node {
     Value value;
-  } key_value;
-
-  class linked_pair {
-  public:
-    key_value pair;
-    linked_pair *next;
-  };
-
-  bool isGreaterThan(float a, float b, float e = 1e-6) {
-    return (a > b) && fabs(a - b) > e;
-  }
-
-  int re_hash() {
-    // Doubleing the size of the hashmap array:
-    int prev_map_size = map_size;
-    map_size = (int)map_size * sqrt(5);
-    linked_pair *new_map = new linked_pair[map_size];
-
-    // Re-hashing all the elements:
-    for (int i = 0; i < prev_map_size; i++) {
-
-      // Ignoring the empty spaces:
-      if (map[i].pair.key == "")
-        continue;
-
-      // Copying the current previous map element:
-      linked_pair *curr_copy = &map[i];
-      while (curr_copy != nullptr) {
-
-        int hash_index = hash_function(curr_copy->pair.key, map_size);
-        linked_pair *curr_pair = &new_map[hash_index];
-
-        // Verifying if already has element in the hash index:
-        if (curr_pair->pair.key != "") {
-          linked_pair *copy_pair = new linked_pair[1];
-          copy_pair->pair = curr_copy->pair;
-          copy_pair->next = nullptr;
-
-          // Scanning until it reaches the last element of the linked list:
-          while (curr_pair->next != nullptr) {
-            curr_pair = curr_pair->next;
-          }
-          curr_pair->next = copy_pair;
-        } else {
-          curr_pair->pair = curr_copy->pair;
-          curr_pair->next = nullptr;
-        }
-
-        // Passing to the next element of the previous map colision linked list:
-        curr_copy = curr_copy->next;
-      }
-    }
-    delete[] map;
-    map = new_map;
-
-    return EXIT_SUCCESS;
-  }
-
-  int hash_function(string key, int list_size) {
-    int hash_index = 0;
-    for (char letter : key)
-      hash_index += letter;
-    return (13 * hash_index * 37) % 113 % list_size;
-  }
+    struct node *leftChild;
+    struct node *rightChild;
+  } Node;
 
 public:
-  int map_size;
-
-  // Hash Map constructor:
-  hashmap() {
-    elements_num = 0;
-    map_size = 2;
-    map = new linked_pair[map_size];
-  };
-
-  linked_pair *map;
-
-  linked_pair *hash_insert(string key, Value value) {
-    elements_num++;
-
-    // Storing the new key value pair:
-    key_value kv;
-    kv.key = key;
-    kv.value = value;
-
-    linked_pair *new_pair = new linked_pair[1];
-    new_pair->pair = kv;
-    new_pair->next = nullptr;
-
-    // Case when the hashmap has 0 elements
-    density = (float)elements_num / map_size;
-
-    // Condition to verify if the resizing is needed (more than 75%):
-    if (isGreaterThan(density, 0.95)) {
-      re_hash();
+  Node *insert(Value newNode, Node **root) {
+    if (root == nullptr) {
+      *root = newNode;
     }
-
-    int hash_index = hash_function(key, map_size);
-
-    // Case that the hash index collides:
-    if (map[hash_index].pair.key != "") {
-      linked_pair *curr_pair = &map[hash_index];
-      while (curr_pair->next != nullptr && curr_pair->pair.key != key) {
-        curr_pair = curr_pair->next;
-      }
-      if (curr_pair->next == nullptr) {
-        curr_pair->next = new_pair;
-      } else {
-        curr_pair->next->pair.value = value;
-      }
-    } else {
-      map[hash_index] = *new_pair;
-    }
-    return map;
-  }
-
-  Value at(string key) {
-    int hash_index = hash_function(key, map_size);
-
-    if (map[hash_index].pair.key == key)
-      return map[hash_index].pair.value;
-    else {
-      linked_pair *curr_pair = &map[hash_index];
-      try {
-        while (curr_pair != nullptr) {
-          if (curr_pair->pair.key == key) {
-            return curr_pair->pair.value;
-          }
-          curr_pair = curr_pair->next;
-        }
-
-        // If reaches a null pointer the key were not created:
-        throw runtime_error("Key not found");
-      } catch (const exception &e) {
-        return Value();
-      }
-    }
-    return Value();
   }
 };
 
@@ -243,8 +115,7 @@ hashmap<Container> createContainerMap(ContainerList *fiscalizeds,
                                       int fiscSize) {
   hashmap<Container> newContainerMap;
   for (int i = 0; i < fiscSize; i++) {
-    newContainerMap.hash_insert(fiscalizeds->list[i].code,
-                                fiscalizeds->list[i]);
+    newContainerMap.insert(fiscalizeds->list[i].code, fiscalizeds->list[i]);
   }
   return newContainerMap;
 }
@@ -447,7 +318,7 @@ int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
     size_t lineSize = fileLine.length();
 
     // Determine the current list
-    ContainerList **currList = nullptr;
+    ContainerList **currList;
 
     // If the line contains the size of the container list
     if (lineSize <= 10) {
