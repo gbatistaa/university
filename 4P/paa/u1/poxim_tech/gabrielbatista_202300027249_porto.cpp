@@ -71,6 +71,7 @@ private:
         curr_copy = curr_copy->next;
       }
     }
+    delete[] map;
     map = new_map;
 
     return EXIT_SUCCESS;
@@ -134,24 +135,6 @@ public:
     return map;
   }
 
-  int print_hash_map() {
-    for (int i = 0; i < map_size; i++) {
-      if (map[i].pair.key != "") {
-        cout << map[i].pair.key << " | " << map[i].pair.value;
-        linked_pair *curr_pair = &map[i];
-
-        // Scanning all of the collided pairs:
-        while (curr_pair->next != nullptr && curr_pair->next->pair.key != "") {
-          cout << " --> " << curr_pair->next->pair.key << " | "
-               << curr_pair->next->pair.value;
-          curr_pair = curr_pair->next;
-        }
-        cout << endl;
-      }
-    }
-    return EXIT_SUCCESS;
-  }
-
   Value at(string key) {
     int hash_index = hash_function(key, map_size);
 
@@ -187,6 +170,8 @@ public:
   string code;
   string cnpj;
   int weight;
+
+  Container() : code(""), cnpj(""), weight(0) {}
 };
 
 class Irregular : public Container {
@@ -442,46 +427,64 @@ int writeContainerProp(string *props[], char character, int &propSts) {
   return EXIT_SUCCESS;
 }
 
-int readInputAndCreateContainerLists(ifstream &file,
-                                     ContainerList **contPointers) {
+int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
+                                     ContainerList **fiscs) {
   string fileLine;
-  int currContainerIndex = 0;
   int currIndex = 0;
   int currVectorSize = 0;
-  ContainerList *currContainerList = contPointers[currContainerIndex];
-  currContainerIndex = -1;
-  while (getline(file, fileLine)) {
-    int lineSize = fileLine.length();
+  bool isFirstCont = true;
 
-    // Verification to get the number of the containers in the new list:
-    cout << "funcionou" << endl;
-    cout << fileLine << endl;
+  // Allocate memory for the ContainerList structures
+  *regis = new ContainerList();
+  (*regis)->size = 0;
+  (*regis)->list = nullptr;
+
+  *fiscs = new ContainerList();
+  (*fiscs)->size = 0;
+  (*fiscs)->list = nullptr;
+
+  while (getline(file, fileLine)) {
+    size_t lineSize = fileLine.length();
+
+    // Determine the current list
+    ContainerList **currList = nullptr;
+
+    // If the line contains the size of the container list
     if (lineSize <= 10) {
       currVectorSize = stoi(fileLine);
-      cout << currVectorSize << endl;
-      currContainerList = new ContainerList;
-      currContainerList->size = currVectorSize;
-      currContainerList->list = new Container[currVectorSize];
-      currContainerIndex++;
+
+      currList = isFirstCont ? regis : fiscs;
+
+      // Allocate memory for the container list
+      (*currList)->size = currVectorSize;
+      (*currList)->list = new Container[currVectorSize];
+
+      isFirstCont = false;
+      // Switch to the next container list
       currIndex = 0;
       continue;
     }
 
+    // Process a line with container details
     string newCnpj, newCode, newWeight;
     int newWeightNumeric, propStatus = 0;
     string *props[3] = {&newCode, &newCnpj, &newWeight};
 
-    // Reading the file, separating in props and writing in the string
-    // variables
-    for (int i = 0; i < lineSize; i++) {
+    for (size_t i = 0; i < lineSize; i++) {
       writeContainerProp(props, fileLine.at(i), propStatus);
     }
     newWeightNumeric = stoi(newWeight);
 
-    // Adding the new element to the last position of the container list:
-    contPointers[currContainerIndex]->list[currIndex].code = newCode;
-    contPointers[currContainerIndex]->list[currIndex].cnpj = newCnpj;
-    contPointers[currContainerIndex]->list[currIndex].weight = newWeightNumeric;
+    // Validate if the current list's memory is allocated
+    if ((*currList)->list == nullptr) {
+      cerr << "Error: Memory not allocated for container list!" << endl;
+      return EXIT_FAILURE;
+    }
+
+    // Write properties into the allocated container list
+    (*currList)->list[currIndex].code = newCode;
+    (*currList)->list[currIndex].cnpj = newCnpj;
+    (*currList)->list[currIndex].weight = newWeightNumeric;
 
     currIndex++;
   }
@@ -494,27 +497,20 @@ int main(int argc, char *argv[3]) {
   ofstream output(argv[2]); // Output file
 
   if (!input.is_open()) {
-    cerr << "erro" << endl;
+    cerr << "erro ao abrir input" << endl;
     return EXIT_FAILURE;
   }
 
   if (!output.is_open()) {
-    cerr << "erro" << endl;
+    cerr << "erro ao abrir output" << endl;
     return EXIT_FAILURE;
   }
 
-  ContainerList *registeredContainers = new ContainerList[1];
-  registeredContainers->size = 0;
-  registeredContainers->list = new Container[registeredContainers->size];
+  ContainerList *registeredContainers = nullptr;
+  ContainerList *fiscalizedContainers = nullptr;
 
-  ContainerList *fiscalizedContainers = new ContainerList[1];
-  fiscalizedContainers->size = 0;
-  fiscalizedContainers->list = new Container[fiscalizedContainers->size];
-
-  ContainerList *containersPointers[2] = {registeredContainers,
-                                          fiscalizedContainers};
-
-  readInputAndCreateContainerLists(input, containersPointers);
+  readInputAndCreateContainerLists(input, &registeredContainers,
+                                   &fiscalizedContainers);
 
   hashmap<Container> fiscalizedsMap =
       createContainerMap(fiscalizedContainers, fiscalizedContainers->size);
@@ -530,7 +526,6 @@ int main(int argc, char *argv[3]) {
 
   for (int i = 0; i < irregulars->size; i++) {
     output << irregulars->list[i].irregularityMessage << endl;
-    cout << irregulars->list[i].irregularityMessage << endl;
   }
   return EXIT_SUCCESS;
 }
