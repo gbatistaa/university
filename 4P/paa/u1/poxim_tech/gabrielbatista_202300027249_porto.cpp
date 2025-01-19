@@ -8,30 +8,8 @@
 #include <iostream>
 #include <ostream>
 #include <string>
-#include <unordered_map>
 
 using namespace std;
-
-template <typename Value> class bst {
-private:
-  typedef struct tree {
-    int size;
-    struct tree *root;
-  } Tree;
-
-  typedef struct node {
-    Value value;
-    struct node *leftChild;
-    struct node *rightChild;
-  } Node;
-
-public:
-  Node *insert(Value newNode, Node **root) {
-    if (root == nullptr) {
-      *root = newNode;
-    }
-  }
-};
 
 enum Irregularity {
   WEIGHT,
@@ -62,6 +40,100 @@ typedef struct irregularList {
   Irregular *list;
   int size;
 } IrregularList;
+class bst {
+
+public:
+  bst() { root = nullptr; };
+
+  class Node {
+  public:
+    Container value;
+    Node *leftChild;
+    Node *rightChild;
+
+    Node() : value(Container()), leftChild(nullptr), rightChild(nullptr) {}
+  };
+
+  Node *root;
+
+  Node *createNode(Container container) {
+    Node *newPtr = new Node;
+    if (newPtr == nullptr) {
+      cerr << "Error on memory allocation for new node" << endl;
+      return nullptr;
+    }
+
+    newPtr->value = container;
+    newPtr->leftChild = nullptr;
+    newPtr->rightChild = nullptr;
+    return newPtr;
+  }
+
+  Node *insert(Container newContainer, Node *root) {
+    if (root == nullptr) {
+      Node *newNode = createNode(newContainer);
+      return newNode;
+    }
+    int newNodeCode = calculateCode(newContainer.code);
+    if (calculateCode(root->value.code) < newNodeCode)
+      root->leftChild = insert(newContainer, root->leftChild);
+    else if (calculateCode(root->value.code) > newNodeCode)
+      root->rightChild = insert(newContainer, root->rightChild);
+    else {
+      Node *currNode = root;
+      while (currNode != nullptr) {
+        if (currNode->value.code == newContainer.code)
+          return root;
+        currNode = currNode->leftChild;
+      }
+    }
+    return root;
+  }
+
+  Node *at(Node *root, Container value) {
+    if (root == nullptr || value.code == root->value.code) {
+      return root;
+    }
+    int code = calculateCode(value.code);
+    int rootCode = calculateCode(root->value.code);
+    if (rootCode < code) {
+      cout << "O root code (" << rootCode << ") é menor que o code (" << code
+           << ")" << endl;
+      cout << "Procurando na árvore esquerda..." << endl;
+      return at(root->leftChild, value);
+    } else if (rootCode > code) {
+      cout << "O root code (" << rootCode << ") é maior que o code (" << code
+           << ")" << endl;
+      cout << "Procurando na árvore direita..." << endl;
+      return at(root->rightChild, value);
+    } else {
+      cout << "\nO root code (" << rootCode << ") é igual ao code (" << code
+           << ")" << endl;
+      cout << "Procurando na árvore esquerda...\n" << endl;
+      Node *currNode = root;
+      while (currNode != nullptr) {
+        if (currNode->value.code == value.code) {
+          cout << "Nó com código (" + value.code + ") encontrado!\n" << endl;
+          return currNode;
+        }
+        cout << "Nó com código (" + currNode->value.code +
+                    ") tem mesmo ascii, mas é diferente!"
+             << endl;
+        currNode = currNode->leftChild;
+      }
+      cout << "Nó com código (" + value.code + ") não encontrado\n" << endl;
+      return nullptr;
+    };
+  }
+
+private:
+  int calculateCode(string str) {
+    int code = 0;
+    for (char character : str)
+      code += character;
+    return code;
+  }
+};
 
 bool isGreaterThan(float a, float b, float e = 1e-6) {
   return (a > b) && fabs(a - b) > e;
@@ -74,8 +146,7 @@ float calculateDifPercent(int n1, int n2) {
 }
 
 ContainerList *filterRegisteredContainersForInspection(
-    ContainerList *registereds, int registeredsSize,
-    unordered_map<string, Container> fiscalizedsMap) {
+    ContainerList *registereds, int registeredsSize, bst *fiscalizedsBST) {
   ContainerList *duplicateds = new ContainerList[1];
   if (!duplicateds) {
     exit(EXIT_FAILURE);
@@ -89,7 +160,8 @@ ContainerList *filterRegisteredContainersForInspection(
     try {
       // Verifies if the registered container was fiscalized:
       if (registereds->list[i].code ==
-          fiscalizedsMap.at(registereds->list[i].code).code) {
+          fiscalizedsBST->at(fiscalizedsBST->root, registereds->list[i])
+              ->value.code) {
 
         // Increments the duplicated containers list size:
         duplicateds->size++;
@@ -111,23 +183,16 @@ ContainerList *filterRegisteredContainersForInspection(
   return duplicateds;
 }
 
-unordered_map<string, Container> createContainerMap(ContainerList *fiscalizeds,
-                                                    int fiscSize) {
-  unordered_map<string, Container> newContainerMap;
+bst *createContainerBST(ContainerList *fiscalizeds, int fiscSize) {
+  bst *newContainerBST = new bst();
   for (int i = 0; i < fiscSize; i++) {
-<<<<<<< HEAD
-    newContainerMap.insert(fiscalizeds->list[i].code, fiscalizeds->list[i]);
-=======
-    newContainerMap[fiscalizeds->list[i].code] = fiscalizeds->list[i];
->>>>>>> 305432b6f78b80826ce3bef77098756f6fa075dc
+    newContainerBST->insert(fiscalizeds->list[i], newContainerBST->root);
   }
-  return newContainerMap;
+  return newContainerBST;
 }
 
-bool hasDifferentCnjp(Container container,
-                      unordered_map<string, Container> fiscalizeds,
-                      string &msg) {
-  Container fiscalized = fiscalizeds.at(container.code);
+bool hasDifferentCnjp(Container container, bst *fiscalizeds, string &msg) {
+  Container fiscalized = fiscalizeds->at(fiscalizeds->root, container)->value;
   if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj) {
     msg = container.cnpj + "<->" + fiscalized.cnpj;
     return true;
@@ -135,11 +200,10 @@ bool hasDifferentCnjp(Container container,
   return false;
 }
 
-float calcContainerWeightDifPercent(
-    Container container, unordered_map<string, Container> fiscalizeds,
-    float *bruteWeightDif = nullptr) {
+float calcContainerWeightDifPercent(Container container, bst *fiscalizeds,
+                                    float *bruteWeightDif = nullptr) {
   try {
-    Container fiscalized = fiscalizeds.at(container.code);
+    Container fiscalized = fiscalizeds->at(fiscalizeds->root, container)->value;
     if (container.code == fiscalized.code) {
       float weightDif =
           calculateDifPercent(container.weight, fiscalized.weight);
@@ -153,9 +217,9 @@ float calcContainerWeightDifPercent(
   }
 }
 
-IrregularList *
-createIrregularContainersList(unordered_map<string, Container> fiscalizeds,
-                              ContainerList *duplicateds, int duplicatedsSize) {
+IrregularList *createIrregularContainersList(bst *fiscalizeds,
+                                             ContainerList *duplicateds,
+                                             int duplicatedsSize) {
   string irrMsg;
   IrregularList *irregulars = new IrregularList[1];
   irregulars->size = 0;
@@ -217,9 +281,8 @@ createIrregularContainersList(unordered_map<string, Container> fiscalizeds,
   return irregulars;
 }
 
-int mergeIrregularContainers(Irregular *irregulars,
-                             unordered_map<string, Container> fiscalizeds,
-                             int left, int mid, int right) {
+int mergeIrregularContainers(Irregular *irregulars, bst *fiscalizeds, int left,
+                             int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
@@ -278,9 +341,8 @@ int mergeIrregularContainers(Irregular *irregulars,
 }
 
 // Função de ordenação Merge Sort
-void sortIrregularContainers(Irregular *irregulars,
-                             unordered_map<string, Container> fiscalizeds,
-                             int left, int right) {
+void sortIrregularContainers(Irregular *irregulars, bst *fiscalizeds, int left,
+                             int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
@@ -324,10 +386,7 @@ int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
     size_t lineSize = fileLine.length();
 
     // Determine the current list
-<<<<<<< HEAD
     ContainerList **currList;
-=======
->>>>>>> 305432b6f78b80826ce3bef77098756f6fa075dc
 
     // If the line contains the size of the container list
     if (lineSize <= 10) {
@@ -391,16 +450,16 @@ int main(int argc, char *argv[3]) {
   readInputAndCreateContainerLists(input, &registeredContainers,
                                    &fiscalizedContainers);
 
-  unordered_map<string, Container> fiscalizedsMap =
-      createContainerMap(fiscalizedContainers, fiscalizedContainers->size);
+  bst *fiscalizedsBST =
+      createContainerBST(fiscalizedContainers, fiscalizedContainers->size);
 
   ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
-      registeredContainers, registeredContainers->size, fiscalizedsMap);
+      registeredContainers, registeredContainers->size, fiscalizedsBST);
 
   IrregularList *irregulars = createIrregularContainersList(
-      fiscalizedsMap, duplicatedContainers, duplicatedContainers->size);
+      fiscalizedsBST, duplicatedContainers, duplicatedContainers->size);
 
-  sortIrregularContainers(irregulars->list, fiscalizedsMap, 0,
+  sortIrregularContainers(irregulars->list, fiscalizedsBST, 0,
                           irregulars->size - 1);
 
   for (int i = 0; i < irregulars->size; i++) {
