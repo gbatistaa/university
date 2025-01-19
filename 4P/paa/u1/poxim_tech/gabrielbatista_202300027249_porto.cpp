@@ -91,39 +91,43 @@ public:
   }
 
   Node *at(Node *root, Container value) {
-    if (root == nullptr || value.code == root->value.code) {
-      return root;
-    }
-    int code = calculateCode(value.code);
-    int rootCode = calculateCode(root->value.code);
-    if (rootCode < code) {
-      cout << "O root code (" << rootCode << ") é menor que o code (" << code
-           << ")" << endl;
-      cout << "Procurando na árvore esquerda..." << endl;
-      return at(root->leftChild, value);
-    } else if (rootCode > code) {
-      cout << "O root code (" << rootCode << ") é maior que o code (" << code
-           << ")" << endl;
-      cout << "Procurando na árvore direita..." << endl;
-      return at(root->rightChild, value);
-    } else {
-      cout << "\nO root code (" << rootCode << ") é igual ao code (" << code
-           << ")" << endl;
-      cout << "Procurando na árvore esquerda...\n" << endl;
-      Node *currNode = root;
-      while (currNode != nullptr) {
-        if (currNode->value.code == value.code) {
-          cout << "Nó com código (" + value.code + ") encontrado!\n" << endl;
-          return currNode;
-        }
-        cout << "Nó com código (" + currNode->value.code +
-                    ") tem mesmo ascii, mas é diferente!"
+    Node *current = root;
+    while (current != nullptr) {
+      int code = calculateCode(value.code);
+      int currentCode = calculateCode(current->value.code);
+      if (currentCode < code) {
+        cout << "O root code de " + current->value.code + " (" << currentCode
+             << ") é menor que o code de " + value.code + " (" << code << ")"
              << endl;
-        currNode = currNode->leftChild;
+        cout << "Procurando na árvore esquerda..." << endl;
+        current = current->leftChild;
+      } else if (currentCode > code) {
+        cout << "O root code de " + current->value.code + " (" << currentCode
+             << ") é maior que o code de " + value.code + " (" << code << ")"
+             << endl;
+        cout << "Procurando na árvore direita..." << endl;
+        current = current->rightChild;
+      } else {
+        cout << "O root code de " + current->value.code + " (" << currentCode
+             << ") é igual ao code de " + value.code + " (" << code << ")"
+             << endl;
+        cout << "Procurando na árvore esquerda...\n" << endl;
+        Node *currNode = current;
+        while (currNode != nullptr) {
+          if (currNode->value.code == value.code) {
+            cout << "Nó com código (" + value.code + ") encontrado!\n" << endl;
+            return currNode;
+          }
+          cout << "Nó com código (" + currNode->value.code +
+                      ") tem mesmo ascii, mas é diferente!"
+               << endl;
+          currNode = currNode->leftChild;
+        }
+        cout << "Nó com código (" + value.code + ") não encontrado\n" << endl;
+        return nullptr;
       }
-      cout << "Nó com código (" + value.code + ") não encontrado\n" << endl;
-      return nullptr;
-    };
+    }
+    return nullptr;
   }
 
 private:
@@ -149,7 +153,8 @@ ContainerList *filterRegisteredContainersForInspection(
     ContainerList *registereds, int registeredsSize, bst *fiscalizedsBST) {
   ContainerList *duplicateds = new ContainerList[1];
   if (!duplicateds) {
-    exit(EXIT_FAILURE);
+    cerr << "Erro na alocação de memória!" << endl;
+    return nullptr;
   }
   duplicateds->list = nullptr;
   duplicateds->size = 0;
@@ -159,6 +164,9 @@ ContainerList *filterRegisteredContainersForInspection(
   for (int i = 0; i < registeredsSize; i++) {
     try {
       // Verifies if the registered container was fiscalized:
+      if (fiscalizedsBST->at(fiscalizedsBST->root, registereds->list[i]) ==
+          nullptr)
+        continue;
       if (registereds->list[i].code ==
           fiscalizedsBST->at(fiscalizedsBST->root, registereds->list[i])
               ->value.code) {
@@ -185,8 +193,10 @@ ContainerList *filterRegisteredContainersForInspection(
 
 bst *createContainerBST(ContainerList *fiscalizeds, int fiscSize) {
   bst *newContainerBST = new bst();
+
   for (int i = 0; i < fiscSize; i++) {
-    newContainerBST->insert(fiscalizeds->list[i], newContainerBST->root);
+    newContainerBST->root =
+        newContainerBST->insert(fiscalizeds->list[i], newContainerBST->root);
   }
   return newContainerBST;
 }
@@ -385,13 +395,11 @@ int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
   while (getline(file, fileLine)) {
     size_t lineSize = fileLine.length();
 
-    // Determine the current list
-    ContainerList **currList;
-
     // If the line contains the size of the container list
     if (lineSize <= 10) {
       currVectorSize = stoi(fileLine);
 
+      // Determine the current list
       currList = isFirstCont ? regis : fiscs;
 
       // Allocate memory for the container list
@@ -407,11 +415,10 @@ int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
     // Process a line with container details
     string newCnpj, newCode, newWeight;
     int newWeightNumeric, propStatus = 0;
-    string *props[3] = {&newCode, &newCnpj, &newWeight};
 
-    for (size_t i = 0; i < lineSize; i++) {
-      writeContainerProp(props, fileLine.at(i), propStatus);
-    }
+    istringstream iss(fileLine);
+    iss >> newCode >> newCnpj >> newWeight;
+
     newWeightNumeric = stoi(newWeight);
 
     // Validate if the current list's memory is allocated
@@ -450,20 +457,34 @@ int main(int argc, char *argv[3]) {
   readInputAndCreateContainerLists(input, &registeredContainers,
                                    &fiscalizedContainers);
 
+  cout << "Arquivo lido com sucesso!\n" << endl;
+
   bst *fiscalizedsBST =
       createContainerBST(fiscalizedContainers, fiscalizedContainers->size);
+
+  cout << "Árvore binária criada com sucesso!" << endl;
+  cout << "Código do container da raiz: " + fiscalizedsBST->root->value.code +
+              "\n"
+       << endl;
 
   ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
       registeredContainers, registeredContainers->size, fiscalizedsBST);
 
+  cout << "Containeres duplicados filtrados com sucesso!" << endl;
+
   IrregularList *irregulars = createIrregularContainersList(
       fiscalizedsBST, duplicatedContainers, duplicatedContainers->size);
+
+  cout << "Lista de containeres irregulares criada com sucesso!\n" << endl;
 
   sortIrregularContainers(irregulars->list, fiscalizedsBST, 0,
                           irregulars->size - 1);
 
+  cout << "Ordenação da lista de irregulares criada com sucesso!\n";
+
   for (int i = 0; i < irregulars->size; i++) {
     output << irregulars->list[i].irregularityMessage << endl;
   }
+  cout << "Fim" << endl;
   return EXIT_SUCCESS;
 }
