@@ -12,7 +12,6 @@
 
 using namespace std;
 
-<<<<<<< HEAD
 template <typename Value> class bst {
 private:
   typedef struct tree {
