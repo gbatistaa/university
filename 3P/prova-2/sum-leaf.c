@@ -1,16 +1,15 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
-typedef struct node
-{
+typedef struct node {
   int value;
   struct node *leftChild;
   struct node *rightChild;
 } BinaryNode;
 
 BinaryNode *createBinaryNode(int value) {
-  BinaryNode *newNode = (BinaryNode*)malloc(sizeof(BinaryNode));
+  BinaryNode *newNode = (BinaryNode *)malloc(sizeof(BinaryNode));
   newNode->value = value;
   newNode->leftChild = NULL;
   newNode->rightChild = NULL;
@@ -18,13 +17,14 @@ BinaryNode *createBinaryNode(int value) {
 }
 
 int printInOrder(BinaryNode *root) {
-  if(root == NULL) {
+  if (root == NULL) {
     return EXIT_SUCCESS;
   } else {
     printInOrder(root->leftChild);
     printf(" %d", root->value);
     printInOrder(root->rightChild);
   }
+  return EXIT_FAILURE;
 }
 
 BinaryNode *insertBinaryNode(BinaryNode *root, int value) {
@@ -74,28 +74,28 @@ int main() {
     printf("Escolha uma opção: ");
     scanf("%d", &op);
 
-    switch(op) {
-      case 0:
-        printf("\nFim da execução\n");
-        break;
-      case 1:
-        printf("\nDigite um valor: ");
-        scanf(" %d", &value);
-        root = insertBinaryNode(root, value);
-        break;
-      case 2:
-        printf("\nImprimindo árvore em ordem: \n");
-        if(root == NULL)
-          printf("Árvore sem elementos.\n");
-        else
-          printInOrder(root);
-        break;
-      case 3:
-        int leafsTotalSum = sumTreeLeafs(root);
-        printf("\nSoma de todas as folhas: %d\n", leafsTotalSum);
-        break;
-      default:
-        printf("Opção Inválida!\n");
+    switch (op) {
+    case 0:
+      printf("\nFim da execução\n");
+      break;
+    case 1:
+      printf("\nDigite um valor: ");
+      scanf(" %d", &value);
+      root = insertBinaryNode(root, value);
+      break;
+    case 2:
+      printf("\nImprimindo árvore em ordem: \n");
+      if (root == NULL)
+        printf("Árvore sem elementos.\n");
+      else
+        printInOrder(root);
+      break;
+    case 3:
+      int leafsTotalSum = sumTreeLeafs(root);
+      printf("\nSoma de todas as folhas: %d\n", leafsTotalSum);
+      break;
+    default:
+      printf("Opção Inválida!\n");
     }
   } while (op != 0);
 }
