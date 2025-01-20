@@ -41,97 +41,7 @@ typedef struct irregularList {
   Irregular *list;
   int size;
 } IrregularList;
-class bst {
 
-public:
-  bst() { root = nullptr; };
-
-  class Node {
-  public:
-    Container value;
-    Node *leftChild;
-    Node *rightChild;
-
-    Node() : value(Container()), leftChild(nullptr), rightChild(nullptr) {}
-  };
-
-  Node *root;
-
-  Node *createNode(Container container) {
-    Node *newPtr = new Node;
-    if (newPtr == nullptr) {
-      cerr << "Error on memory allocation for new node" << endl;
-      return nullptr;
-    }
-
-    newPtr->value = container;
-    newPtr->leftChild = nullptr;
-    newPtr->rightChild = nullptr;
-    return newPtr;
-  }
-
-  Node *insert(Container newContainer, Node *root) {
-    if (root == nullptr) {
-      Node *newNode = createNode(newContainer);
-      return newNode;
-    }
-    int newNodeCode = calculateCode(newContainer.code);
-    if (calculateCode(root->value.code) < newNodeCode)
-      root->leftChild = insert(newContainer, root->leftChild);
-    else if (calculateCode(root->value.code) > newNodeCode)
-      root->rightChild = insert(newContainer, root->rightChild);
-    else {
-      Node *currNode = root;
-      while (currNode != nullptr) {
-        if (currNode->value.code == newContainer.code)
-          return root;
-        currNode = currNode->leftChild;
-      }
-    }
-    return root;
-  }
-
-  Node *insertIte(Container newContainer, Node *root) {
-    Node **current = &root;
-    int newNodeCode = calculateCode(newContainer.code);
-    while (*current != nullptr) {
-      int currentCode = calculateCode((*current)->value.code);
-      if (currentCode < newNodeCode)
-        current = &(*current)->leftChild;
-      else if (currentCode > newNodeCode)
-        current = &(*current)->rightChild;
-      else {
-      }
-    }
-    *current = createNode(newContainer);
-    return root;
-  }
-
-  Node *at(Node *root, Container value) {
-    Node *current = root;
-    while (current != nullptr) {
-      int code = calculateCode(value.code);
-      int currentCode = calculateCode(current->value.code);
-      if (currentCode < code) {
-        current = current->leftChild;
-      } else if (currentCode > code) {
-        current = current->rightChild;
-      } else {
-        Node *currNode = current;
-        while (currNode != nullptr) {
-          if (currNode->value.code == value.code) {
-            return currNode;
-          }
-          currNode = currNode->leftChild;
-        }
-        return nullptr;
-      }
-    }
-    return nullptr;
-  }
-
-private:
-};
 int calculateCode(string str) {
   int code = 0;
   for (char character : str)
@@ -149,7 +59,7 @@ float calculateDifPercent(int n1, int n2) {
   return abs(percentage);
 }
 
-void sortInAlphabeticOrder(Container *list, int left, int mid, int right) {
+void merge(Container *list, int left, int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
@@ -196,21 +106,23 @@ void sortInAlphabeticOrder(Container *list, int left, int mid, int right) {
 }
 
 // Função recursiva para implementar o Merge Sort
-void mergeSort(Container *list, int left, int right) {
+void sortInAlphabeticOrder(Container *list, int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
     // Ordenando a primeira e a segunda metade
-    mergeSort(list, left, mid);
-    mergeSort(list, mid + 1, right);
+    sortInAlphabeticOrder(list, left, mid);
+    sortInAlphabeticOrder(list, mid + 1, right);
 
     // Mesclando as duas metades
-    sortInAlphabeticOrder(list, left, mid, right);
+    merge(list, left, mid, right);
   }
 }
 
-ContainerList *filterRegisteredContainersForInspection(
-    ContainerList *registereds, int registeredsSize, bst *fiscalizedsBST) {
+ContainerList *
+filterRegisteredContainersForInspection(ContainerList *registereds,
+                                        int registeredsSize,
+                                        Container *fiscalizedsBST) {
   ContainerList *duplicateds = new ContainerList[1];
   if (!duplicateds) {
     cerr << "Erro na alocação de memória!" << endl;
@@ -224,12 +136,10 @@ ContainerList *filterRegisteredContainersForInspection(
   for (int i = 0; i < registeredsSize; i++) {
     try {
       // Verifies if the registered container was fiscalized:
-      if (fiscalizedsBST->at(fiscalizedsBST->root, registereds->list[i]) ==
-          nullptr)
+      if (binarySearch(fiscalizedsBST, registereds->list[i]) == nullptr)
         continue;
       if (registereds->list[i].code ==
-          fiscalizedsBST->at(fiscalizedsBST->root, registereds->list[i])
-              ->value.code) {
+          binarySearch(fiscalizedsBST, registereds->list[i])->value.code) {
 
         // Increments the duplicated containers list size:
         duplicateds->size++;
@@ -247,27 +157,20 @@ ContainerList *filterRegisteredContainersForInspection(
   }
   return duplicateds;
 }
-bst *createContainerBST(ContainerList *fiscalizeds, int fiscSize) {
-  bst *newContainerBST = new bst();
 
-  for (int i = 0; i < fiscSize; i++) {
-    newContainerBST->root =
-        newContainerBST->insert(fiscalizeds->list[i], newContainerBST->root);
-  }
-  return newContainerBST;
-}
-bool hasDifferentCnjp(Container container, bst *fiscalizeds, string &msg) {
-  Container fiscalized = fiscalizeds->at(fiscalizeds->root, container)->value;
+bool hasDifferentCnjp(Container container, Container *fiscalizeds,
+                      string &msg) {
+  Container fiscalized = binarySearch(fiscalizeds, container)->value;
   if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj) {
     msg = container.cnpj + "<->" + fiscalized.cnpj;
     return true;
   }
   return false;
 }
-float calcContainerWeightDifPercent(Container container, bst *fiscalizeds,
+float calcContainerWeightDifPercent(Container container, Container *fiscalizeds,
                                     float *bruteWeightDif = nullptr) {
   try {
-    Container fiscalized = fiscalizeds->at(fiscalizeds->root, container)->value;
+    Container fiscalized = binarySearch(fiscalizeds, container)->value;
     if (container.code == fiscalized.code) {
       float weightDif =
           calculateDifPercent(container.weight, fiscalized.weight);
@@ -280,7 +183,7 @@ float calcContainerWeightDifPercent(Container container, bst *fiscalizeds,
     return EXIT_FAILURE;
   }
 }
-IrregularList *createIrregularContainersList(bst *fiscalizeds,
+IrregularList *createIrregularContainersList(Container *fiscalizeds,
                                              ContainerList *duplicateds,
                                              int duplicatedsSize) {
   string irrMsg;
@@ -344,8 +247,8 @@ IrregularList *createIrregularContainersList(bst *fiscalizeds,
   return irregulars;
 }
 
-int mergeIrregularContainers(Irregular *irregulars, bst *fiscalizeds, int left,
-                             int mid, int right) {
+int mergeIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
+                             int left, int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
@@ -404,8 +307,8 @@ int mergeIrregularContainers(Irregular *irregulars, bst *fiscalizeds, int left,
 }
 
 // Função de ordenação Merge Sort
-void sortIrregularContainers(Irregular *irregulars, bst *fiscalizeds, int left,
-                             int right) {
+void sortIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
+                             int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
@@ -512,25 +415,21 @@ int main(int argc, char *argv[3]) {
 
   cout << "Arquivo lido com sucesso!\n" << endl;
 
-  bst *fiscalizedsBST =
-      createContainerBST(fiscalizedContainers, fiscalizedContainers->size);
-
-  cout << "Árvore binária criada com sucesso!" << endl;
-  cout << "Código do container da raiz: " + fiscalizedsBST->root->value.code +
-              "\n"
-       << endl;
+  cout << " criada com sucesso!" << endl;
 
   ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
-      registeredContainers, registeredContainers->size, fiscalizedsBST);
+      registeredContainers, registeredContainers->size,
+      fiscalizedContainers->list);
 
   cout << "Containeres duplicados filtrados com sucesso!" << endl;
 
   IrregularList *irregulars = createIrregularContainersList(
-      fiscalizedsBST, duplicatedContainers, duplicatedContainers->size);
+      fiscalizedContainers->list, duplicatedContainers,
+      duplicatedContainers->size);
 
   cout << "Lista de containeres irregulares criada com sucesso!\n" << endl;
 
-  sortIrregularContainers(irregulars->list, fiscalizedsBST, 0,
+  sortIrregularContainers(irregulars->list, fiscalizedContainers->list, 0,
                           irregulars->size - 1);
 
   cout << "Ordenação da lista de irregulares criada com sucesso!\n";
