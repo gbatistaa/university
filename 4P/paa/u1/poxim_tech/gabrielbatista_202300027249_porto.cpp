@@ -150,12 +150,12 @@ float calculateDifPercent(int n1, int n2) {
 }
 
 void sortInAlphabeticOrder(Container *list, int left, int mid, int right) {
-  int n1 = mid - left + 1; // Tamanho do subarray esquerdo
-  int n2 = right - mid;    // Tamanho do subarray direito
+  int n1 = mid - left + 1;
+  int n2 = right - mid;
 
   // Alocando memória para os subarrays temporários
-  int *leftArr = new int[n1];
-  int *rightArr = new int[n2];
+  Container *leftArr = new Container[n1];
+  Container *rightArr = new Container[n2];
 
   // Copiando os dados para os subarrays temporários
   for (int i = 0; i < n1; i++)
@@ -166,7 +166,7 @@ void sortInAlphabeticOrder(Container *list, int left, int mid, int right) {
   // Mesclando os subarrays temporários de volta ao array original
   int i = 0, j = 0, k = left;
   while (i < n1 && j < n2) {
-    if (leftArr[i] <= rightArr[j]) {
+    if (leftArr[i].code <= rightArr[j].code) {
       list[k] = leftArr[i];
       i++;
     } else {
@@ -196,16 +196,16 @@ void sortInAlphabeticOrder(Container *list, int left, int mid, int right) {
 }
 
 // Função recursiva para implementar o Merge Sort
-void mergeSort(int *arr, int left, int right) {
+void mergeSort(Container *list, int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
     // Ordenando a primeira e a segunda metade
-    mergeSort(arr, left, mid);
-    mergeSort(arr, mid + 1, right);
+    mergeSort(list, left, mid);
+    mergeSort(list, mid + 1, right);
 
     // Mesclando as duas metades
-    merge(arr, left, mid, right);
+    sortInAlphabeticOrder(list, left, mid, right);
   }
 }
 
