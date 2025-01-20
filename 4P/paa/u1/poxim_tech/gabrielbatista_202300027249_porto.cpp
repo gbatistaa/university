@@ -131,13 +131,13 @@ public:
   }
 
 private:
-  int calculateCode(string str) {
-    int code = 0;
-    for (char character : str)
-      code += character;
-    return code;
-  }
 };
+int calculateCode(string str) {
+  int code = 0;
+  for (char character : str)
+    code += character;
+  return code;
+}
 
 bool isGreaterThan(float a, float b, float e = 1e-6) {
   return (a > b) && fabs(a - b) > e;
@@ -147,6 +147,66 @@ float calculateDifPercent(int n1, int n2) {
   int dif = n1 - n2;
   float percentage = (float)dif / n1 * 100;
   return abs(percentage);
+}
+
+void sortInAlphabeticOrder(Container *list, int left, int mid, int right) {
+  int n1 = mid - left + 1; // Tamanho do subarray esquerdo
+  int n2 = right - mid;    // Tamanho do subarray direito
+
+  // Alocando memória para os subarrays temporários
+  int *leftArr = new int[n1];
+  int *rightArr = new int[n2];
+
+  // Copiando os dados para os subarrays temporários
+  for (int i = 0; i < n1; i++)
+    leftArr[i] = list[left + i];
+  for (int j = 0; j < n2; j++)
+    rightArr[j] = list[mid + 1 + j];
+
+  // Mesclando os subarrays temporários de volta ao array original
+  int i = 0, j = 0, k = left;
+  while (i < n1 && j < n2) {
+    if (leftArr[i] <= rightArr[j]) {
+      list[k] = leftArr[i];
+      i++;
+    } else {
+      list[k] = rightArr[j];
+      j++;
+    }
+    k++;
+  }
+
+  // Copiando os elementos restantes de leftArr, se houver
+  while (i < n1) {
+    list[k] = leftArr[i];
+    i++;
+    k++;
+  }
+
+  // Copiando os elementos restantes de rightArr, se houver
+  while (j < n2) {
+    list[k] = rightArr[j];
+    j++;
+    k++;
+  }
+
+  // Liberando a memória alocada
+  delete[] leftArr;
+  delete[] rightArr;
+}
+
+// Função recursiva para implementar o Merge Sort
+void mergeSort(int *arr, int left, int right) {
+  if (left < right) {
+    int mid = left + (right - left) / 2;
+
+    // Ordenando a primeira e a segunda metade
+    mergeSort(arr, left, mid);
+    mergeSort(arr, mid + 1, right);
+
+    // Mesclando as duas metades
+    merge(arr, left, mid, right);
+  }
 }
 
 ContainerList *filterRegisteredContainersForInspection(
