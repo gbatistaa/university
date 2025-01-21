@@ -1,3 +1,4 @@
+#include <atomic>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -119,63 +120,51 @@ void sortInAlphabeticOrder(Container *list, int left, int right) {
   }
 }
 
-Container *binarySearch(Container *list, string code, int left, int right) {
-  if (left <= right) {
-    int mid = left + (right - left) / 2;
-    if (code > list[mid].code) {
-      return binarySearch(list, code, 0, mid);
-    } else if (code < list[mid].code) {
-      return binarySearch(list, code, mid + 1, right);
-    } else {
-      return &list[mid];
-    }
+Container *binarySearch(Container *list, string code, int left, int right,
+                        int i = 0) {
+  if (left > right) {
+    return nullptr;
   }
-  return nullptr;
+  int mid = left + (right - left) / 2;
+  if (code < list[mid].code) {
+    return binarySearch(list, code, 0, mid - 1, i + 1);
+  } else if (code > list[mid].code) {
+    return binarySearch(list, code, mid + 1, right, i + 1);
+  } else {
+    cout << "Encontrado nos fiscalizados: " + code << endl;
+    return &list[mid];
+  }
 }
-
 ContainerList *
 filterRegisteredContainersForInspection(ContainerList *registereds,
                                         int registeredsSize,
                                         Container *fiscalizeds, int fiscSize) {
   ContainerList *duplicateds = new ContainerList[1];
   if (!duplicateds) {
-    cerr << "Erro na alocação de memória!" << endl;
     return nullptr;
   }
-  duplicateds->list = nullptr;
+  duplicateds->list = new Container[fiscSize];
   duplicateds->size = 0;
-
-  Container *newDuplicatedsList = new Container[1];
-  duplicateds->list = newDuplicatedsList;
+  int j = 0;
   for (int i = 0; i < registeredsSize; i++) {
-    try {
-      // Verifies if the registered container was fiscalized:
-      Container *dupli =
-          binarySearch(fiscalizeds, registereds->list[i].code, 0, fiscSize - 1);
-      if (dupli == nullptr)
-        continue;
-      if (registereds->list[i].code == dupli->code) {
-        // Increments the duplicated containers list size:
-        duplicateds->size++;
-        Container *resizedList = new Container[duplicateds->size];
-        for (int i = 0; i < duplicateds->size - 1; i++) {
-          resizedList[i] = duplicateds->list[i];
-        }
-        duplicateds->list = resizedList;
-        // Add the duplicated container in the list last position:
-        duplicateds->list[duplicateds->size - 1] = registereds->list[i];
-      }
-    } catch (const exception &e) {
-      cerr << e.what() << endl;
+    // Verifies if the registered container was fiscalized:
+    Container *dupli =
+        binarySearch(fiscalizeds, registereds->list[i].code, 0, fiscSize - 1);
+    if (dupli == nullptr) {
+      continue;
+    } else if (registereds->list[i].code == dupli->code) {
+      duplicateds->list[j++] = registereds->list[i];
     }
   }
+  duplicateds->size = j;
   return duplicateds;
 }
-
 bool hasDifferentCnjp(Container container, Container *fiscalizeds, string &msg,
                       int fiscSize) {
   Container *fiscalized =
       binarySearch(fiscalizeds, container.code, 0, fiscSize - 1);
+  if (fiscalized == nullptr)
+    return false;
   if (container.code == fiscalized->code &&
       container.cnpj != fiscalized->cnpj) {
     msg = container.cnpj + "<->" + fiscalized->cnpj;
@@ -186,24 +175,22 @@ bool hasDifferentCnjp(Container container, Container *fiscalizeds, string &msg,
 float calcContainerWeightDifPercent(Container container, Container *fiscalizeds,
                                     int fiscSize,
                                     float *bruteWeightDif = nullptr) {
-  try {
-    Container *fiscalized =
-        binarySearch(fiscalizeds, container.code, 0, fiscSize);
-    if (container.code == fiscalized->code) {
-      float weightDif =
-          calculateDifPercent(container.weight, fiscalized->weight);
-      if (bruteWeightDif != nullptr)
-        *bruteWeightDif = fabs(container.weight - fiscalized->weight);
-      return weightDif;
-    }
-    return EXIT_SUCCESS;
-  } catch (const exception &e) {
+
+  Container *fiscalized =
+      binarySearch(fiscalizeds, container.code, 0, fiscSize);
+  if (fiscalized == nullptr)
     return EXIT_FAILURE;
+  if (container.code == fiscalized->code) {
+    float weightDif = calculateDifPercent(container.weight, fiscalized->weight);
+    if (bruteWeightDif != nullptr)
+      *bruteWeightDif = fabs(container.weight - fiscalized->weight);
+    return weightDif;
   }
+  return EXIT_SUCCESS;
 }
 IrregularList *createIrregularContainersList(Container *fiscalizeds,
-                                             ContainerList *duplicateds,
-                                             int duplicatedsSize) {
+                                             ContainerList *registereds,
+                                             int fiscSize, int regisSize) {
   string irrMsg;
   IrregularList *irregulars = new IrregularList[1];
   irregulars->size = 0;
@@ -211,17 +198,16 @@ IrregularList *createIrregularContainersList(Container *fiscalizeds,
   Irregular *irrList = new Irregular[1];
   irregulars->list = irrList;
 
-  for (int i = 0; i < duplicatedsSize; i++) {
-    Container duplicated = duplicateds->list[i];
-    if (hasDifferentCnjp(duplicated, fiscalizeds, irrMsg, duplicatedsSize)) {
+  for (int i = 0; i < regisSize; i++) {
+    Container registered = registereds->list[i];
+    if (hasDifferentCnjp(registered, fiscalizeds, irrMsg, fiscSize)) {
       Irregular newCnpjIrr;
-      newCnpjIrr.code = duplicated.code;
-      newCnpjIrr.cnpj = duplicated.cnpj;
-      newCnpjIrr.weight = duplicated.weight;
+      newCnpjIrr.code = registered.code;
+      newCnpjIrr.cnpj = registered.cnpj;
+      newCnpjIrr.weight = registered.weight;
       newCnpjIrr.irregularity = CNPJ;
-      newCnpjIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
+      newCnpjIrr.irregularityMessage = registered.code + ":" + irrMsg;
       irregulars->size++;
-
       Irregular *resizedIrrList = new Irregular[irregulars->size];
       for (int i = 0; i < irregulars->size - 1; i++) {
         resizedIrrList[i] = irregulars->list[i];
@@ -231,70 +217,51 @@ IrregularList *createIrregularContainersList(Container *fiscalizeds,
     } else {
       float weightDif;
       float weightDifPercent = calcContainerWeightDifPercent(
-          duplicated, fiscalizeds, duplicatedsSize, &weightDif);
+          registered, fiscalizeds, fiscSize, &weightDif);
       if (isGreaterThan(weightDifPercent, 10)) {
-
         ostringstream difPerc, bruteDif;
         difPerc << fixed << setprecision(0) << weightDifPercent;
         bruteDif << fixed << setprecision(0) << weightDif;
         string irrMsg = bruteDif.str() + "kg(" + difPerc.str() + "%)";
-
         Irregular newWeightIrr;
-        newWeightIrr.code = duplicated.code;
-        newWeightIrr.cnpj = duplicated.cnpj;
-        newWeightIrr.weight = duplicated.weight;
+        newWeightIrr.code = registered.code;
+        newWeightIrr.cnpj = registered.cnpj;
+        newWeightIrr.weight = registered.weight;
         newWeightIrr.irregularity = WEIGHT;
-        newWeightIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
+        newWeightIrr.irregularityMessage = registered.code + ":" + irrMsg;
         irregulars->size++;
-
         Irregular *resizedIrrList = new Irregular[irregulars->size];
         for (int i = 0; i < irregulars->size - 1; i++) {
           resizedIrrList[i] = irregulars->list[i];
         }
-
         irregulars->list = resizedIrrList;
         irregulars->list[irregulars->size - 1] = newWeightIrr;
       }
     }
   }
-
   return irregulars;
 }
-
 int mergeIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
                              int fiscSize, int left, int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
-
-  // Vetores temporários
   Irregular leftVec[n1], rightVec[n2];
-
-  // Copiar os dados para os vetores temporários
   for (int a = 0; a < n1; a++)
     leftVec[a] = irregulars[left + a];
   for (int b = 0; b < n2; b++)
     rightVec[b] = irregulars[mid + 1 + b];
-
-  // Mesclar os vetores temporários de volta ao vetor original
   int i = 0, j = 0, k = left;
-
   while (i < n1 && j < n2) {
     Irregularity leftIrregularity = leftVec[i].irregularity;
     Irregularity rightIrregularity = rightVec[j].irregularity;
-
-    // Comparsion to prioritize the CNPJ irregularity:
     if (leftIrregularity > rightIrregularity) {
       irregulars[k++] = leftVec[i++];
-
-      // Comparision to prioritize the container with the bigger weight
-      // irregularity:
     } else if (leftIrregularity == rightIrregularity) {
       if (leftIrregularity == WEIGHT) {
         int weightIrrL = round(
             calcContainerWeightDifPercent(leftVec[i], fiscalizeds, fiscSize));
         int weightIrrR = round(
             calcContainerWeightDifPercent(rightVec[j], fiscalizeds, fiscSize));
-
         if (isGreaterThan(weightIrrL, weightIrrR) || weightIrrL == weightIrrR) {
           irregulars[k++] = leftVec[i++];
         } else {
@@ -303,57 +270,35 @@ int mergeIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
       } else {
         irregulars[k++] = leftVec[i++];
       }
-      // Comparision to prioritize the container with CNPJ irregularity that
-      // comes first on the register list:
     } else {
       irregulars[k++] = rightVec[j++];
     }
   }
-
   while (i < n1) {
     irregulars[k++] = leftVec[i++];
   }
-
   while (j < n2) {
     irregulars[k++] = rightVec[j++];
   }
   return EXIT_SUCCESS;
 }
 
-// Função de ordenação Merge Sort
 void sortIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
                              int fiscSize, int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
-
-    // Ordenar a primeira e a segunda metades
     sortIrregularContainers(irregulars, fiscalizeds, fiscSize, left, mid);
     sortIrregularContainers(irregulars, fiscalizeds, fiscSize, mid + 1, right);
-
-    // Mesclar as metades ordenadas
     mergeIrregularContainers(irregulars, fiscalizeds, fiscSize, left, mid,
                              right);
   }
 }
-
-int writeContainerProp(string *props[], char character, int &propSts) {
-  if (character == ' ') {
-    propSts++;
-  } else {
-    int i = propSts;
-    *props[i] += character;
-  }
-  return EXIT_SUCCESS;
-}
-
 int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
                                      ContainerList **fiscs) {
   string fileLine;
   int currIndex = 0;
   int currVectorSize = 0;
   bool isFirstCont = true;
-
-  // Allocate memory for the ContainerList structures
   *regis = new ContainerList();
   (*regis)->size = 0;
   (*regis)->list = nullptr;
@@ -361,90 +306,54 @@ int readInputAndCreateContainerLists(ifstream &file, ContainerList **regis,
   *fiscs = new ContainerList();
   (*fiscs)->size = 0;
   (*fiscs)->list = nullptr;
-
   ContainerList **currList = nullptr;
   while (getline(file, fileLine)) {
     size_t lineSize = fileLine.length();
-
-    // If the line contains the size of the container list
     if (lineSize <= 10) {
       currVectorSize = stoi(fileLine);
-
-      // Determine the current list
       currList = isFirstCont ? regis : fiscs;
-
-      // Allocate memory for the container list
       (*currList)->size = currVectorSize;
       (*currList)->list = new Container[currVectorSize];
-
       isFirstCont = false;
-      // Switch to the next container list
       currIndex = 0;
       continue;
     }
-
-    // Process a line with container details
     string newCnpj, newCode, newWeight;
-    int newWeightNumeric, propStatus = 0;
-
+    int newWeightNumeric;
     istringstream iss(fileLine);
     iss >> newCode >> newCnpj >> newWeight;
-
     newWeightNumeric = stoi(newWeight);
-
-    // Validate if the current list's memory is allocated
     if ((*currList)->list == nullptr) {
       cerr << "Error: Memory not allocated for container list!" << endl;
       return EXIT_FAILURE;
     }
-
-    // Write properties into the allocated container list
     (*currList)->list[currIndex].code = newCode;
     (*currList)->list[currIndex].cnpj = newCnpj;
     (*currList)->list[currIndex].weight = newWeightNumeric;
-
     currIndex++;
   }
-
   return EXIT_SUCCESS;
 }
-
 int main(int argc, char *argv[3]) {
-  ifstream input(argv[1]);  // Input File
-  ofstream output(argv[2]); // Output file
-
+  ifstream input(argv[1]);
+  ofstream output(argv[2]);
   if (!input.is_open()) {
     cerr << "erro ao abrir input" << endl;
     return EXIT_FAILURE;
   }
-
   if (!output.is_open()) {
     cerr << "erro ao abrir output" << endl;
     return EXIT_FAILURE;
   }
-
   ContainerList *registeredContainers = nullptr;
   ContainerList *fiscalizedContainers = nullptr;
   readInputAndCreateContainerLists(input, &registeredContainers,
                                    &fiscalizedContainers);
-
-  cout << "Arquivo lido com sucesso!\n" << endl;
-
   sortInAlphabeticOrder(fiscalizedContainers->list, 0,
                         fiscalizedContainers->size - 1);
-
-  ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
-      registeredContainers, registeredContainers->size,
-      fiscalizedContainers->list, fiscalizedContainers->size);
-
-  cout << "Containeres duplicados filtrados com sucesso!" << endl;
-
   IrregularList *irregulars = createIrregularContainersList(
-      fiscalizedContainers->list, duplicatedContainers,
-      duplicatedContainers->size);
-
-  cout << "Lista de containeres irregulares criada com sucesso!\n" << endl;
-
+      fiscalizedContainers->list, registeredContainers,
+      fiscalizedContainers->size, registeredContainers->size);
   sortIrregularContainers(irregulars->list, fiscalizedContainers->list,
                           fiscalizedContainers->size, 0, irregulars->size - 1);
 
