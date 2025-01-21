@@ -25,9 +25,22 @@ public:
   int calls;
 };
 
+int swap(int &n1, int &n2) {
+  int aux = n1;
+  n1 = n2;
+  n2 = aux;
+
+  return EXIT_SUCCESS;
+}
+
 int lomuto(int *vector, int start, int end) {
-  int pivot = vector[end];
-  return pivot;
+  int pivot = vector[end], x = start - 1, y = start;
+  for (int i = 0; y < end; y++) {
+    if (vector[end] <= pivot) {
+      swap(vector[++x], vector[y]);
+    }
+  }
+  return x;
 }
 
 // int lomuto_median(int &vector, int start, int end) {}
