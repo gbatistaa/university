@@ -14,6 +14,8 @@ public:
   int **list;
 };
 
+enum Particioning { LP, LM, LA, HP, HM, HA };
+
 int read_input(ifstream &input, Matrix *&vectors) {
   string line;
 
