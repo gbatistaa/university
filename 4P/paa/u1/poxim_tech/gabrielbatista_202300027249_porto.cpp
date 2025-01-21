@@ -131,7 +131,6 @@ Container *binarySearch(Container *list, string code, int left, int right,
   } else if (code > list[mid].code) {
     return binarySearch(list, code, mid + 1, right, i + 1);
   } else {
-    cout << "Encontrado nos fiscalizados: " + code << endl;
     return &list[mid];
   }
 }
