@@ -7,6 +7,8 @@
 using namespace std;
 
 // Class for monitoring the matrix and its vectors and the size of each one
+enum Particioning { LP, LM, LA, HP, HM, HA };
+
 class Matrix {
 public:
   int size;
@@ -14,13 +16,49 @@ public:
   int **list;
 };
 
-enum Particioning { LP, LM, LA, HP, HM, HA };
+class Quick_Variation {
+public:
+  string format;
+  Particioning code;
+  int calls;
+};
 
-int quick_sort(int &vector, int start, int end) {
+int lomuto(int *vector, int start, int end) {
+  int pivot = vector[end];
+  return pivot;
+}
+
+// int lomuto_median(int &vector, int start, int end) {}
+// int lomuto_random(int &vector, int start, int end) {}
+
+// int hoare(int &vector, int start, int end) {}
+// int hoare_median(int &vector, int start, int end) {}
+// int hoare_random(int &vector, int start, int end) {}
+
+int pivot_chooser(int *vector, Particioning code) {
+  int pivot = 0;
+  switch (code) {
+  case LP:
+    break;
+  case LM:
+    break;
+  case LA:
+    break;
+  case HP:
+    break;
+  case HM:
+    break;
+  case HA:
+    break;
+  }
+  return pivot;
+}
+
+int quick_sort(int *vector, int start, int end, Particioning code) {
   if (start < end) {
-    int pivot = 0;
-    quick_sort(vector, start, pivot);
-    quick_sort(vector, pivot + 1, end);
+    int pivot = pivot_chooser(vector, code);
+    quick_sort(vector, start, pivot, code);
+    quick_sort(vector, pivot + 1, end, code);
   }
   return EXIT_SUCCESS;
 }
@@ -54,7 +92,7 @@ int read_input(ifstream &input, Matrix *&vectors) {
     if (is_size_line) {
       int vector_size = stoi(line);
       vectors->list[i] = new int[vector_size];
-      cout << "Criado vetor " << i + 1
+      cout << "Criado vetor " << i
            << " com " + line + " elementos no endereço: " << vectors->list[i]
            << endl;
       is_size_line = false;
