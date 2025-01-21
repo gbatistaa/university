@@ -356,12 +356,8 @@ int main(int argc, char *argv[3]) {
       fiscalizedContainers->size, registeredContainers->size);
   sortIrregularContainers(irregulars->list, fiscalizedContainers->list,
                           fiscalizedContainers->size, 0, irregulars->size - 1);
-
-  cout << "Ordenação da lista de irregulares criada com sucesso!\n";
-
   for (int i = 0; i < irregulars->size; i++) {
     output << irregulars->list[i].irregularityMessage << endl;
   }
-  cout << "Fim" << endl;
   return EXIT_SUCCESS;
 }
