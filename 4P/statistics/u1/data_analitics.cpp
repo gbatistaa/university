@@ -17,13 +17,8 @@ float calculate_average(vector<float> vec) {
 }
 
 int calculate_median(int size) {
-  int size_half = size / 2;
   int half_plus = (size + 1) / 2;
-  if (size % 2 == 0) {
-    return ((size_half * size_half) + (half_plus * half_plus)) / 2;
-  } else {
-    return half_plus;
-  }
+  return half_plus - 1;
 }
 
 float calculate_variance(vector<float> list, float average) {
