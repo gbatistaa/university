@@ -16,6 +16,15 @@ public:
 
 enum Particioning { LP, LM, LA, HP, HM, HA };
 
+int quick_sort(int &vector, int start, int end) {
+  if (start < end) {
+    int pivot = 0;
+    quick_sort(vector, start, pivot);
+    quick_sort(vector, pivot + 1, end);
+  }
+  return EXIT_SUCCESS;
+}
+
 int read_input(ifstream &input, Matrix *&vectors) {
   string line;
 
@@ -60,7 +69,8 @@ int read_input(ifstream &input, Matrix *&vectors) {
         vectors->list[i][j] = element;
         j++;
       }
-      vectors->sizes[i] = j;
+      vectors->sizes[i] = j + 1;
+      cout << "\nVetor " << i << " tem tamanho " << j << endl;
       cout << endl;
       i++;
       is_size_line = true;
