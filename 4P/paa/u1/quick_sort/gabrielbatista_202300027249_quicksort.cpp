@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -5,6 +6,7 @@
 #include <string>
 
 using namespace std;
+using namespace std::chrono;
 
 // Class for monitoring the matrix and its vectors and the size of each one
 enum Particioning { LP, LM, LA, HP, HM, HA };
@@ -119,6 +121,8 @@ int read_input(ifstream &input, Matrix *&vectors) {
 }
 
 int main(int argc, char *argv[3]) {
+  auto start_program = high_resolution_clock::now();
+
   ifstream input(argv[1]);
   ofstream output(argv[2]);
 
@@ -142,6 +146,11 @@ int main(int argc, char *argv[3]) {
 
   input.close();
   output.close();
+
+  auto end_program = high_resolution_clock::now(); // Fim do programa
+
+  cout << "Tempo total do programa: "
+       << duration<float>(end_program - start_program).count() << " s\n";
 
   return EXIT_SUCCESS;
 }
