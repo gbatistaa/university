@@ -74,10 +74,7 @@ int read_input(ifstream &input, Matrix *&vectors) {
     return EXIT_FAILURE;
   }
 
-  cout << "Extraindo dados do arquivo..." << endl;
-
   int vectors_quantity = stoi(line);
-  cout << "Serão " << vectors_quantity << " vetores" << endl;
 
   // Creating the vectors list with pre allocation size and list for the matrix
   // vectors sizes
@@ -94,25 +91,16 @@ int read_input(ifstream &input, Matrix *&vectors) {
     if (is_size_line) {
       int vector_size = stoi(line);
       vectors->list[i] = new int[vector_size];
-      cout << "Criado vetor " << i
-           << " com " + line + " elementos no endereço: " << vectors->list[i]
-           << endl;
       is_size_line = false;
     } else {
       int element = 0, j = 0;
 
       // Storing each vector elements on its vector
       istringstream iss(line);
-      cout << "Elementos do vetor " << i + 1 << ": ";
       while (iss >> element) {
-        cout << "(" << element << "| " << j << ") ";
-        vectors->list[i][j] = element;
-        j++;
+        vectors->list[i][j++] = element;
       }
-      vectors->sizes[i] = j + 1;
-      cout << "\nVetor " << i << " tem tamanho " << j << endl;
-      cout << endl;
-      i++;
+      vectors->sizes[i++] = j + 1;
       is_size_line = true;
     }
   }
