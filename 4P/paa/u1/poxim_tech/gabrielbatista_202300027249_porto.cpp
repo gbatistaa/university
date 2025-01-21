@@ -5,8 +5,8 @@
 #include <exception>
 #include <fstream>
 #include <iomanip>
+#include <ios>
 #include <iostream>
-#include <memory>
 #include <ostream>
 #include <string>
 
@@ -119,10 +119,24 @@ void sortInAlphabeticOrder(Container *list, int left, int right) {
   }
 }
 
+Container *binarySearch(Container *list, string code, int left, int right) {
+  if (left <= right) {
+    int mid = left + (right - left) / 2;
+    if (code > list[mid].code) {
+      return binarySearch(list, code, 0, mid);
+    } else if (code < list[mid].code) {
+      return binarySearch(list, code, mid + 1, right);
+    } else {
+      return &list[mid];
+    }
+  }
+  return nullptr;
+}
+
 ContainerList *
 filterRegisteredContainersForInspection(ContainerList *registereds,
                                         int registeredsSize,
-                                        Container *fiscalizedsBST) {
+                                        Container *fiscalizeds, int fiscSize) {
   ContainerList *duplicateds = new ContainerList[1];
   if (!duplicateds) {
     cerr << "Erro na alocação de memória!" << endl;
@@ -136,11 +150,11 @@ filterRegisteredContainersForInspection(ContainerList *registereds,
   for (int i = 0; i < registeredsSize; i++) {
     try {
       // Verifies if the registered container was fiscalized:
-      if (binarySearch(fiscalizedsBST, registereds->list[i]) == nullptr)
+      Container *dupli =
+          binarySearch(fiscalizeds, registereds->list[i].code, 0, fiscSize - 1);
+      if (dupli == nullptr)
         continue;
-      if (registereds->list[i].code ==
-          binarySearch(fiscalizedsBST, registereds->list[i])->value.code) {
-
+      if (registereds->list[i].code == dupli->code) {
         // Increments the duplicated containers list size:
         duplicateds->size++;
         Container *resizedList = new Container[duplicateds->size];
@@ -158,24 +172,28 @@ filterRegisteredContainersForInspection(ContainerList *registereds,
   return duplicateds;
 }
 
-bool hasDifferentCnjp(Container container, Container *fiscalizeds,
-                      string &msg) {
-  Container fiscalized = binarySearch(fiscalizeds, container)->value;
-  if (container.code == fiscalized.code && container.cnpj != fiscalized.cnpj) {
-    msg = container.cnpj + "<->" + fiscalized.cnpj;
+bool hasDifferentCnjp(Container container, Container *fiscalizeds, string &msg,
+                      int fiscSize) {
+  Container *fiscalized =
+      binarySearch(fiscalizeds, container.code, 0, fiscSize - 1);
+  if (container.code == fiscalized->code &&
+      container.cnpj != fiscalized->cnpj) {
+    msg = container.cnpj + "<->" + fiscalized->cnpj;
     return true;
   }
   return false;
 }
 float calcContainerWeightDifPercent(Container container, Container *fiscalizeds,
+                                    int fiscSize,
                                     float *bruteWeightDif = nullptr) {
   try {
-    Container fiscalized = binarySearch(fiscalizeds, container)->value;
-    if (container.code == fiscalized.code) {
+    Container *fiscalized =
+        binarySearch(fiscalizeds, container.code, 0, fiscSize);
+    if (container.code == fiscalized->code) {
       float weightDif =
-          calculateDifPercent(container.weight, fiscalized.weight);
+          calculateDifPercent(container.weight, fiscalized->weight);
       if (bruteWeightDif != nullptr)
-        *bruteWeightDif = fabs(container.weight - fiscalized.weight);
+        *bruteWeightDif = fabs(container.weight - fiscalized->weight);
       return weightDif;
     }
     return EXIT_SUCCESS;
@@ -195,13 +213,7 @@ IrregularList *createIrregularContainersList(Container *fiscalizeds,
 
   for (int i = 0; i < duplicatedsSize; i++) {
     Container duplicated = duplicateds->list[i];
-
-    float weightDif;
-    bool difCnpj = hasDifferentCnjp(duplicated, fiscalizeds, irrMsg);
-    float weightDifPercent =
-        calcContainerWeightDifPercent(duplicated, fiscalizeds, &weightDif);
-
-    if (difCnpj) {
+    if (hasDifferentCnjp(duplicated, fiscalizeds, irrMsg, duplicatedsSize)) {
       Irregular newCnpjIrr;
       newCnpjIrr.code = duplicated.code;
       newCnpjIrr.cnpj = duplicated.cnpj;
@@ -214,33 +226,35 @@ IrregularList *createIrregularContainersList(Container *fiscalizeds,
       for (int i = 0; i < irregulars->size - 1; i++) {
         resizedIrrList[i] = irregulars->list[i];
       }
-
       irregulars->list = resizedIrrList;
       irregulars->list[irregulars->size - 1] = newCnpjIrr;
-    }
+    } else {
+      float weightDif;
+      float weightDifPercent = calcContainerWeightDifPercent(
+          duplicated, fiscalizeds, duplicatedsSize, &weightDif);
+      if (isGreaterThan(weightDifPercent, 10)) {
 
-    else if (isGreaterThan(weightDifPercent, 10)) {
+        ostringstream difPerc, bruteDif;
+        difPerc << fixed << setprecision(0) << weightDifPercent;
+        bruteDif << fixed << setprecision(0) << weightDif;
+        string irrMsg = bruteDif.str() + "kg(" + difPerc.str() + "%)";
 
-      ostringstream difPerc, bruteDif;
-      difPerc << fixed << setprecision(0) << weightDifPercent;
-      bruteDif << fixed << setprecision(0) << weightDif;
-      string irrMsg = bruteDif.str() + "kg(" + difPerc.str() + "%)";
+        Irregular newWeightIrr;
+        newWeightIrr.code = duplicated.code;
+        newWeightIrr.cnpj = duplicated.cnpj;
+        newWeightIrr.weight = duplicated.weight;
+        newWeightIrr.irregularity = WEIGHT;
+        newWeightIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
+        irregulars->size++;
 
-      Irregular newWeightIrr;
-      newWeightIrr.code = duplicated.code;
-      newWeightIrr.cnpj = duplicated.cnpj;
-      newWeightIrr.weight = duplicated.weight;
-      newWeightIrr.irregularity = WEIGHT;
-      newWeightIrr.irregularityMessage = duplicated.code + ":" + irrMsg;
-      irregulars->size++;
+        Irregular *resizedIrrList = new Irregular[irregulars->size];
+        for (int i = 0; i < irregulars->size - 1; i++) {
+          resizedIrrList[i] = irregulars->list[i];
+        }
 
-      Irregular *resizedIrrList = new Irregular[irregulars->size];
-      for (int i = 0; i < irregulars->size - 1; i++) {
-        resizedIrrList[i] = irregulars->list[i];
+        irregulars->list = resizedIrrList;
+        irregulars->list[irregulars->size - 1] = newWeightIrr;
       }
-
-      irregulars->list = resizedIrrList;
-      irregulars->list[irregulars->size - 1] = newWeightIrr;
     }
   }
 
@@ -248,7 +262,7 @@ IrregularList *createIrregularContainersList(Container *fiscalizeds,
 }
 
 int mergeIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
-                             int left, int mid, int right) {
+                             int fiscSize, int left, int mid, int right) {
   int n1 = mid - left + 1;
   int n2 = right - mid;
 
@@ -276,10 +290,10 @@ int mergeIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
       // irregularity:
     } else if (leftIrregularity == rightIrregularity) {
       if (leftIrregularity == WEIGHT) {
-        int weightIrrL =
-            round(calcContainerWeightDifPercent(leftVec[i], fiscalizeds));
-        int weightIrrR =
-            round(calcContainerWeightDifPercent(rightVec[j], fiscalizeds));
+        int weightIrrL = round(
+            calcContainerWeightDifPercent(leftVec[i], fiscalizeds, fiscSize));
+        int weightIrrR = round(
+            calcContainerWeightDifPercent(rightVec[j], fiscalizeds, fiscSize));
 
         if (isGreaterThan(weightIrrL, weightIrrR) || weightIrrL == weightIrrR) {
           irregulars[k++] = leftVec[i++];
@@ -308,16 +322,17 @@ int mergeIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
 
 // Função de ordenação Merge Sort
 void sortIrregularContainers(Irregular *irregulars, Container *fiscalizeds,
-                             int left, int right) {
+                             int fiscSize, int left, int right) {
   if (left < right) {
     int mid = left + (right - left) / 2;
 
     // Ordenar a primeira e a segunda metades
-    sortIrregularContainers(irregulars, fiscalizeds, left, mid);
-    sortIrregularContainers(irregulars, fiscalizeds, mid + 1, right);
+    sortIrregularContainers(irregulars, fiscalizeds, fiscSize, left, mid);
+    sortIrregularContainers(irregulars, fiscalizeds, fiscSize, mid + 1, right);
 
     // Mesclar as metades ordenadas
-    mergeIrregularContainers(irregulars, fiscalizeds, left, mid, right);
+    mergeIrregularContainers(irregulars, fiscalizeds, fiscSize, left, mid,
+                             right);
   }
 }
 
@@ -415,11 +430,12 @@ int main(int argc, char *argv[3]) {
 
   cout << "Arquivo lido com sucesso!\n" << endl;
 
-  cout << " criada com sucesso!" << endl;
+  sortInAlphabeticOrder(fiscalizedContainers->list, 0,
+                        fiscalizedContainers->size - 1);
 
   ContainerList *duplicatedContainers = filterRegisteredContainersForInspection(
       registeredContainers, registeredContainers->size,
-      fiscalizedContainers->list);
+      fiscalizedContainers->list, fiscalizedContainers->size);
 
   cout << "Containeres duplicados filtrados com sucesso!" << endl;
 
@@ -429,8 +445,8 @@ int main(int argc, char *argv[3]) {
 
   cout << "Lista de containeres irregulares criada com sucesso!\n" << endl;
 
-  sortIrregularContainers(irregulars->list, fiscalizedContainers->list, 0,
-                          irregulars->size - 1);
+  sortIrregularContainers(irregulars->list, fiscalizedContainers->list,
+                          fiscalizedContainers->size, 0, irregulars->size - 1);
 
   cout << "Ordenação da lista de irregulares criada com sucesso!\n";
 
