@@ -9,6 +9,7 @@ using namespace std;
 // Class for monitoring the matrix and its vectors and the size of each one
 class Matrix {
 public:
+  int size;
   int *sizes;
   int **list;
 };
@@ -27,9 +28,11 @@ int read_input(ifstream &input, Matrix *&vectors) {
   int vectors_quantity = stoi(line);
   cout << "Serão " << vectors_quantity << " vetores" << endl;
 
-  // Creating the vectors list with pre allocation size
+  // Creating the vectors list with pre allocation size and list for the matrix
+  // vectors sizes
   vectors->list = new int *[vectors_quantity];
   vectors->sizes = new int[vectors_quantity];
+  vectors->size = vectors_quantity;
 
   // Reading the vectors lines
   int i = 0;
@@ -55,8 +58,8 @@ int read_input(ifstream &input, Matrix *&vectors) {
         vectors->list[i][j] = element;
         j++;
       }
+      vectors->sizes[i] = j;
       cout << endl;
-
       i++;
       is_size_line = true;
     }
