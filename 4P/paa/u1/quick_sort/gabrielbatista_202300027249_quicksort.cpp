@@ -43,12 +43,92 @@ int lomuto(int *vector, int start, int end) {
   return x;
 }
 
-// int lomuto_median(int &vector, int start, int end) {}
-// int lomuto_random(int &vector, int start, int end) {}
+int lomuto_median(int *vector, int start, int end) {
+  int mid = start + (end - start) / 2;
+  int median_index = (vector[start] <= vector[mid])
+                         ? ((vector[mid] <= vector[end])
+                                ? mid
+                                : (vector[start] <= vector[end] ? end : start))
+                         : ((vector[start] <= vector[end])
+                                ? start
+                                : (vector[mid] <= vector[end] ? end : mid));
+  int temp = vector[end];
+  vector[end] = vector[median_index];
+  vector[median_index] = temp;
+  int pivot = vector[end];
+  int i = start - 1;
+  for (int j = start; j < end; j++) {
+    if (vector[j] <= pivot) {
+      temp = vector[++i];
+      vector[i] = vector[j];
+      vector[j] = temp;
+    }
+  }
+  temp = vector[i + 1];
+  vector[i + 1] = vector[end];
+  vector[end] = temp;
 
-// int hoare(int &vector, int start, int end) {}
-// int hoare_median(int &vector, int start, int end) {}
-// int hoare_random(int &vector, int start, int end) {}
+  return i + 1;
+}
+
+int lomuto_random(int *vector, int start, int end) {
+  int index = start + rand() % (end - start + 1);
+  swap(vector[end], vector[index]);
+  return lomuto(vector, start, end);
+}
+
+int hoare(int *vector, int start, int end) {
+  int pivot = vector[start], x = start - 1, y = end + 1;
+  while (true) {
+    while (vector[--y] > pivot)
+      ;
+    while (vector[++x] < pivot)
+      ;
+    if (x < y)
+      swap(vector[x], vector[y]);
+    else
+      return y;
+  }
+}
+
+int hoare_median(int *vector, int start, int end) {
+  // Calcula o índice da mediana entre o primeiro, o meio e o último elementos
+  int mid = start + (end - start) / 2;
+  int median_index = (vector[start] <= vector[mid])
+                         ? ((vector[mid] <= vector[end])
+                                ? mid
+                                : (vector[start] <= vector[end] ? end : start))
+                         : ((vector[start] <= vector[end])
+                                ? start
+                                : (vector[mid] <= vector[end] ? end : mid));
+
+  int pivot = vector[median_index];
+  int temp = vector[start];
+  vector[start] = vector[median_index];
+  vector[median_index] = temp;
+  int i = start - 1;
+  int j = end + 1;
+  while (1) {
+    do {
+      i++;
+    } while (vector[i] < pivot);
+    do {
+      j--;
+    } while (vector[j] > pivot);
+    if (i >= j) {
+      return j;
+    }
+    temp = vector[i];
+    vector[i] = vector[j];
+    vector[j] = temp;
+  }
+}
+
+int hoare_random(int *vector, int start, int end) {
+  int index = start + rand() % (end - start + 1);
+  swap(vector[end], vector[index]);
+  return EXIT_SUCCESS;
+}
 
 int pivot_chooser(int *vector, Particioning code) {
   int pivot = 0;
