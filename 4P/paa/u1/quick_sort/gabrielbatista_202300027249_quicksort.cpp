@@ -130,20 +130,26 @@ int hoare_random(int *vector, int start, int end) {
   return EXIT_SUCCESS;
 }
 
-int pivot_chooser(int *vector, Particioning code) {
+int pivot_chooser(int *vector, int start, int end, Particioning code) {
   int pivot = 0;
   switch (code) {
   case LP:
+    lomuto(vector, start, end);
     break;
   case LM:
+    lomuto_median(vector, start, end);
     break;
   case LA:
+    lomuto_random(vector, start, end);
     break;
   case HP:
+    hoare(vector, start, end);
     break;
   case HM:
+    hoare_median(vector, start, end);
     break;
   case HA:
+    hoare_random(vector, start, end);
     break;
   }
   return pivot;
@@ -151,7 +157,7 @@ int pivot_chooser(int *vector, Particioning code) {
 
 int quick_sort(int *vector, int start, int end, Particioning code) {
   if (start < end) {
-    int pivot = pivot_chooser(vector, code);
+    int pivot = pivot_chooser(vector, start, end, code);
     quick_sort(vector, start, pivot, code);
     quick_sort(vector, pivot + 1, end, code);
   }
