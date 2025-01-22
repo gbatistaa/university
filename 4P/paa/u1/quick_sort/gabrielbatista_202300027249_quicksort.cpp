@@ -20,7 +20,7 @@ public:
 
 class Quick_Variation {
 public:
-  string format;
+  string message;
   Particioning code;
   int calls;
 };
