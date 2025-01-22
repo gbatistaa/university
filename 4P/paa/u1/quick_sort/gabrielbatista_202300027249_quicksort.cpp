@@ -25,15 +25,10 @@ public:
   int calls;
 };
 
-int swap(int &n1, int &n2) {
-  int aux = n1;
-  n1 = n2;
-  n2 = aux;
-  return EXIT_SUCCESS;
-}
-
 int lomuto(int *vector, int start, int end) {
-  int pivot = vector[end], x = start - 1, y = start;
+  int pivot = vector[end];
+  int x = start - 1;
+  int y = start;
   for (y = start; y < end; y++) {
     if (vector[y] <= pivot) {
       swap(vector[++x], vector[y]);
@@ -134,23 +129,22 @@ int pivot_chooser(int *vector, int start, int end, Particioning code) {
   int pivot = 0;
   switch (code) {
   case LP:
-    cout << "\nOrdenando usando lomuto padrão...\n" << endl;
-    lomuto(vector, start, end);
+    pivot = lomuto(vector, start, end);
     break;
   case LM:
-    lomuto_median(vector, start, end);
+    pivot = lomuto_median(vector, start, end);
     break;
   case LA:
-    lomuto_random(vector, start, end);
+    pivot = lomuto_random(vector, start, end);
     break;
   case HP:
-    hoare(vector, start, end);
+    pivot = hoare(vector, start, end);
     break;
   case HM:
-    hoare_median(vector, start, end);
+    pivot = hoare_median(vector, start, end);
     break;
   case HA:
-    hoare_random(vector, start, end);
+    pivot = hoare_random(vector, start, end);
     break;
   }
   return pivot;
@@ -159,7 +153,7 @@ int pivot_chooser(int *vector, int start, int end, Particioning code) {
 int quick_sort(int *vector, int start, int end, Particioning code) {
   if (start < end) {
     int pivot = pivot_chooser(vector, start, end, code);
-    quick_sort(vector, start, pivot, code);
+    quick_sort(vector, start, pivot - 1, code);
     quick_sort(vector, pivot + 1, end, code);
   }
   return EXIT_SUCCESS;
@@ -237,7 +231,7 @@ int main(int argc, char *argv[3]) {
   }
   cout << endl;
 
-  quick_sort(vectors->list[0], 0, vectors->sizes[0], LP);
+  quick_sort(vectors->list[0], 0, vectors->sizes[0] - 1, LP);
 
   for (int i = 0; i < vectors->sizes[0]; i++) {
     cout << vectors->list[0][i] << " ";
