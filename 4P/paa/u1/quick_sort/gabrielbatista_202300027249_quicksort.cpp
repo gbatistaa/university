@@ -29,18 +29,17 @@ int swap(int &n1, int &n2) {
   int aux = n1;
   n1 = n2;
   n2 = aux;
-
   return EXIT_SUCCESS;
 }
 
 int lomuto(int *vector, int start, int end) {
   int pivot = vector[end], x = start - 1, y = start;
-  for (int i = 0; y < end; y++) {
-    if (vector[end] <= pivot) {
+  for (y = start; y < end; y++) {
+    if (vector[y] <= pivot) {
       swap(vector[++x], vector[y]);
     }
-    swap(vector[++x], vector[end]);
   }
+  swap(vector[++x], vector[end]);
   return x;
 }
 
@@ -201,7 +200,7 @@ int read_input(ifstream &input, Matrix *&vectors) {
       while (iss >> element) {
         vectors->list[i][j++] = element;
       }
-      vectors->sizes[i++] = j + 1;
+      vectors->sizes[i++] = j;
       is_size_line = true;
     }
   }
@@ -234,14 +233,14 @@ int main(int argc, char *argv[3]) {
   read_input(input, vectors);
 
   for (int i = 0; i < vectors->sizes[0]; i++) {
-    cout << vectors->list[0][i];
+    cout << vectors->list[0][i] << " ";
   }
   cout << endl;
 
   quick_sort(vectors->list[0], 0, vectors->sizes[0], LP);
 
   for (int i = 0; i < vectors->sizes[0]; i++) {
-    cout << vectors->list[0][i];
+    cout << vectors->list[0][i] << " ";
   }
   cout << endl;
 
