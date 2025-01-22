@@ -39,6 +39,7 @@ int lomuto(int *vector, int start, int end) {
     if (vector[end] <= pivot) {
       swap(vector[++x], vector[y]);
     }
+    swap(vector[++x], vector[end]);
   }
   return x;
 }
@@ -134,6 +135,7 @@ int pivot_chooser(int *vector, int start, int end, Particioning code) {
   int pivot = 0;
   switch (code) {
   case LP:
+    cout << "\nOrdenando usando lomuto padrão...\n" << endl;
     lomuto(vector, start, end);
     break;
   case LM:
@@ -230,6 +232,18 @@ int main(int argc, char *argv[3]) {
   Matrix *vectors = new Matrix();
 
   read_input(input, vectors);
+
+  for (int i = 0; i < vectors->sizes[0]; i++) {
+    cout << vectors->list[0][i];
+  }
+  cout << endl;
+
+  quick_sort(vectors->list[0], 0, vectors->sizes[0], LP);
+
+  for (int i = 0; i < vectors->sizes[0]; i++) {
+    cout << vectors->list[0][i];
+  }
+  cout << endl;
 
   input.close();
   output.close();
