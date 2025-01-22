@@ -2,21 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-int isDuplicated(int size, int *vector, int num) {
-  for (int i = 0; i < size; i++) {
-    if (vector[i] == num) {
-      return 1; // Número duplicado
-    }
-  }
-  return 0; // Não duplicado
-}
-
 void generateRandomVector(int n, int *vector) {
   int randomNum;
   for (int i = 0; i < n; i++) {
-    do {
-      randomNum = rand() % 201 - 50; // Gera números de -50 a 150
-    } while (isDuplicated(i, vector, randomNum));
+    randomNum = rand() % 201 - 50; // Gera números de -50 a 150
     vector[i] = randomNum;
   }
 }
