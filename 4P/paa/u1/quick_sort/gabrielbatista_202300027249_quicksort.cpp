@@ -1,9 +1,15 @@
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
+
+#define RESET "\033[0m"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
 
 using namespace std;
 using namespace std::chrono;
@@ -122,11 +128,11 @@ int hoare_median(int *vector, int start, int end) {
 int hoare_random(int *vector, int start, int end) {
   int index = start + rand() % (end - start + 1);
   swap(vector[end], vector[index]);
-  return EXIT_SUCCESS;
+  return hoare(vector, start, end);
 }
 
 int pivot_chooser(int *vector, int start, int end, Particioning code) {
-  int pivot = 0;
+  int pivot;
   switch (code) {
   case LP:
     pivot = lomuto(vector, start, end);
@@ -153,7 +159,7 @@ int pivot_chooser(int *vector, int start, int end, Particioning code) {
 int quick_sort(int *vector, int start, int end, Particioning code) {
   if (start < end) {
     int pivot = pivot_chooser(vector, start, end, code);
-    quick_sort(vector, start, pivot - 1, code);
+    quick_sort(vector, start, code < HP ? pivot - 1 : pivot, code);
     quick_sort(vector, pivot + 1, end, code);
   }
   return EXIT_SUCCESS;
@@ -202,6 +208,15 @@ int read_input(ifstream &input, Matrix *&vectors) {
   return EXIT_SUCCESS;
 }
 
+bool sorted_it_is(int *vector, int size) {
+  if (size <= 1)
+    return true;
+  for (int i = 1; i < size; i++)
+    if (vector[i] < vector[i - 1])
+      return false;
+  return true;
+}
+
 int main(int argc, char *argv[3]) {
   auto start_program = high_resolution_clock::now();
 
@@ -226,17 +241,13 @@ int main(int argc, char *argv[3]) {
 
   read_input(input, vectors);
 
-  for (int i = 0; i < vectors->sizes[0]; i++) {
-    cout << vectors->list[0][i] << " ";
+  for (int i = 0; i < vectors->size; i++) {
+    quick_sort(vectors->list[i], 0, vectors->sizes[i] - 1, HA);
+    cout << (sorted_it_is(vectors->list[i], vectors->sizes[i])
+                 ? GREEN "Está ordenado" RESET
+                 : RED "Não está ordenado" RESET)
+         << endl;
   }
-  cout << endl;
-
-  quick_sort(vectors->list[0], 0, vectors->sizes[0] - 1, LP);
-
-  for (int i = 0; i < vectors->sizes[0]; i++) {
-    cout << vectors->list[0][i] << " ";
-  }
-  cout << endl;
 
   input.close();
   output.close();
