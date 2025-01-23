@@ -33,8 +33,8 @@ void swap(int &n1, int &n2) {
 }
 
 int lomuto(int *vector, int start, int end, int &calls) {
-  int pivot = vector[end], x = start - 1, y = start;
-  for (y = start; y < end; y++) {
+  int pivot = vector[end], x = start - 1;
+  for (int y = start; y < end; y++) {
     if (vector[y] <= pivot) {
       swap(vector[++x], vector[y]);
       calls++;
@@ -46,33 +46,36 @@ int lomuto(int *vector, int start, int end, int &calls) {
 }
 
 int lomuto_median(int *vector, int start, int end, int &calls) {
-  int mid = start + (end - start) / 2;
-  if (vector[start] > vector[mid]) {
-    swap(vector[start], vector[mid]);
+  int size = end - start + 1;
+  int i1 = start + size / 4, i2 = start + size / 2, i3 = start + 3 * size / 4;
+  if (vector[i1] > vector[i2]) {
+    swap(vector[i1], vector[i2]);
     calls++;
   }
-  if (vector[start] > vector[end]) {
-    swap(vector[start], vector[end]);
+  if (vector[i1] > vector[i3]) {
+    swap(vector[i1], vector[i3]);
     calls++;
   }
-  if (vector[mid] > vector[end]) {
-    swap(vector[mid], vector[end]);
+  if (vector[i2] > vector[i3]) {
+    swap(vector[i2], vector[i3]);
     calls++;
   }
-  swap(vector[mid], vector[end]);
+  swap(vector[i2], vector[end]);
   calls++;
+
   int pivot = vector[end];
   int i = start - 1;
+
   for (int j = start; j < end; j++) {
     if (vector[j] <= pivot) {
-      i++;
-      swap(vector[i], vector[j]);
+      swap(vector[++i], vector[j]);
       calls++;
     }
   }
-  swap(vector[i + 1], vector[end]);
+  swap(vector[++i], vector[end]);
   calls++;
-  return i + 1;
+
+  return i;
 }
 
 int lomuto_random(int *vector, int start, int end, int &calls) {
@@ -250,7 +253,7 @@ int main(int argc, char *argv[3]) {
 
   for (int i = 0; i < vectors->size; i++) {
     int stable_vector[vectors->sizes[i]];
-
+    cout << i << ":N(" << vectors->sizes[i] << ")";
     for (int part = LP; part <= HA; part++) {
       int calls = 0;
       for (int j = 0; j < vectors->sizes[i]; j++) {
