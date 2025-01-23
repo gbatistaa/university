@@ -128,7 +128,7 @@ int hoare_median(int *vector, int start, int end, int &calls) {
 
 int hoare_random(int *vector, int start, int end, int &calls) {
   int index = start + rand() % (end - start + 1);
-  swap(vector[end], vector[index]);
+  swap(vector[start], vector[index]);
   calls++;
   return hoare(vector, start, end, calls);
 }
@@ -249,22 +249,20 @@ int main(int argc, char *argv[3]) {
   string names[6] = {"LP", "LM", "LA", "HP", "HM", "HA"};
 
   for (int i = 0; i < vectors->size; i++) {
-    int stable_vector[vectors->sizes[i]], calls = 1;
-    for (int j = 0; j < vectors->sizes[i]; j++) {
-      stable_vector[j] = vectors->list[i][j];
-    }
+    int stable_vector[vectors->sizes[i]];
 
     for (int part = LP; part <= HA; part++) {
+      int calls = 0;
+      for (int j = 0; j < vectors->sizes[i]; j++) {
+        stable_vector[j] = vectors->list[i][j];
+      }
+      calls++;
       quick_sort(stable_vector, 0, vectors->sizes[i] - 1, (Particioning)part,
                  calls);
-      for (int k = 0; k < vectors->sizes[i]; k++) {
-        // cout << stable_vector[k] << " ";
-      }
-      // cout << "| Quantidade de chamadas (" + names[part] + "): " << calls
-      //      << endl;
+      cout << "," + names[part] << "(" << calls << ")";
       calls = 0;
     }
-    // cout << endl;
+    cout << endl;
   }
 
   input.close();
@@ -272,7 +270,7 @@ int main(int argc, char *argv[3]) {
 
   auto end_program = high_resolution_clock::now();
 
-  cout << "Tempo total do programa: "
+  cout << "\nTempo total do programa: "
        << duration<float>(end_program - start_program).count() << " s\n";
 
   return EXIT_SUCCESS;
