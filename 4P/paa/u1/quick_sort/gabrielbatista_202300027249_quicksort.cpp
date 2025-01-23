@@ -131,8 +131,9 @@ int hoare_median(int *vector, int start, int end, int &calls) {
 }
 
 int hoare_random(int *vector, int start, int end, int &calls) {
-  int index = start + rand() % (end - start + 1);
-  swap(vector[start], vector[index]);
+  int size_sub_vec = end - start + 1;
+  int random_idx = (start + abs(vector[start])) % random_idx;
+  swap(vector[random_idx]);
   calls++;
   return hoare(vector, start, end, calls);
 }
