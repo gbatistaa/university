@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
@@ -6,10 +5,6 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-
-#define RESET "\033[0m"
-#define RED "\033[31m"
-#define GREEN "\033[32m"
 
 using namespace std;
 using namespace std::chrono;
@@ -31,20 +26,28 @@ public:
   int calls;
 };
 
-int lomuto(int *vector, int start, int end) {
+void swap(int &n1, int &n2) {
+  int aux = n1;
+  n1 = n2;
+  n2 = aux;
+}
+
+int lomuto(int *vector, int start, int end, int &calls) {
   int pivot = vector[end];
   int x = start - 1;
   int y = start;
   for (y = start; y < end; y++) {
     if (vector[y] <= pivot) {
       swap(vector[++x], vector[y]);
+      calls++;
     }
   }
   swap(vector[++x], vector[end]);
+  calls++;
   return x;
 }
 
-int lomuto_median(int *vector, int start, int end) {
+int lomuto_median(int *vector, int start, int end, int &calls) {
   int mid = start + (end - start) / 2;
   int median_index = (vector[start] <= vector[mid])
                          ? ((vector[mid] <= vector[end])
@@ -72,28 +75,29 @@ int lomuto_median(int *vector, int start, int end) {
   return i + 1;
 }
 
-int lomuto_random(int *vector, int start, int end) {
+int lomuto_random(int *vector, int start, int end, int &calls) {
   int index = start + rand() % (end - start + 1);
   swap(vector[end], vector[index]);
-  return lomuto(vector, start, end);
+  calls++;
+  return lomuto(vector, start, end, calls);
 }
 
-int hoare(int *vector, int start, int end) {
+int hoare(int *vector, int start, int end, int &calls) {
   int pivot = vector[start], x = start - 1, y = end + 1;
   while (true) {
     while (vector[--y] > pivot)
       ;
     while (vector[++x] < pivot)
       ;
-    if (x < y)
+    if (x < y) {
       swap(vector[x], vector[y]);
-    else
+      calls++;
+    } else
       return y;
   }
 }
 
-int hoare_median(int *vector, int start, int end) {
-  // Calcula o índice da mediana entre o primeiro, o meio e o último elementos
+int hoare_median(int *vector, int start, int end, int &calls) {
   int mid = start + (end - start) / 2;
   int median_index = (vector[start] <= vector[mid])
                          ? ((vector[mid] <= vector[end])
@@ -125,42 +129,46 @@ int hoare_median(int *vector, int start, int end) {
   }
 }
 
-int hoare_random(int *vector, int start, int end) {
+int hoare_random(int *vector, int start, int end, int &calls) {
   int index = start + rand() % (end - start + 1);
   swap(vector[end], vector[index]);
-  return hoare(vector, start, end);
+  calls++;
+  return hoare(vector, start, end, calls);
 }
 
-int pivot_chooser(int *vector, int start, int end, Particioning code) {
-  int pivot;
+int pivot_chooser(int *vector, int start, int end, Particioning code,
+                  int &calls) {
+  int pivot = 0;
   switch (code) {
   case LP:
-    pivot = lomuto(vector, start, end);
+    pivot = lomuto(vector, start, end, calls);
     break;
   case LM:
-    pivot = lomuto_median(vector, start, end);
+    pivot = lomuto_median(vector, start, end, calls);
     break;
   case LA:
-    pivot = lomuto_random(vector, start, end);
+    pivot = lomuto_random(vector, start, end, calls);
     break;
   case HP:
-    pivot = hoare(vector, start, end);
+    pivot = hoare(vector, start, end, calls);
     break;
   case HM:
-    pivot = hoare_median(vector, start, end);
+    pivot = hoare_median(vector, start, end, calls);
     break;
   case HA:
-    pivot = hoare_random(vector, start, end);
+    pivot = hoare_random(vector, start, end, calls);
     break;
   }
   return pivot;
 }
 
-int quick_sort(int *vector, int start, int end, Particioning code) {
+int quick_sort(int *vector, int start, int end, Particioning code, int &calls) {
   if (start < end) {
-    int pivot = pivot_chooser(vector, start, end, code);
-    quick_sort(vector, start, code < HP ? pivot - 1 : pivot, code);
-    quick_sort(vector, pivot + 1, end, code);
+    int pivot = pivot_chooser(vector, start, end, code, calls);
+    quick_sort(vector, start, code < HP ? pivot - 1 : pivot, code, calls);
+    calls++;
+    quick_sort(vector, pivot + 1, end, code, calls);
+    calls++;
   }
   return EXIT_SUCCESS;
 }
@@ -242,17 +250,21 @@ int main(int argc, char *argv[3]) {
   read_input(input, vectors);
 
   for (int i = 0; i < vectors->size; i++) {
-    quick_sort(vectors->list[i], 0, vectors->sizes[i] - 1, HA);
-    cout << (sorted_it_is(vectors->list[i], vectors->sizes[i])
-                 ? GREEN "Está ordenado" RESET
-                 : RED "Não está ordenado" RESET)
-         << endl;
+    int stable_vector[vectors->sizes[i]], calls = 1;
+    for (int j = 0; j < vectors->sizes[i]; j++) {
+      stable_vector[j] = vectors->list[i][j];
+    }
+    quick_sort(stable_vector, 0, vectors->sizes[i] - 1, LP, calls);
+    for (int k = 0; k < vectors->sizes[i]; k++) {
+      cout << stable_vector[k] << " ";
+    }
+    cout << "Quantidade de chamadas: " << calls << "\n" << endl;
   }
 
   input.close();
   output.close();
 
-  auto end_program = high_resolution_clock::now(); // Fim do programa
+  auto end_program = high_resolution_clock::now();
 
   cout << "Tempo total do programa: "
        << duration<float>(end_program - start_program).count() << " s\n";
