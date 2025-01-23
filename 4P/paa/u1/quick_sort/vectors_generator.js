@@ -27,7 +27,7 @@ function generateRandomVector(n) {
   var vector = [];
   var randomNum = 55;
   for (var i = 0; i < n; i++) {
-    randomNum = Math.round(Math.random() * 150) - 50;
+    randomNum = Math.floor(Math.random() * 2000000) - 999999;
     vector.push(randomNum);
   }
   return vector;
