@@ -27,7 +27,7 @@ function generateRandomVector(n) {
   var vector = [];
   var randomNum = 55;
   for (var i = 0; i < n; i++) {
-    randomNum = Math.floor(Math.random() * 2000000) - 999999;
+    randomNum = Math.floor(Math.random() * 150) + 50;
     vector.push(randomNum);
   }
   return vector;
@@ -38,7 +38,7 @@ function generateQuickSortFile(vectorsQuant) {
   // Iterator to write data in the file of n(vectorsQuant) vectors:
   for (let i = 0; i < vectorsQuant; i++) {
     // Chooses randomly the size of the vector from 3 to 15:
-    var randomVectorSize = Math.round(Math.random() * 1990) + 10;
+    var randomVectorSize = Math.round(Math.random() * 10) + 10;
     var vector = generateRandomVector(randomVectorSize);
     // Writes the quantity of elements in one line:
     fs.appendFileSync(argvs[0], "".concat(randomVectorSize, "\n"));
