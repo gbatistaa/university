@@ -10,7 +10,7 @@ using namespace std;
 using namespace std::chrono;
 
 // Class for monitoring the matrix and its vectors and the size of each one
-enum Particioning { LP, LM, LA, HP, HM, HA };
+typedef enum Particioning { LP, LM, LA, HP, HM, HA } Particioning;
 
 class Matrix {
 public:
@@ -33,9 +33,7 @@ void swap(int &n1, int &n2) {
 }
 
 int lomuto(int *vector, int start, int end, int &calls) {
-  int pivot = vector[end];
-  int x = start - 1;
-  int y = start;
+  int pivot = vector[end], x = start - 1, y = start;
   for (y = start; y < end; y++) {
     if (vector[y] <= pivot) {
       swap(vector[++x], vector[y]);
@@ -48,7 +46,6 @@ int lomuto(int *vector, int start, int end, int &calls) {
 }
 
 int lomuto_median(int *vector, int start, int end, int &calls) {
-  calls++;
   int mid = start + (end - start) / 2;
   if (vector[start] > vector[mid]) {
     swap(vector[start], vector[mid]);
@@ -249,16 +246,25 @@ int main(int argc, char *argv[3]) {
 
   read_input(input, vectors);
 
+  string names[6] = {"LP", "LM", "LA", "HP", "HM", "HA"};
+
   for (int i = 0; i < vectors->size; i++) {
     int stable_vector[vectors->sizes[i]], calls = 1;
     for (int j = 0; j < vectors->sizes[i]; j++) {
       stable_vector[j] = vectors->list[i][j];
     }
-    quick_sort(stable_vector, 0, vectors->sizes[i] - 1, LM, calls);
-    for (int k = 0; k < vectors->sizes[i]; k++) {
-      cout << stable_vector[k] << " ";
+
+    for (int part = LP; part <= HA; part++) {
+      quick_sort(stable_vector, 0, vectors->sizes[i] - 1, (Particioning)part,
+                 calls);
+      for (int k = 0; k < vectors->sizes[i]; k++) {
+        // cout << stable_vector[k] << " ";
+      }
+      // cout << "| Quantidade de chamadas (" + names[part] + "): " << calls
+      //      << endl;
+      calls = 0;
     }
-    cout << "Quantidade de chamadas: " << calls << "\n" << endl;
+    // cout << endl;
   }
 
   input.close();
