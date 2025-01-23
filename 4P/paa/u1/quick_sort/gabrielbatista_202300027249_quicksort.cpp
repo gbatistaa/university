@@ -79,8 +79,9 @@ int lomuto_median(int *vector, int start, int end, int &calls) {
 }
 
 int lomuto_random(int *vector, int start, int end, int &calls) {
-  int index = start + rand() % (end - start + 1);
-  swap(vector[end], vector[index]);
+  int size_sub_vec = end - start + 1;
+  int random_idx = (start + abs(vector[start])) % random_idx;
+  swap(vector[random_idx]);
   calls++;
   return lomuto(vector, start, end, calls);
 }
