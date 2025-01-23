@@ -48,30 +48,33 @@ int lomuto(int *vector, int start, int end, int &calls) {
 }
 
 int lomuto_median(int *vector, int start, int end, int &calls) {
+  calls++;
   int mid = start + (end - start) / 2;
-  int median_index = (vector[start] <= vector[mid])
-                         ? ((vector[mid] <= vector[end])
-                                ? mid
-                                : (vector[start] <= vector[end] ? end : start))
-                         : ((vector[start] <= vector[end])
-                                ? start
-                                : (vector[mid] <= vector[end] ? end : mid));
-  int temp = vector[end];
-  vector[end] = vector[median_index];
-  vector[median_index] = temp;
+  if (vector[start] > vector[mid]) {
+    swap(vector[start], vector[mid]);
+    calls++;
+  }
+  if (vector[start] > vector[end]) {
+    swap(vector[start], vector[end]);
+    calls++;
+  }
+  if (vector[mid] > vector[end]) {
+    swap(vector[mid], vector[end]);
+    calls++;
+  }
+  swap(vector[mid], vector[end]);
+  calls++;
   int pivot = vector[end];
   int i = start - 1;
   for (int j = start; j < end; j++) {
     if (vector[j] <= pivot) {
-      temp = vector[++i];
-      vector[i] = vector[j];
-      vector[j] = temp;
+      i++;
+      swap(vector[i], vector[j]);
+      calls++;
     }
   }
-  temp = vector[i + 1];
-  vector[i + 1] = vector[end];
-  vector[end] = temp;
-
+  swap(vector[i + 1], vector[end]);
+  calls++;
   return i + 1;
 }
 
@@ -99,33 +102,30 @@ int hoare(int *vector, int start, int end, int &calls) {
 
 int hoare_median(int *vector, int start, int end, int &calls) {
   int mid = start + (end - start) / 2;
-  int median_index = (vector[start] <= vector[mid])
-                         ? ((vector[mid] <= vector[end])
-                                ? mid
-                                : (vector[start] <= vector[end] ? end : start))
-                         : ((vector[start] <= vector[end])
-                                ? start
-                                : (vector[mid] <= vector[end] ? end : mid));
-
-  int pivot = vector[median_index];
-  int temp = vector[start];
-  vector[start] = vector[median_index];
-  vector[median_index] = temp;
-  int i = start - 1;
-  int j = end + 1;
-  while (1) {
-    do {
-      i++;
-    } while (vector[i] < pivot);
-    do {
-      j--;
-    } while (vector[j] > pivot);
-    if (i >= j) {
+  if (vector[start] > vector[mid]) {
+    swap(vector[start], vector[mid]);
+    calls++;
+  }
+  if (vector[start] > vector[end]) {
+    swap(vector[start], vector[end]);
+    calls++;
+  }
+  if (vector[mid] > vector[end]) {
+    swap(vector[mid], vector[end]);
+    calls++;
+  }
+  swap(vector[start], vector[mid]);
+  calls++;
+  int pivot = vector[start], i = start - 1, j = end + 1;
+  while (true) {
+    while (vector[--j] > pivot)
+      ;
+    while (vector[++i] < pivot)
+      ;
+    if (i >= j)
       return j;
-    }
-    temp = vector[i];
-    vector[i] = vector[j];
-    vector[j] = temp;
+    swap(vector[i], vector[j]);
+    calls++;
   }
 }
 
@@ -254,7 +254,7 @@ int main(int argc, char *argv[3]) {
     for (int j = 0; j < vectors->sizes[i]; j++) {
       stable_vector[j] = vectors->list[i][j];
     }
-    quick_sort(stable_vector, 0, vectors->sizes[i] - 1, LP, calls);
+    quick_sort(stable_vector, 0, vectors->sizes[i] - 1, LM, calls);
     for (int k = 0; k < vectors->sizes[i]; k++) {
       cout << stable_vector[k] << " ";
     }
