@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -80,8 +81,8 @@ int lomuto_median(int *vector, int start, int end, int &calls) {
 
 int lomuto_random(int *vector, int start, int end, int &calls) {
   int size_sub_vec = end - start + 1;
-  int random_idx = (start + abs(vector[start])) % random_idx;
-  swap(vector[random_idx]);
+  int random_idx = start + abs(vector[start]) % size_sub_vec;
+  swap(vector[random_idx], vector[end]);
   calls++;
   return lomuto(vector, start, end, calls);
 }
@@ -132,8 +133,8 @@ int hoare_median(int *vector, int start, int end, int &calls) {
 
 int hoare_random(int *vector, int start, int end, int &calls) {
   int size_sub_vec = end - start + 1;
-  int random_idx = (start + abs(vector[start])) % random_idx;
-  swap(vector[random_idx]);
+  int random_idx = start + abs(vector[start]) % size_sub_vec;
+  swap(vector[random_idx], vector[start]);
   calls++;
   return hoare(vector, start, end, calls);
 }
@@ -275,7 +276,7 @@ int main(int argc, char *argv[3]) {
 
   auto end_program = high_resolution_clock::now();
 
-  cout << "\nTempo total do programa: "
+  cout << "\nExecution time: "
        << duration<float>(end_program - start_program).count() << " s\n";
 
   return EXIT_SUCCESS;
