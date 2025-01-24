@@ -266,6 +266,7 @@ int main(int argc, char *argv[3]) {
   for (int i = 0; i < vectors->size; i++) {
     int stable_vector[vectors->sizes[i]];
     Quick_Variation variations[6] = {};
+    int variations_size = sizeof(variations) / sizeof(variations[0]);
     string vector_id =
         to_string(i) + ":N(" + to_string(vectors->sizes[i]) + ")";
     int calls = 0;
@@ -281,7 +282,7 @@ int main(int argc, char *argv[3]) {
       variations[part].calls = calls;
       calls = 0;
     }
-    sort_qs_variations_calls(variations, 0, 5);
+    sort_qs_variations_calls(variations, 0, variations_size - 1);
     string all_variations = "";
     for (int part = LP; part <= HA; part++) {
       all_variations += variations[part].message;
