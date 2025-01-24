@@ -6,6 +6,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <utility>
 
 using namespace std;
 using namespace std::chrono;
@@ -23,11 +24,10 @@ public:
 class Quick_Variation {
 public:
   string message;
-  Particioning code;
   int calls;
 
   // Quick variation constructor
-  Quick_Variation() : message(""), code(LP), calls(0) {}
+  Quick_Variation() : message(""), calls(0) {}
 };
 
 void swap(int &n1, int &n2) {
@@ -51,22 +51,22 @@ int lomuto(int *vector, int start, int end, int &calls) {
 
 int lomuto_median(int *vector, int start, int end, int &calls) {
   int size = end - start + 1;
-  int i1 = start + size / 4, i2 = start + size / 2, i3 = start + 3 * size / 4;
-  if (vector[i1] > vector[i2]) {
-    swap(vector[i1], vector[i2]);
+  int i1 = start + (size / 4), i2 = start + (size / 2),
+      i3 = start + ((3 * size) / 4);
+  if ((vector[i1] >= vector[i2] && vector[i1] <= vector[i3]) ||
+      (vector[i1] <= vector[i2] && vector[i1] >= vector[i3])) {
+    swap(vector[end], vector[i1]);
     calls++;
+    return lomuto(vector, start, end, calls);
   }
-  if (vector[i1] > vector[i3]) {
-    swap(vector[i1], vector[i3]);
+  if ((vector[i2] >= vector[i1] && vector[i2] <= vector[i3]) ||
+      (vector[i2] <= vector[i1] && vector[i2] >= vector[i3])) {
+    swap(vector[end], vector[i2]);
     calls++;
+    return lomuto(vector, start, end, calls);
   }
-  if (vector[i2] > vector[i3]) {
-    swap(vector[i2], vector[i3]);
-    calls++;
-  }
-  swap(vector[i2], vector[end]);
+  swap(vector[end], vector[i3]);
   calls++;
-
   return lomuto(vector, start, end, calls);
 }
 
@@ -95,22 +95,22 @@ int hoare(int *vector, int start, int end, int &calls) {
 
 int hoare_median(int *vector, int start, int end, int &calls) {
   int size = end - start + 1;
-  int i1 = start + size / 4, i2 = start + size / 2, i3 = start + 3 * size / 4;
-  if (vector[i1] > vector[i2]) {
-    swap(vector[i1], vector[i2]);
+  int i1 = start + (size / 4), i2 = start + (size / 2),
+      i3 = start + ((3 * size) / 4);
+  if ((vector[i1] >= vector[i2] && vector[i1] <= vector[i3]) ||
+      (vector[i1] <= vector[i2] && vector[i1] >= vector[i3])) {
+    swap(vector[end], vector[i1]);
     calls++;
+    return hoare(vector, start, end, calls);
   }
-  if (vector[i1] > vector[i3]) {
-    swap(vector[i1], vector[i3]);
+  if ((vector[i2] >= vector[i1] && vector[i2] <= vector[i3]) ||
+      (vector[i2] <= vector[i1] && vector[i2] >= vector[i3])) {
+    swap(vector[end], vector[i2]);
     calls++;
+    return hoare(vector, start, end, calls);
   }
-  if (vector[i2] > vector[i3]) {
-    swap(vector[i2], vector[i3]);
-    calls++;
-  }
-  swap(vector[i2], vector[start]);
+  swap(vector[end], vector[i3]);
   calls++;
-
   return hoare(vector, start, end, calls);
 }
 
@@ -240,7 +240,9 @@ int main(int argc, char *argv[3]) {
   for (int i = 0; i < vectors->size; i++) {
     int stable_vector[vectors->sizes[i]];
     Quick_Variation variations[6] = {};
-    cout << i << ":N(" << vectors->sizes[i] << ")";
+    string vector_id =
+        to_string(i) + ":N(" + to_string(vectors->sizes[i]) + ")";
+    cout << vector_id;
     int calls = 0;
     for (int part = LP; part <= HA; part++) {
       for (int j = 0; j < vectors->sizes[i]; j++) {
@@ -249,10 +251,13 @@ int main(int argc, char *argv[3]) {
       calls++;
       quick_sort(stable_vector, 0, vectors->sizes[i] - 1, (Particioning)part,
                  calls);
+      variations[part].message =
+          "," + names[part] + "(" + to_string(calls) + ")";
+      variations[part].calls = calls;
       calls = 0;
     }
     for (int part = LP; part <= HA; part++) {
-      cout << "," + names[part] << "(" << calls << ")";
+      cout << variations[part].message;
     }
     cout << endl;
   }
