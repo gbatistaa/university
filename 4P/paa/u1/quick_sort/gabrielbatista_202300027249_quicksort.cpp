@@ -6,7 +6,6 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-#include <utility>
 
 using namespace std;
 using namespace std::chrono;
@@ -99,17 +98,17 @@ int hoare_median(int *vector, int start, int end, int &calls) {
       i3 = start + ((3 * size) / 4);
   if ((vector[i1] >= vector[i2] && vector[i1] <= vector[i3]) ||
       (vector[i1] <= vector[i2] && vector[i1] >= vector[i3])) {
-    swap(vector[end], vector[i1]);
+    swap(vector[start], vector[i1]);
     calls++;
     return hoare(vector, start, end, calls);
   }
   if ((vector[i2] >= vector[i1] && vector[i2] <= vector[i3]) ||
       (vector[i2] <= vector[i1] && vector[i2] >= vector[i3])) {
-    swap(vector[end], vector[i2]);
+    swap(vector[start], vector[i2]);
     calls++;
     return hoare(vector, start, end, calls);
   }
-  swap(vector[end], vector[i3]);
+  swap(vector[start], vector[i3]);
   calls++;
   return hoare(vector, start, end, calls);
 }
