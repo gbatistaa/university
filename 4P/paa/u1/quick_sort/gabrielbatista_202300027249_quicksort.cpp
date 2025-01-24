@@ -11,7 +11,7 @@ using namespace std;
 using namespace std::chrono;
 
 // Class for monitoring the matrix and its vectors and the size of each one
-typedef enum Particioning { LP, LM, LA, HP, HM, HA } Particioning;
+enum Particioning { LP, LM, LA, HP, HM, HA };
 
 class Matrix {
 public:
@@ -25,6 +25,9 @@ public:
   string message;
   Particioning code;
   int calls;
+
+  // Quick variation constructor
+  Quick_Variation() : message(""), code(LP), calls(0) {}
 };
 
 void swap(int &n1, int &n2) {
@@ -64,19 +67,7 @@ int lomuto_median(int *vector, int start, int end, int &calls) {
   swap(vector[i2], vector[end]);
   calls++;
 
-  int pivot = vector[end];
-  int i = start - 1;
-
-  for (int j = start; j < end; j++) {
-    if (vector[j] <= pivot) {
-      swap(vector[++i], vector[j]);
-      calls++;
-    }
-  }
-  swap(vector[++i], vector[end]);
-  calls++;
-
-  return i;
+  return lomuto(vector, start, end, calls);
 }
 
 int lomuto_random(int *vector, int start, int end, int &calls) {
@@ -103,32 +94,24 @@ int hoare(int *vector, int start, int end, int &calls) {
 }
 
 int hoare_median(int *vector, int start, int end, int &calls) {
-  int mid = start + (end - start) / 2;
-  if (vector[start] > vector[mid]) {
-    swap(vector[start], vector[mid]);
+  int size = end - start + 1;
+  int i1 = start + size / 4, i2 = start + size / 2, i3 = start + 3 * size / 4;
+  if (vector[i1] > vector[i2]) {
+    swap(vector[i1], vector[i2]);
     calls++;
   }
-  if (vector[start] > vector[end]) {
-    swap(vector[start], vector[end]);
+  if (vector[i1] > vector[i3]) {
+    swap(vector[i1], vector[i3]);
     calls++;
   }
-  if (vector[mid] > vector[end]) {
-    swap(vector[mid], vector[end]);
+  if (vector[i2] > vector[i3]) {
+    swap(vector[i2], vector[i3]);
     calls++;
   }
-  swap(vector[start], vector[mid]);
+  swap(vector[i2], vector[start]);
   calls++;
-  int pivot = vector[start], i = start - 1, j = end + 1;
-  while (true) {
-    while (vector[--j] > pivot)
-      ;
-    while (vector[++i] < pivot)
-      ;
-    if (i >= j)
-      return j;
-    swap(vector[i], vector[j]);
-    calls++;
-  }
+
+  return hoare(vector, start, end, calls);
 }
 
 int hoare_random(int *vector, int start, int end, int &calls) {
@@ -256,17 +239,20 @@ int main(int argc, char *argv[3]) {
 
   for (int i = 0; i < vectors->size; i++) {
     int stable_vector[vectors->sizes[i]];
+    Quick_Variation variations[6] = {};
     cout << i << ":N(" << vectors->sizes[i] << ")";
+    int calls = 0;
     for (int part = LP; part <= HA; part++) {
-      int calls = 0;
       for (int j = 0; j < vectors->sizes[i]; j++) {
         stable_vector[j] = vectors->list[i][j];
       }
       calls++;
       quick_sort(stable_vector, 0, vectors->sizes[i] - 1, (Particioning)part,
                  calls);
-      cout << "," + names[part] << "(" << calls << ")";
       calls = 0;
+    }
+    for (int part = LP; part <= HA; part++) {
+      cout << "," + names[part] << "(" << calls << ")";
     }
     cout << endl;
   }
