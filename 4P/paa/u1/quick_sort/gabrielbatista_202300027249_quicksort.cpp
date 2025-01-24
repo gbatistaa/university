@@ -34,6 +34,11 @@ void swap(int &n1, int &n2) {
   n1 = n2;
   n2 = aux;
 }
+void swap_qs_vars(Quick_Variation &n1, Quick_Variation &n2) {
+  Quick_Variation aux = n1;
+  n1 = n2;
+  n2 = aux;
+}
 
 int lomuto(int *vector, int start, int end, int &calls) {
   int pivot = vector[end], x = start - 1;
@@ -158,47 +163,26 @@ int quick_sort(int *vector, int start, int end, Particioning code, int &calls) {
   return EXIT_SUCCESS;
 }
 
-void merge(Quick_Variation *arr, int left, int mid, int right) {
-  int n1 = mid - left + 1;
-  int n2 = right - mid;
-
-  Quick_Variation *L = new Quick_Variation[n1];
-  Quick_Variation *R = new Quick_Variation[n2];
-  for (int i = 0; i < n1; i++)
-    L[i] = arr[left + i];
-  for (int i = 0; i < n2; i++)
-    R[i] = arr[mid + 1 + i];
-  int i = 0, j = 0, k = left;
-  while (i < n1 && j < n2) {
-    if (L[i].calls <= R[j].calls) {
-      arr[k] = L[i];
-      i++;
-    } else {
-      arr[k] = R[j];
-      j++;
+int lomuto_vars(Quick_Variation *variations, int start, int end) {
+  int x = start - 1;
+  Quick_Variation pivot = variations[end];
+  for (int y = start; y < end; y++) {
+    if (variations[y].calls <= pivot.calls) {
+      swap_qs_vars(variations[++x], variations[y]);
     }
-    k++;
   }
-  while (i < n1) {
-    arr[k] = L[i];
-    i++;
-    k++;
-  }
-  while (j < n2) {
-    arr[k] = R[j];
-    j++;
-    k++;
-  }
-  delete[] L;
-  delete[] R;
+  swap_qs_vars(variations[++x], variations[end]);
+  return x;
 }
-void mergeSort(Quick_Variation *arr, int left, int right) {
-  if (left < right) {
-    int mid = left + (right - left) / 2;
-    mergeSort(arr, left, mid);
-    mergeSort(arr, mid + 1, right);
-    merge(arr, left, mid, right);
+
+int sort_qs_variations_calls(Quick_Variation *variations, int start, int end) {
+  if (start < end) {
+    int pivot = lomuto_vars(variations, start, end);
+
+    sort_qs_variations_calls(variations, start, pivot - 1);
+    sort_qs_variations_calls(variations, pivot + 1, end);
   }
+  return EXIT_SUCCESS;
 }
 
 int read_input(ifstream &input, Matrix *&vectors) {
@@ -284,7 +268,6 @@ int main(int argc, char *argv[3]) {
     Quick_Variation variations[6] = {};
     string vector_id =
         to_string(i) + ":N(" + to_string(vectors->sizes[i]) + ")";
-    cout << vector_id;
     int calls = 0;
     for (int part = LP; part <= HA; part++) {
       for (int j = 0; j < vectors->sizes[i]; j++) {
@@ -298,10 +281,12 @@ int main(int argc, char *argv[3]) {
       variations[part].calls = calls;
       calls = 0;
     }
+    sort_qs_variations_calls(variations, 0, 5);
+    string all_variations = "";
     for (int part = LP; part <= HA; part++) {
-      cout << variations[part].message;
+      all_variations += variations[part].message;
     }
-    cout << endl;
+    output << vector_id + all_variations << endl;
   }
 
   input.close();
@@ -309,7 +294,7 @@ int main(int argc, char *argv[3]) {
 
   auto end_program = high_resolution_clock::now();
 
-  cout << "\nExecution time: "
+  cout << "Execution time: "
        << duration<float>(end_program - start_program).count() << " s\n";
 
   return EXIT_SUCCESS;
