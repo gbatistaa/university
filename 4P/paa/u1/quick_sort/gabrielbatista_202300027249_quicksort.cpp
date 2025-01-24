@@ -158,6 +158,49 @@ int quick_sort(int *vector, int start, int end, Particioning code, int &calls) {
   return EXIT_SUCCESS;
 }
 
+void merge(Quick_Variation *arr, int left, int mid, int right) {
+  int n1 = mid - left + 1;
+  int n2 = right - mid;
+
+  Quick_Variation *L = new Quick_Variation[n1];
+  Quick_Variation *R = new Quick_Variation[n2];
+  for (int i = 0; i < n1; i++)
+    L[i] = arr[left + i];
+  for (int i = 0; i < n2; i++)
+    R[i] = arr[mid + 1 + i];
+  int i = 0, j = 0, k = left;
+  while (i < n1 && j < n2) {
+    if (L[i].calls <= R[j].calls) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = R[j];
+      j++;
+    }
+    k++;
+  }
+  while (i < n1) {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+  while (j < n2) {
+    arr[k] = R[j];
+    j++;
+    k++;
+  }
+  delete[] L;
+  delete[] R;
+}
+void mergeSort(Quick_Variation *arr, int left, int right) {
+  if (left < right) {
+    int mid = left + (right - left) / 2;
+    mergeSort(arr, left, mid);
+    mergeSort(arr, mid + 1, right);
+    merge(arr, left, mid, right);
+  }
+}
+
 int read_input(ifstream &input, Matrix *&vectors) {
   string line;
 
