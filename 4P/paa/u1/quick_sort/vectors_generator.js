@@ -6,8 +6,8 @@ var read = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-// Input question to get the generated vectors quantity from user:
 read.question("Quantidade de vetores: ", function (answer) {
+  console.time("Execução do programa");
   // Erases the file current data:
   var vectorsQuant = parseInt(answer);
   try {
@@ -17,6 +17,7 @@ read.question("Quantidade de vetores: ", function (answer) {
     }
     fs.writeFileSync(argvs[0], "");
     generateQuickSortFile(vectorsQuant);
+    console.timeEnd("Execução do programa");
     read.close();
   } catch (error) {
     console.error(error);
@@ -27,18 +28,17 @@ function generateRandomVector(n) {
   var vector = [];
   var randomNum = 55;
   for (var i = 0; i < n; i++) {
-    randomNum = Math.floor(Math.random() * 150) + 50;
+    randomNum = Math.floor(Math.random() * 1000001) - 999999;
     vector.push(randomNum);
   }
   return vector;
 }
-// Main function:
 function generateQuickSortFile(vectorsQuant) {
   fs.appendFileSync(argvs[0], "".concat(vectorsQuant.toString(), "\n"));
   // Iterator to write data in the file of n(vectorsQuant) vectors:
   for (let i = 0; i < vectorsQuant; i++) {
     // Chooses randomly the size of the vector from 3 to 15:
-    var randomVectorSize = Math.round(Math.random() * 10) + 10;
+    var randomVectorSize = Math.round(Math.random() * 1800) + 200;
     var vector = generateRandomVector(randomVectorSize);
     // Writes the quantity of elements in one line:
     fs.appendFileSync(argvs[0], "".concat(randomVectorSize, "\n"));
