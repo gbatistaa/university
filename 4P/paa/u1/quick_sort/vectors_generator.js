@@ -1,6 +1,5 @@
 var fs = require("fs");
 var readline = require("readline");
-console.clear();
 var argvs = process.argv.slice(2);
 var read = readline.createInterface({
   input: process.stdin,
@@ -28,7 +27,7 @@ function generateRandomVector(n) {
   var vector = [];
   var randomNum = 55;
   for (var i = 0; i < n; i++) {
-    randomNum = Math.floor(Math.random() * 1000001) - 999999;
+    randomNum = Math.floor(Math.random() * 2000000) - 999999;
     vector.push(randomNum);
   }
   return vector;
