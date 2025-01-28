@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <type_traits>
 
 #define MAX_SIZE 512
 
@@ -55,13 +56,15 @@ int read_file(ifstream &input, PackageList *&pkg_list) {
 
   // Reading ther first line and getting the total pkgs and pkgs per read:
 
-  input >> pkg_list->total_pkgs;
-  input >> pkg_list->pkgs_per_read;
+  string line;
+  getline(input, line);
+  istringstream iss(line);
+  iss >> pkg_list->total_pkgs;
+  iss >> pkg_list->pkgs_per_read;
 
   // Pre allocating the packages list with its obtained size
   pkg_list->pkgs = new Package[pkg_list->total_pkgs];
 
-  string line;
   int i = 0;
   while (getline(input, line)) {
 
@@ -81,7 +84,20 @@ int read_file(ifstream &input, PackageList *&pkg_list) {
     }
     i++;
   }
+  return EXIT_SUCCESS;
+}
 
+int print_sorted_pkgs(Package *pkgs, int list_size, int pkgs_per_read) {
+  int last_pkg = 0, current_pkg = 0;
+  bool is_gonna_wait = false;
+  while (current_pkg < list_size) {
+    Package wait_list[list_size];
+    for (int i = 0; i < pkgs_per_read; i++) {
+      if (current_pkg != pkgs[i].code) {
+        is_gonna_wait = true;
+      }
+    }
+  }
   return EXIT_SUCCESS;
 }
 
@@ -105,7 +121,12 @@ int main(int args, char *argv[3]) {
 
   read_file(input, package_list);
 
+  cout << "Pacotes por leitura: " << package_list->pkgs_per_read << endl;
+  cout << "Pacotes totais: " << package_list->total_pkgs << endl;
+
   for (int i = 0; i < package_list->total_pkgs; i++) {
+    cout << package_list->pkgs[i].code << " | " << package_list->pkgs[i].size
+         << ": ";
     for (int j = 0; j < package_list->pkgs[i].size; j++) {
       cout << package_list->pkgs[i].bytes_list[j] << " ";
     }
@@ -113,8 +134,8 @@ int main(int args, char *argv[3]) {
   }
   cout << endl;
 
-  cout << "Pacotes por leitura: " << package_list->pkgs_per_read << endl;
-  cout << "Pacotes totais: " << package_list->total_pkgs << endl;
+  print_sorted_pkgs(package_list->pkgs, package_list->total_pkgs,
+                    package_list->pkgs_per_read);
 
   return EXIT_SUCCESS;
 }
