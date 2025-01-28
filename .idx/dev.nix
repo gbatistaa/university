@@ -8,6 +8,7 @@
     pkgs.gcc
     pkgs.zsh
     pkgs.git
+    pkgs.nodejs
     pkgs.sudo
     pkgs.astyle
     pkgs.git-credential-manager

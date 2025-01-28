@@ -23,6 +23,7 @@ public:
 class Quick_Variation {
 public:
   string message;
+  Particioning code;
   int calls;
 
   // Quick variation constructor
@@ -263,6 +264,8 @@ int main(int argc, char *argv[3]) {
 
   string names[6] = {"LP", "LM", "LA", "HP", "HM", "HA"};
 
+  bool is_hoare_standard_the_best = true;
+
   for (int i = 0; i < vectors->size; i++) {
     int stable_vector[vectors->sizes[i]];
     Quick_Variation variations[6] = {};
@@ -280,15 +283,23 @@ int main(int argc, char *argv[3]) {
       variations[part].message =
           "," + names[part] + "(" + to_string(calls) + ")";
       variations[part].calls = calls;
+      variations[part].code = (Particioning)part; 
       calls = 0;
     }
     sort_qs_variations_calls(variations, 0, variations_size - 1);
+    if (variations[0].code != HP) {
+      is_hoare_standard_the_best = false;
+    }
     string all_variations = "";
     for (int part = LP; part <= HA; part++) {
       all_variations += variations[part].message;
     }
     output << vector_id + all_variations << endl;
   }
+  if (is_hoare_standard_the_best)
+    cout << "\033[32mSempre o hoare padrão é o melhor\033[0m"<< endl; 
+  else 
+    cout << "\033[31mNem sempre o hoare padrão é o melhor\033[0m"<< endl; 
 
   input.close();
   output.close();
