@@ -5,12 +5,15 @@
 #include <sstream>
 #include <string>
 
+#define MAX_SIZE 512
+
 using namespace std;
 
 class Package {
+public:
   int code;
   int size;
-  char *bytes_list[2];
+  string *bytes_list;
 };
 
 class PackageList {
@@ -48,15 +51,36 @@ int build_heap(int array[], int size) {
   return EXIT_SUCCESS;
 }
 
-int read_file(ifstream &input) {
+int read_file(ifstream &input, PackageList *&pkg_list) {
+
+  // Reading ther first line and getting the total pkgs and pkgs per read:
+
+  input >> pkg_list->total_pkgs;
+  input >> pkg_list->pkgs_per_read;
+
+  // Pre allocating the packages list with its obtained size
+  pkg_list->pkgs = new Package[pkg_list->total_pkgs];
+
   string line;
+  int i = 0;
+  while (getline(input, line)) {
 
-  // Reading ther first line and getting the pkgs total and pkgs quantity
-  if (!getline(input, line)) {
-    cerr << "Error on the file reading" << endl;
+    // Storing each package infos
+    istringstream iss(line);
+    iss >> pkg_list->pkgs[i].code;
+    iss >> pkg_list->pkgs[i].size;
+
+    // Preallocating the bytes list with its obtained size:
+    pkg_list->pkgs[i].bytes_list = new string[pkg_list->pkgs[i].size];
+
+    // Reading all the bytes and storing in the bytes list:
+    int j = 0;
+    string byte;
+    while (iss >> byte) {
+      pkg_list->pkgs[i].bytes_list[j++] = byte;
+    }
+    i++;
   }
-
-  istringstream iss(line);
 
   return EXIT_SUCCESS;
 }
@@ -69,19 +93,28 @@ int main(int args, char *argv[3]) {
     cerr << "Erro ao abrir input" << endl;
     return EXIT_FAILURE;
   }
-
   cout << "Input aberto com sucesso!\n" << endl;
 
   if (!output.is_open()) {
     cerr << "Erro ao abrir output" << endl;
     return EXIT_FAILURE;
   }
+  cout << "Output aberto com sucesso!" << endl;
 
-  PackageList package_list = PackageList();
+  PackageList *package_list = new PackageList();
 
-  read_file(input);
+  read_file(input, package_list);
 
-  cout << "Output aberto com sucesso!\n" << endl;
+  for (int i = 0; i < package_list->total_pkgs; i++) {
+    for (int j = 0; j < package_list->pkgs[i].size; j++) {
+      cout << package_list->pkgs[i].bytes_list[j] << " ";
+    }
+    cout << endl;
+  }
+  cout << endl;
+
+  cout << "Pacotes por leitura: " << package_list->pkgs_per_read << endl;
+  cout << "Pacotes totais: " << package_list->total_pkgs << endl;
 
   return EXIT_SUCCESS;
 }
