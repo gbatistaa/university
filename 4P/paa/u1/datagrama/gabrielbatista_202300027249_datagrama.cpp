@@ -88,15 +88,21 @@ int read_file(ifstream &input, PackageList *&pkg_list) {
 }
 
 int print_sorted_pkgs(Package *pkgs, int list_size, int pkgs_per_read) {
-  int last_pkg = 0, current_pkg = 0;
+  int last_pkg = 0, expected_pkg = 0, curr_pkg = 0, wait_index = 0;
   bool is_gonna_wait = false;
-  while (current_pkg < list_size) {
-    Package wait_list[list_size];
-    for (int i = 0; i < pkgs_per_read; i++) {
-      if (current_pkg != pkgs[i].code) {
-        is_gonna_wait = true;
+  Package wait_list[list_size];
+  while (expected_pkg < list_size - 1) {
+
+    // reading the block of n elements:
+    for (int i = 0; i < pkgs_per_read || expected_pkg < list_size; i++) {
+      if (pkgs[curr_pkg].code == expected_pkg) {
+        cout << pkgs[curr_pkg].code << " ";
+        expected_pkg++;
+      } else {
+        wait_list[wait_index++] = pkgs[curr_pkg];
       }
     }
+    wait_index = 0;
   }
   return EXIT_SUCCESS;
 }
