@@ -23,32 +23,45 @@ public:
   Package *pkgs;
 };
 
-int heapify(int array[], int size, int root) {
-  int bigger = root;
-  int left = (2 * root) + 1;
-  int right = (2 * root) + 2;
+// Function to adjust a node to maintain the max-heap property
+void max_heapify(Package array[], int size, int root) {
+  int largest = root;
+  int left = 2 * root + 1;
+  int right = 2 * root + 2;
 
-  if (left < size && array[left] > array[bigger]) {
-    bigger = left;
+  // If left child exists and is greater than root
+  if (left < size && array[left].code > array[largest].code) {
+    largest = left;
   }
 
-  if (right < size && array[right] > array[bigger]) {
-    bigger = right;
+  // If right child exists and is greater than the current largest
+  if (right < size && array[right].code > array[largest].code) {
+    largest = right;
   }
 
-  if (bigger != root) {
-    swap(array[root], array[bigger]);
-    heapify(array, size, bigger);
+  // If largest is not root, swap and heapify recursively
+  if (largest != root) {
+    swap(array[root], array[largest]);
+    max_heapify(array, size, largest);
   }
-
-  return EXIT_SUCCESS;
 }
 
-int build_heap(int array[], int size) {
-  for (int i = (size / 2) - 1; i >= 0; i--) {
-    heapify(array, size, i);
+// Function to build a max-heap
+void build_max_heap(Package array[], int size) {
+  for (int i = size / 2 - 1; i >= 0; i--) {
+    max_heapify(array, size, i);
   }
-  return EXIT_SUCCESS;
+}
+
+// Heap Sort: Sorts array in ascending order using a max-heap
+void heap_sort(Package array[], int size) {
+  build_max_heap(array, size); // Step 1: Build a max-heap
+
+  // Step 2: Extract elements from heap one by one
+  for (int i = size - 1; i > 0; i--) {
+    swap(array[0], array[i]); // Move current root to end
+    max_heapify(array, i, 0); // Restore heap property on the reduced heap
+  }
 }
 
 int print_pkg_bytes(Package pkg) {
@@ -56,25 +69,26 @@ int print_pkg_bytes(Package pkg) {
   for (int i = 0; i < pkg.size - 1; i++) {
     cout << pkg.bytes_list[i] << ",";
   }
-  cout << pkg.bytes_list[pkg.size - 1] << endl;
+  cout << pkg.bytes_list[pkg.size - 1];
   return EXIT_SUCCESS;
 }
 
 int write_sorted_pkgs(Package *pkgs, int list_size, int pkgs_per_read) {
-  int expected_pkg = 0, curr_pkg = 0, wait_start = 0, wait_end = -1;
+  int expected_pkg = 0, curr_pkg = 0, wait_end = -1;
   Package wait_list[list_size];
   while (expected_pkg < list_size - 1) {
-
+    cout << endl;
     // reading the block of n elements and storing in the wait list:
-    for (int i = 0; i < pkgs_per_read || expected_pkg < list_size; i++) {
-      wait_list[wait_end++] = pkgs[curr_pkg++];
+    for (int i = 0; i < pkgs_per_read && expected_pkg < list_size; i++) {
+      wait_list[++wait_end] = pkgs[curr_pkg++];
+      cout << "rodou" << endl;
     }
 
     // heapify packages...
 
-    // Searching the expected package in order:
+    // Searching the expected package in order in the wait list:
     int curr_wait = 0;
-    for (int j = 0; j < pkgs_per_read || expected_pkg < list_size; j++) {
+    for (int j = 0; j < pkgs_per_read; j++) {
 
       // Condition triggered when the expected package is found:
       if (wait_list[curr_wait].code == expected_pkg) {
@@ -149,9 +163,14 @@ int main(int args, char *argv[3]) {
   cout << "Pacotes por leitura: " << package_list->pkgs_per_read << endl;
   cout << "Pacotes totais: " << package_list->total_pkgs << endl;
 
-  // print_pkg_bytes(package_list->pkgs[4]);
-  write_sorted_pkgs(package_list->pkgs, package_list->total_pkgs,
-                    package_list->pkgs_per_read);
+  build_max_heap(package_list->pkgs, package_list->total_pkgs);
+
+  for (int i = 0; i < package_list->total_pkgs; i++) {
+    cout << package_list->pkgs[i].code << endl;
+  }
+  print_pkg_bytes(package_list->pkgs[4]);
+  // write_sorted_pkgs(package_list->pkgs, package_list->total_pkgs,
+  //                   package_list->pkgs_per_read);
 
   cout << "rodou" << endl;
 
