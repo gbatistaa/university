@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <codecvt>
+#include <cstddef>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -13,7 +15,7 @@ class Package {
 public:
   int code = 0;
   int size = 0;
-  string *bytes_list;
+  string *bytes_list = nullptr;
 };
 
 class PackageList {
@@ -73,42 +75,29 @@ int print_pkg_bytes(Package pkg) {
   return EXIT_SUCCESS;
 }
 
-int write_sorted_pkgs(Package *pkgs, int list_size, int pkgs_per_read) {
-  int expected_pkg = 0, curr_pkg = 0, wait_start = 0, wait_end = -1,
-      curr_wait = 0;
+int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
+                      int pkgs_per_read) {
+  int expected_pkg = 0, curr_pkg = 0, wait_end = -1, curr_wait = 0,
+      read_pkgs = 0;
   Package wait_list[list_size];
-  while (expected_pkg < list_size - 1) {
-    // reading the block of n elements and storing in the wait list:
-    for (int i = 0; i < pkgs_per_read && expected_pkg < list_size; i++) {
-      wait_list[++wait_end] = pkgs[curr_pkg++];
-    }
 
-    heap_sort(wait_list, list_size);
-
-    // Searching the expected package in order in the wait list:
-    for (int j = 0; j <= wait_end; j++) {
-
-      // Condition triggered when the expected package is found:
-      if (wait_list[curr_wait].code == expected_pkg) {
-        cout << "\n"
-             << wait_list[curr_wait].code
-             << " é o pacote esperado: " << expected_pkg << endl;
-        print_pkg_bytes(wait_list[curr_wait++]);
-        expected_pkg++;
-      } else if (wait_list[curr_wait].code > expected_pkg) {
-        cout << "\n"
-             << wait_list[curr_wait].code
-             << " é maior que o pacote esperado: " << expected_pkg << endl;
-        curr_wait++;
-        break;
-      } else {
-        cout << "\n"
-             << wait_list[curr_wait].code
-             << " é menor que o pacote esperado: " << expected_pkg << endl;
-        curr_wait++;
+  // Iteration in all the packages on the packages list;
+  for (int i = 0; i < list_size; i++) {
+    read_pkgs++;
+    wait_list[++wait_end] = pkgs[i];
+    if (read_pkgs % pkgs_per_read == 0) {
+      cout << "\n";
+      for (int j = 0; j <= wait_end; j++) {
+        heap_sort(wait_list, wait_end + 1);
+        if (wait_list[j].code == expected_pkg) {
+          print_pkg_bytes(wait_list[j]);
+          expected_pkg++;
+        }
       }
+      cout << "|";
     }
   }
+  cout << endl;
   return EXIT_SUCCESS;
 }
 
@@ -167,11 +156,7 @@ int main(int args, char *argv[3]) {
 
   read_file(input, package_list);
 
-  cout << "Pacotes por leitura: " << package_list->pkgs_per_read << endl;
-  cout << "Pacotes totais: " << package_list->total_pkgs << endl;
-
-  write_sorted_pkgs(package_list->pkgs, package_list->total_pkgs,
+  write_sorted_pkgs(output, package_list->pkgs, package_list->total_pkgs,
                     package_list->pkgs_per_read);
-
   return EXIT_SUCCESS;
 }
