@@ -13,7 +13,7 @@ class Package {
 public:
   int code = 0;
   int size = 0;
-  string *bytes_list = nullptr;
+  string *bytes_list;
 };
 
 class PackageList {
@@ -74,31 +74,38 @@ int print_pkg_bytes(Package pkg) {
 }
 
 int write_sorted_pkgs(Package *pkgs, int list_size, int pkgs_per_read) {
-  int expected_pkg = 0, curr_pkg = 0, wait_end = -1;
+  int expected_pkg = 0, curr_pkg = 0, wait_start = 0, wait_end = -1,
+      curr_wait = 0;
   Package wait_list[list_size];
   while (expected_pkg < list_size - 1) {
-    cout << endl;
     // reading the block of n elements and storing in the wait list:
     for (int i = 0; i < pkgs_per_read && expected_pkg < list_size; i++) {
       wait_list[++wait_end] = pkgs[curr_pkg++];
-      cout << "rodou" << endl;
     }
 
-    // heapify packages...
+    heap_sort(wait_list, list_size);
 
     // Searching the expected package in order in the wait list:
-    int curr_wait = 0;
-    for (int j = 0; j < pkgs_per_read; j++) {
+    for (int j = 0; j <= wait_end; j++) {
 
       // Condition triggered when the expected package is found:
       if (wait_list[curr_wait].code == expected_pkg) {
-        print_pkg_bytes(wait_list[curr_wait]);
-        wait_list[curr_wait++] =
-            Package(); // Erasing the found in-order package
+        cout << "\n"
+             << wait_list[curr_wait].code
+             << " é o pacote esperado: " << expected_pkg << endl;
+        print_pkg_bytes(wait_list[curr_wait++]);
         expected_pkg++;
-      } else {
-        cout << "\n";
+      } else if (wait_list[curr_wait].code > expected_pkg) {
+        cout << "\n"
+             << wait_list[curr_wait].code
+             << " é maior que o pacote esperado: " << expected_pkg << endl;
+        curr_wait++;
         break;
+      } else {
+        cout << "\n"
+             << wait_list[curr_wait].code
+             << " é menor que o pacote esperado: " << expected_pkg << endl;
+        curr_wait++;
       }
     }
   }
@@ -163,16 +170,8 @@ int main(int args, char *argv[3]) {
   cout << "Pacotes por leitura: " << package_list->pkgs_per_read << endl;
   cout << "Pacotes totais: " << package_list->total_pkgs << endl;
 
-  build_max_heap(package_list->pkgs, package_list->total_pkgs);
-
-  for (int i = 0; i < package_list->total_pkgs; i++) {
-    cout << package_list->pkgs[i].code << endl;
-  }
-  print_pkg_bytes(package_list->pkgs[4]);
-  // write_sorted_pkgs(package_list->pkgs, package_list->total_pkgs,
-  //                   package_list->pkgs_per_read);
-
-  cout << "rodou" << endl;
+  write_sorted_pkgs(package_list->pkgs, package_list->total_pkgs,
+                    package_list->pkgs_per_read);
 
   return EXIT_SUCCESS;
 }
