@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -22,6 +21,14 @@ public:
   int pkgs_per_read;
   Package *pkgs;
 };
+
+int swap(Package &n1, Package &n2) {
+  Package aux = n1;
+  n1 = n2;
+  n2 = aux;
+
+  return EXIT_SUCCESS;
+}
 
 int max_heapify(Package array[], int size, int root) {
   int largest = root;
