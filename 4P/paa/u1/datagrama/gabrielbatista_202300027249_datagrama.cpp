@@ -1,12 +1,12 @@
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 
-#define MAX_SIZE 512
-
 using namespace std;
+using namespace std::chrono;
 
 class Package {
 public:
@@ -50,13 +50,10 @@ int partition(Package array[], int low, int high) {
 
 void quick_sort_hoare(Package array[], int low, int high) {
   if (low < high) {
-    // Obtém o índice de partição
     int partition_index = partition(array, low, high);
 
-    // Ordena recursivamente as duas partições
-    quick_sort_hoare(array, low, partition_index); // Ordena a partição esquerda
-    quick_sort_hoare(array, partition_index + 1,
-                     high); // Ordena a partição direita
+    quick_sort_hoare(array, low, partition_index);
+    quick_sort_hoare(array, partition_index + 1, high);
   }
 }
 
@@ -77,16 +74,18 @@ int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
     read_pkgs++;
     wait_list[++wait_end] = pkgs[i];
     if (read_pkgs % pkgs_per_read == 0) {
-      if (read_pkgs > pkgs_per_read)
-        output << "\n";
+      bool is_something_wrote = false;
+      quick_sort_hoare(wait_list, 0, wait_end);
       for (int j = 0; j <= wait_end; j++) {
-        quick_sort_hoare(wait_list, 0, wait_end);
         if (wait_list[j].code == expected_pkg) {
+          is_something_wrote = true;
           write_pkg_bytes(output, wait_list[j]);
           expected_pkg++;
         }
       }
-      output << "|";
+      if (read_pkgs > pkgs_per_read && is_something_wrote) {
+        output << "|\n";
+      }
     }
   }
   return EXIT_SUCCESS;
@@ -128,16 +127,18 @@ int read_file(ifstream &input, PackageList *&pkg_list) {
 }
 
 int main(int args, char *argv[3]) {
+  auto start = high_resolution_clock::now();
+
   ifstream input(argv[1]);
   ofstream output(argv[2]);
 
   if (!input.is_open()) {
-    cerr << "Erro ao abrir input" << endl;
+    cerr << "Error on input file opening" << endl;
     return EXIT_FAILURE;
   }
 
   if (!output.is_open()) {
-    cerr << "Erro ao abrir output" << endl;
+    cerr << "Error on output file opening" << endl;
     return EXIT_FAILURE;
   }
 
@@ -147,5 +148,10 @@ int main(int args, char *argv[3]) {
 
   write_sorted_pkgs(output, package_list->pkgs, package_list->total_pkgs,
                     package_list->pkgs_per_read);
+
+  auto end = high_resolution_clock::now();
+  duration<double> duration = end - start;
+  cout << "Execution time: " << duration.count() << " segundos" << endl;
+
   return EXIT_SUCCESS;
 }
