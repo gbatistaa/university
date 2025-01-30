@@ -71,8 +71,7 @@ int write_pkg_bytes(ofstream &output, Package pkg) {
 
 int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
                       int pkgs_per_read) {
-  int expected_pkg = 0, curr_pkg = 0, wait_end = -1, curr_wait = 0,
-      read_pkgs = 0;
+  int expected_pkg = 0, wait_end = -1, read_pkgs = 0;
   Package wait_list[list_size];
   for (int i = 0; i < list_size; i++) {
     read_pkgs++;
