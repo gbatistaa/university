@@ -30,30 +30,36 @@ int swap(Package &n1, Package &n2) {
   return EXIT_SUCCESS;
 }
 
-int partition(Package array[], int low, int high) {
-  int pivot = array[(low + high) / 2].code;
-  int i = low - 1;
-  int j = high + 1;
-  while (true) {
-    do {
-      i++;
-    } while (array[i].code < pivot);
-    do {
-      j--;
-    } while (array[j].code > pivot);
-    if (i >= j) {
-      return j;
-    }
-    swap(array[i], array[j]);
+void max_heapify(Package array[], int size, int root) {
+  int largest = root;
+  int left = 2 * root + 1;
+  int right = 2 * root + 2;
+
+  if (left < size && array[left].code > array[largest].code) {
+    largest = left;
+  }
+
+  if (right < size && array[right].code > array[largest].code) {
+    largest = right;
+  }
+
+  if (largest != root) {
+    swap(array[root], array[largest]);
+    max_heapify(array, size, largest);
   }
 }
 
-void quick_sort_hoare(Package array[], int low, int high) {
-  if (low < high) {
-    int partition_index = partition(array, low, high);
+void build_max_heap(Package array[], int size) {
+  for (int i = size / 2 - 1; i >= 0; i--) {
+    max_heapify(array, size, i);
+  }
+}
 
-    quick_sort_hoare(array, low, partition_index);
-    quick_sort_hoare(array, partition_index + 1, high);
+void heap_sort(Package array[], int size) {
+  build_max_heap(array, size);
+  for (int i = size - 1; i > 0; i--) {
+    swap(array[0], array[i]);
+    max_heapify(array, i, 0);
   }
 }
 
@@ -75,7 +81,7 @@ int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
     wait_list[++wait_end] = pkgs[i];
     if (read_pkgs % pkgs_per_read == 0) {
       bool is_something_wrote = false;
-      quick_sort_hoare(wait_list, 0, wait_end);
+      heap_sort(wait_list, wait_end + 1);
       for (int j = 0; j <= wait_end; j++) {
         if (wait_list[j].code == expected_pkg) {
           is_something_wrote = true;
