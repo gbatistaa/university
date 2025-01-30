@@ -83,9 +83,7 @@ int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
           expected_pkg++;
         }
       }
-      if (read_pkgs > pkgs_per_read && is_something_wrote) {
-        output << "|\n";
-      }
+      is_something_wrote ? output << "|\n" : cout << "";
     }
   }
   return EXIT_SUCCESS;
