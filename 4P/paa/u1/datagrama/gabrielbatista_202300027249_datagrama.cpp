@@ -30,7 +30,7 @@ int swap(Package &n1, Package &n2) {
   return EXIT_SUCCESS;
 }
 
-int partition(Package array[], int low, int high) {
+int hoare(Package *array, int low, int high) {
   int pivot = array[(low + high) / 2].code;
   int i = low - 1;
   int j = high + 1;
@@ -45,9 +45,9 @@ int partition(Package array[], int low, int high) {
   }
 }
 
-int quick_sort(Package array[], int low, int high) {
+int quick_sort(Package *array, int low, int high) {
   if (low < high) {
-    int partition_index = partition(array, low, high);
+    int partition_index = hoare(array, low, high);
     quick_sort(array, low, partition_index);
     quick_sort(array, partition_index + 1, high);
   }
