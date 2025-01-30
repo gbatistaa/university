@@ -30,41 +30,34 @@ int swap(Package &n1, Package &n2) {
   return EXIT_SUCCESS;
 }
 
-int max_heapify(Package array[], int size, int root) {
-  int largest = root;
-  int left = 2 * root + 1;
-  int right = 2 * root + 2;
-
-  if (left < size && array[left].code > array[largest].code) {
-    largest = left;
+int partition(Package array[], int low, int high) {
+  int pivot = array[(low + high) / 2].code;
+  int i = low - 1;
+  int j = high + 1;
+  while (true) {
+    do {
+      i++;
+    } while (array[i].code < pivot);
+    do {
+      j--;
+    } while (array[j].code > pivot);
+    if (i >= j) {
+      return j;
+    }
+    swap(array[i], array[j]);
   }
-
-  if (right < size && array[right].code > array[largest].code) {
-    largest = right;
-  }
-
-  if (largest != root) {
-    swap(array[root], array[largest]);
-    max_heapify(array, size, largest);
-  }
-  return EXIT_SUCCESS;
 }
 
-int build_max_heap(Package array[], int size) {
-  for (int i = size / 2 - 1; i >= 0; i--) {
-    max_heapify(array, size, i);
-  }
-  return EXIT_SUCCESS;
-}
+void quick_sort_hoare(Package array[], int low, int high) {
+  if (low < high) {
+    // Obtém o índice de partição
+    int partition_index = partition(array, low, high);
 
-int heap_sort(Package array[], int size) {
-  build_max_heap(array, size);
-
-  for (int i = size - 1; i > 0; i--) {
-    swap(array[0], array[i]);
-    max_heapify(array, i, 0);
+    // Ordena recursivamente as duas partições
+    quick_sort_hoare(array, low, partition_index); // Ordena a partição esquerda
+    quick_sort_hoare(array, partition_index + 1,
+                     high); // Ordena a partição direita
   }
-  return EXIT_SUCCESS;
 }
 
 int write_pkg_bytes(ofstream &output, Package pkg) {
@@ -87,7 +80,7 @@ int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
       if (read_pkgs > pkgs_per_read)
         output << "\n";
       for (int j = 0; j <= wait_end; j++) {
-        heap_sort(wait_list, wait_end + 1);
+        quick_sort_hoare(wait_list, 0, wait_end);
         if (wait_list[j].code == expected_pkg) {
           write_pkg_bytes(output, wait_list[j]);
           expected_pkg++;
