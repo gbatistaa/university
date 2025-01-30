@@ -54,19 +54,21 @@ int quick_sort(Package array[], int low, int high) {
   return EXIT_SUCCESS;
 }
 
-int write_pkg_bytes(ofstream &output, Package pkg) {
-  output << "|";
+int write_pkg_bytes(Package pkg, string &output_str) {
+  output_str += "|";
   for (int i = 0; i < pkg.size - 1; i++) {
-    output << pkg.bytes_list[i] << ",";
+    output_str += pkg.bytes_list[i];
+    output_str += ",";
   }
-  output << pkg.bytes_list[pkg.size - 1];
+  output_str += pkg.bytes_list[pkg.size - 1];
   return EXIT_SUCCESS;
 }
 
 int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
                       int pkgs_per_read) {
-  int expected_pkg = 0, wait_end = -1, read_pkgs = 0;
   Package wait_list[list_size];
+  string output_string = "";
+  int expected_pkg = 0, wait_end = -1, read_pkgs = 0;
   for (int i = 0; i < list_size; i++) {
     read_pkgs++;
     wait_list[++wait_end] = pkgs[i];
@@ -76,13 +78,14 @@ int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
       for (int j = 0; j <= wait_end; j++) {
         if (wait_list[j].code == expected_pkg) {
           is_something_wrote = true;
-          write_pkg_bytes(output, wait_list[j]);
+          write_pkg_bytes(wait_list[j], output_string);
           expected_pkg++;
         }
       }
-      is_something_wrote ? output << "|\n" : cout << "";
+      is_something_wrote ? output_string += "|\n" : output_string += "";
     }
   }
+  output << output_string;
   return EXIT_SUCCESS;
 }
 
