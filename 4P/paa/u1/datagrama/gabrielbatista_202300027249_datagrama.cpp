@@ -73,16 +73,16 @@ int write_sorted_pkgs(ofstream &output, Package *pkgs, int list_size,
     read_pkgs++;
     wait_list[++wait_end] = pkgs[i];
     if (read_pkgs % pkgs_per_read == 0) {
-      bool is_something_wrote = false;
+      bool is_something_written = false;
       quick_sort(wait_list, 0, wait_end);
       for (int j = 0; j <= wait_end; j++) {
         if (wait_list[j].code == expected_pkg) {
-          is_something_wrote = true;
+          is_something_written = true;
           write_pkg_bytes(wait_list[j], output_string);
           expected_pkg++;
         }
       }
-      is_something_wrote ? output_string += "|\n" : output_string += "";
+      is_something_written ? output_string += "|\n" : output_string += "";
     }
   }
   output << output_string;
