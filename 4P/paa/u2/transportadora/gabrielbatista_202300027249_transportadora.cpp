@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -37,36 +38,39 @@ int read_file(ifstream &input, VehicleList *&vehicle_list,
               PackageList *&package_list) {
 
   // Reading and allocating memory for the vehicle list:
-  input >> vehicle_list->size;
+  string line;
+  getline(input, line);
+  istringstream iss(line);
+  iss >> vehicle_list->size;
   vehicle_list->list = new Vehicle[vehicle_list->size];
 
   // Reading all the vehicles data:
-  string line;
   int v = 0;
-  while (getline(input, line)) {
+  while (true) {
+    getline(input, line);
+    istringstream iss(line);
     if (line.length() < 5) {
       break;
     }
-    istringstream iss(line);
+    // Put the line data on the vehicles list (tested):
     iss >> vehicle_list->list[v].sign;
     iss >> vehicle_list->list[v].weight;
     iss >> vehicle_list->list[v++].volume;
   }
-
   // Reading and allocating memory for the package list:
-  istringstream iss(line);
-  iss >> package_list->size;
+
+  package_list->size = stoi(line);
   package_list->list = new Package[package_list->size];
 
   // Reading all the packages data:
   int p = 0;
-  do {
+  while (getline(input, line)) {
     istringstream iss(line);
     iss >> package_list->list[p].code;
     iss >> package_list->list[p].value;
     iss >> package_list->list[p].weight;
     iss >> package_list->list[p++].volume;
-  } while (getline(input, line));
+  }
 
   return EXIT_SUCCESS;
 }
