@@ -25,8 +25,8 @@ class Package {
 public:
   string code;
   float value = 0;
-  float weight = 0;
-  float volume = 0;
+  int weight = 0;
+  int volume = 0;
 };
 
 class PackageList {
