@@ -13,7 +13,7 @@ This repository is organized by course and semester. Each folder contains specif
 ├── Semester 4
 │   ├── Graphs and Computational Algorithms
 │   ├── Algorithm Design and Analysis
-│   ├── Computer Architecture
+│   ├── Applied Statistics
 ```
 
 ## Technologies Used
