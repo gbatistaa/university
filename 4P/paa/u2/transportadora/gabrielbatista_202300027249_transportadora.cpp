@@ -1,4 +1,4 @@
-#include <cstddef>
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -6,6 +6,7 @@
 #include <string>
 
 using namespace std;
+using namespace std::chrono;
 
 class Vehicle {
 public:
@@ -76,6 +77,7 @@ int read_file(ifstream &input, VehicleList *&vehicle_list,
 }
 
 int main(int args, char *argv[]) {
+  auto start = high_resolution_clock::now();
 
   ifstream input(argv[1]);
   ofstream output(argv[2]);
@@ -85,7 +87,7 @@ int main(int args, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  cout << "Input aberto com sucesso!\n" << endl;
+  cout << "Input aberto com sucesso!" << endl;
 
   if (!output.is_open()) {
     cerr << "erro ao abrir output" << endl;
@@ -98,6 +100,10 @@ int main(int args, char *argv[]) {
   VehicleList *vehicle_list = new VehicleList();
 
   read_file(input, vehicle_list, package_list);
+
+  auto end = high_resolution_clock::now();
+  duration<double> duration = end - start;
+  cout << "Execution time: " << duration.count() << " s" << endl;
 
   return EXIT_SUCCESS;
 }
