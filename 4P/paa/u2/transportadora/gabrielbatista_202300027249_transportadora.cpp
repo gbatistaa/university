@@ -9,28 +9,28 @@ using namespace std;
 class Vehicle {
 public:
   string sign;
-  int weight;
-  int volume;
+  int weight = 0;
+  int volume = 0;
 };
 
 class VehicleList {
 public:
-  Vehicle *list;
-  int size;
+  Vehicle *list = nullptr;
+  int size = 0;
 };
 
 class Package {
 public:
   string code;
-  float value;
-  float weight;
-  float volume;
+  float value = 0;
+  float weight = 0;
+  float volume = 0;
 };
 
 class PackageList {
 public:
-  Package *list;
-  int size;
+  Package *list = nullptr;
+  int size = 0;
 };
 
 int read_file(ifstream &input, VehicleList *&vehicle_list,
