@@ -1,9 +1,14 @@
 #include <chrono>
+#include <cmath>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
+#include <ios>
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#define STORED -1
 
 using namespace std;
 using namespace std::chrono;
@@ -76,7 +81,7 @@ int read_file(ifstream &input, VehicleList *&vehicle_list,
   return EXIT_SUCCESS;
 }
 
-int maximize_vehicle_value(PackageList *package_list, Vehicle vehicle,
+int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
                            string &output_string) {
   int packages = package_list->size + 1;
   int max_weight = vehicle.max_weight + 1;
@@ -114,17 +119,43 @@ int maximize_vehicle_value(PackageList *package_list, Vehicle vehicle,
   float max_value = backpack[packages - 1][max_weight - 1][max_volume - 1];
 
   cout << "Max value: " << max_value << endl;
+  ostringstream oss;
+  oss << fixed << setprecision(2) << max_value;
 
-  output_string += "[" + vehicle.sign + "]";
+  output_string += "[" + vehicle.sign + "]R$" + oss.str() + ",";
+  oss.str("");
 
   int a = packages - 1, b = max_weight - 1, c = max_volume - 1;
+  float used_weight = 0, used_volume = 0;
   while (a > 0 && b > 0 && c > 0) {
     if (backpack[a][b][c] != backpack[a - 1][b][c]) {
+      cout << package_list->list[a - 1].value << endl;
       b -= package_list->list[a - 1].weight;
       c -= package_list->list[a - 1].volume;
+      used_weight += package_list->list[a - 1].weight;
+      used_volume += package_list->list[a - 1].volume;
+      package_list->list[a - 1].value = STORED;
     }
     a--;
   }
+  float uw_perct = ceil((used_weight / vehicle.max_weight) * 100);
+  float uv_perct = ceil((used_volume / vehicle.max_volume) * 100);
+
+  oss << fixed << setprecision(0) << used_weight;
+  output_string += oss.str() + "KG";
+  oss.str("");
+
+  oss << fixed << setprecision(0) << uw_perct;
+  output_string += "(" + oss.str() + "%),";
+  oss.str("");
+
+  oss << fixed << setprecision(0) << used_volume;
+  output_string += oss.str() + "L";
+  oss.str("");
+
+  oss << fixed << setprecision(0) << uv_perct;
+  output_string += "(" + oss.str() + "%),";
+  oss.str("");
 
   return EXIT_SUCCESS;
 }
@@ -164,7 +195,7 @@ int main(int args, char *argv[]) {
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
-  cout << "Execution time: " << duration.count() << " s" << endl;
+  cout << "\nExecution time: " << duration.count() << " s" << endl;
 
   return EXIT_SUCCESS;
 }
