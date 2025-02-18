@@ -78,14 +78,20 @@ int read_file(ifstream &input, VehicleList *&vehicle_list,
 
 int maximize_vehicle_value(PackageList *package_list, Vehicle vehicle,
                            string &output_string) {
-  const int packages = package_list->size + 1;
-  const int max_weight = vehicle.max_weight + 1;
-  const int max_volume = vehicle.max_volume + 1;
+  int packages = package_list->size + 1;
+  int max_weight = vehicle.max_weight + 1;
+  int max_volume = vehicle.max_volume + 1;
 
   // Initializing the backpack with null values:
-  float **backpack = new float *[max_weight];
-  for (int w = 0; w < max_weight; w++) {
-    backpack[w] = new float[max_volume]{0};
+  float **backpack[packages];
+  for (int i = 0; i < packages; i++) {
+    backpack[i] = new float *[max_weight];
+    for (int w = 0; w < max_weight; w++) {
+      backpack[i] = new float *[max_weight];
+      for (int v = 0; v < max_volume; v++) {
+        backpack[i][w][v] = 0.0f;
+      }
+    }
   }
 
   for (int i = 1; i < packages; i++) {
@@ -105,6 +111,13 @@ int maximize_vehicle_value(PackageList *package_list, Vehicle vehicle,
       }
     }
   }
+
+  output_string += "[" + vehicle.sign + "]";
+  int j = max_weight, k = max_volume;
+  for (int i = packages - 2; i >= 0; i--) {
+    backpack[j][k]
+  }
+
   return EXIT_SUCCESS;
 }
 
@@ -136,7 +149,10 @@ int main(int args, char *argv[]) {
 
   for (int i = 0; i < vehicle_list->size; i++) {
     maximize_vehicle_value(package_list, vehicle_list->list[i], output_string);
+    output_string += "\n";
   }
+
+  output << output_string;
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
