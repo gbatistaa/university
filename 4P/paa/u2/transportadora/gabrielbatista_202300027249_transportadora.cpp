@@ -87,7 +87,7 @@ int maximize_vehicle_value(PackageList *package_list, Vehicle vehicle,
   for (int i = 0; i < packages; i++) {
     backpack[i] = new float *[max_weight];
     for (int w = 0; w < max_weight; w++) {
-      backpack[i] = new float *[max_weight];
+      backpack[i][w] = new float[max_volume];
       for (int v = 0; v < max_volume; v++) {
         backpack[i][w][v] = 0.0f;
       }
@@ -95,27 +95,35 @@ int maximize_vehicle_value(PackageList *package_list, Vehicle vehicle,
   }
 
   for (int i = 1; i < packages; i++) {
-    for (int w = 0; w < max_weight; w++) {
-      for (int v = 0; v < max_volume; v++) {
+    for (int w = 1; w < max_weight; w++) {
+      for (int v = 1; v < max_volume; v++) {
         if (package_list->list[i - 1].weight <= w &&
             package_list->list[i - 1].volume <= v) {
-          backpack[w][v] =
-              backpack[w][v] < backpack[w - package_list->list[i - 1].weight]
-                                       [v - package_list->list[i - 1].volume] +
-                                   package_list->list[i - 1].value
-                  ? backpack[w][v]
-                  : backpack[w - package_list->list[i - 1].weight]
-                            [v - package_list->list[i - 1].volume] +
-                        package_list->list[i - 1].value;
+          float sum = backpack[i - 1][w - package_list->list[i - 1].weight]
+                              [v - package_list->list[i - 1].volume] +
+                      package_list->list[i - 1].value;
+          float prev = backpack[i - 1][w][v];
+          backpack[i][w][v] = sum > prev ? sum : prev;
+        } else {
+          backpack[i][w][v] = backpack[i - 1][w][v];
         }
       }
     }
   }
 
+  float max_value = backpack[packages - 1][max_weight - 1][max_volume - 1];
+
+  cout << "Max value: " << max_value << endl;
+
   output_string += "[" + vehicle.sign + "]";
-  int j = max_weight, k = max_volume;
-  for (int i = packages - 2; i >= 0; i--) {
-    backpack[j][k]
+
+  int a = packages - 1, b = max_weight - 1, c = max_volume - 1;
+  while (a > 0 && b > 0 && c > 0) {
+    if (backpack[a][b][c] != backpack[a - 1][b][c]) {
+      b -= package_list->list[a - 1].weight;
+      c -= package_list->list[a - 1].volume;
+    }
+    a--;
   }
 
   return EXIT_SUCCESS;
