@@ -118,7 +118,6 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
 
   float max_value = backpack[packages - 1][max_weight - 1][max_volume - 1];
 
-  cout << "Max value: " << max_value << endl;
   ostringstream oss;
   oss << fixed << setprecision(2) << max_value;
 
@@ -129,7 +128,6 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
   float used_weight = 0, used_volume = 0;
   while (a > 0 && b > 0 && c > 0) {
     if (backpack[a][b][c] != backpack[a - 1][b][c]) {
-      cout << package_list->list[a - 1].value << endl;
       b -= package_list->list[a - 1].weight;
       c -= package_list->list[a - 1].volume;
       used_weight += package_list->list[a - 1].weight;
