@@ -154,7 +154,7 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
   oss.str("");
 
   oss << fixed << setprecision(0) << uv_perct;
-  output_string += "(" + oss.str() + "%),";
+  output_string += "(" + oss.str() + "%)->";
   oss.str("");
 
   return EXIT_SUCCESS;
