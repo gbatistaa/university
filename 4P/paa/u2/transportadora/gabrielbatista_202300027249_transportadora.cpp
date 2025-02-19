@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <ios>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -124,7 +125,8 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
   output_string += "[" + vehicle.sign + "]R$" + oss.str() + ",";
   oss.str("");
 
-  int a = packages - 1, b = max_weight - 1, c = max_volume - 1;
+  string used_pkgs_codes = "";
+  int a = packages - 1, b = max_weight - 1, c = max_volume - 1, p = 0;
   float used_weight = 0, used_volume = 0;
   while (a > 0 && b > 0 && c > 0) {
     if (backpack[a][b][c] != backpack[a - 1][b][c]) {
@@ -132,10 +134,12 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
       c -= package_list->list[a - 1].volume;
       used_weight += package_list->list[a - 1].weight;
       used_volume += package_list->list[a - 1].volume;
+      used_pkgs_codes = package_list->list[a - 1].code + "," + used_pkgs_codes;
       package_list->list[a - 1].value = STORED;
     }
     a--;
   }
+  used_pkgs_codes.pop_back();
   float uw_perct = ceil((used_weight / vehicle.max_weight) * 100);
   float uv_perct = ceil((used_volume / vehicle.max_volume) * 100);
 
@@ -152,8 +156,36 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
   oss.str("");
 
   oss << fixed << setprecision(0) << uv_perct;
-  output_string += "(" + oss.str() + "%)->";
+  output_string += "(" + oss.str() + "%)->" + used_pkgs_codes;
   oss.str("");
+
+  return EXIT_SUCCESS;
+}
+
+int calculate_pendencies(PackageList *&package_list, string &output_string) {
+  float pendent_value = 0, pendent_weight = 0, pendent_volume = 0;
+  string pendent_packages_codes = "";
+
+  for (int i = package_list->size - 1; i >= 0; i--) {
+    if (package_list->list[i].value != STORED) {
+      pendent_value += package_list->list[i].value;
+      pendent_weight += package_list->list[i].weight;
+      pendent_volume += package_list->list[i].volume;
+      pendent_packages_codes =
+          package_list->list[i].code + "," + pendent_packages_codes;
+    }
+  }
+  pendent_packages_codes.pop_back();
+  ostringstream oss;
+
+  oss << fixed << setprecision(2) << pendent_value;
+  output_string += "[PENDENTE]:R$" + oss.str() + ",";
+  oss.str("");
+  oss << fixed << setprecision(0) << pendent_weight;
+  output_string += oss.str() + "KG,";
+  oss.str("");
+  oss << fixed << setprecision(0) << pendent_volume;
+  output_string += oss.str() + "L->" + pendent_packages_codes;
 
   return EXIT_SUCCESS;
 }
@@ -189,11 +221,13 @@ int main(int args, char *argv[]) {
     output_string += "\n";
   }
 
+  calculate_pendencies(package_list, output_string);
+
   output << output_string;
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
-  cout << "\nExecution time: " << duration.count() << " s" << endl;
+  cout << "Execution time: " << duration.count() << " s" << endl;
 
   return EXIT_SUCCESS;
 }
