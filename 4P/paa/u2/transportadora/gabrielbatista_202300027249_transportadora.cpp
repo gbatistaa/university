@@ -126,7 +126,7 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
   oss.str("");
 
   string used_pkgs_codes = "";
-  int a = packages - 1, b = max_weight - 1, c = max_volume - 1, p = 0;
+  int a = packages - 1, b = max_weight - 1, c = max_volume - 1;
   float used_weight = 0, used_volume = 0;
   while (a > 0 && b > 0 && c > 0) {
     if (backpack[a][b][c] != backpack[a - 1][b][c]) {
