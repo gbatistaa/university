@@ -7,6 +7,23 @@
 using namespace std;
 using namespace std::chrono;
 
+class DNA {
+public:
+  int sub_string_size;
+  string dna_sequence;
+};
+
+class Desease {
+public:
+  string code;
+  string *genes;
+};
+
+int read_file() {
+  cout << "Hello World!" << endl;
+  return EXIT_SUCCESS;
+}
+
 int main(int argc, char *argv[]) {
   auto start = high_resolution_clock::now();
 
