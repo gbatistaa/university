@@ -23,28 +23,37 @@ public:
   string *genes = nullptr;
 };
 
-// Função para medir uso de RAM em MB no Linux
 double getMemoryUsageMB() {
+  ifstream fp("/proc/self/statm");
   long rss = 0L;
-  FILE *fp = fopen("/proc/self/statm", "r");
+  string dummy;
   if (fp) {
-    fscanf(fp, "%*s%ld", &rss);
-    fclose(fp);
+    fp >> dummy >> rss;
   }
   return rss * sysconf(_SC_PAGESIZE) / (1024.0 * 1024.0);
 }
+
+// float calculate_desease_chance(string dna_sequence, string *desease_genes,
+//                                int sub_string_size) {
+//                                }
 
 int process_desease(string &output_string, string desease_line, DNA *dna,
                     Desease *&deseases, int i) {
   istringstream iss(desease_line);
   int genes_qty = 0;
 
-  Desease *desease = new Desease();
-  iss >> desease->code;
-  iss >> genes_qty;
-  desease->genes = new string[genes_qty];
+  iss >> deseases[i].code;
+  output_string += deseases[i].code + "->";
 
-  output_string += desease->code + "->\n";
+  iss >> genes_qty;
+
+  deseases[i].genes = new string[genes_qty];
+
+  for (int g = 0; g < genes_qty; g++) {
+    iss >> deseases[i].genes[g];
+  }
+
+  output_string += "\n";
 
   return EXIT_SUCCESS;
 }
