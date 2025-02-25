@@ -18,11 +18,16 @@ public:
   string dna_sequence = "";
 };
 
-class Desease {
+class Disease {
 public:
   string code = "";
   string *genes = nullptr;
-  int desease_chance = 0;
+  int disease_chance = 0;
+};
+
+struct DiseaseWithIndex {
+  Disease *disease;
+  int original_index;
 };
 
 double getMemoryUsageMB() {
@@ -33,6 +38,62 @@ double getMemoryUsageMB() {
     fp >> dummy >> rss;
   }
   return rss * sysconf(_SC_PAGESIZE) / (1024.0 * 1024.0);
+}
+
+int partition(DiseaseWithIndex *arr, int low, int high) {
+  int pivot = arr[high].disease->disease_chance; // Pivô é o último elemento
+  int i = low - 1;
+
+  for (int j = low; j < high; j++) {
+    // Ordena em ordem decrescente com base em disease_chance
+    // Se disease_chance for igual, usa o índice original para manter a
+    // estabilidade
+    if (arr[j].disease->disease_chance > pivot ||
+        (arr[j].disease->disease_chance == pivot &&
+         arr[j].original_index < arr[high].original_index)) {
+      i++;
+      swap(arr[i], arr[j]);
+    }
+  }
+  swap(arr[i + 1], arr[high]); // Coloca o pivô na posição correta
+  return i + 1;
+}
+
+// Função recursiva do Quick Sort
+void quickSortStable(DiseaseWithIndex *arr, int low, int high) {
+  if (low < high) {
+    int pi = partition(arr, low, high); // Índice do pivô
+    quickSortStable(arr, low, pi - 1);  // Ordena a sublista à esquerda do pivô
+    quickSortStable(arr, pi + 1, high); // Ordena a sublista à direita do pivô
+  }
+}
+
+// Função para ordenar um vetor de Disease com base em disease_chance
+void sortDiseases(Disease *diseases, int n) {
+  // Cria um vetor auxiliar com Disease e índices originais
+  DiseaseWithIndex *arr = new DiseaseWithIndex[n];
+  for (int i = 0; i < n; i++) {
+    arr[i].disease = &diseases[i];
+    arr[i].original_index = i;
+  }
+
+  // Aplica o Quick Sort estável
+  quickSortStable(arr, 0, n - 1);
+
+  // Cria um vetor temporário para armazenar o resultado ordenado
+  Disease *temp = new Disease[n];
+  for (int i = 0; i < n; i++) {
+    temp[i] = *arr[i].disease;
+  }
+
+  // Copia o resultado de volta para o vetor original
+  for (int i = 0; i < n; i++) {
+    diseases[i] = temp[i];
+  }
+
+  // Libera a memória alocada
+  delete[] arr;
+  delete[] temp;
 }
 
 int insert(int *R, int pos, int &index) {
@@ -86,7 +147,6 @@ int KMP(int *k, int *R, string str, string std, int minimal_substring_size,
       if (oc_num >= minimal_substring_size) {
         minimal_size_ocurrencies += oc_num;
       }
-      cout << "|Encontrou ";
       oc_num = 0;
       j = k[j];
     }
@@ -120,7 +180,7 @@ float calculate_desease_chance(string dna_sequence, string *desease_genes,
 }
 
 int process_desease(string &output_string, string desease_line, DNA *dna,
-                    Desease *&deseases, int i) {
+                    Disease *&deseases, int i) {
   istringstream iss(desease_line);
   int genes_qty = 0;
 
@@ -157,7 +217,7 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
   deseases_qty = stoi(line);
 
   // Allocating memory for the diseases list:
-  Desease *deseases = new Desease[deseases_qty];
+  Disease *deseases = new Disease[deseases_qty];
 
   // Processing all of the diseases and their genes:
 
