@@ -6,7 +6,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-#include <unistd.h> // Para sysconf() no Linux
+#include <unistd.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -43,7 +43,7 @@ int calculate_table(int *k, string standard) {
   if (m == 0)
     return EXIT_SUCCESS;
 
-  k[0] = -1; // Inicialização do array k
+  k[0] = -1;
   for (int i = 1, j = -1; i < m; i++) {
     while (j >= 0 && standard.at(j + 1) != standard.at(i)) {
       j = k[j];
@@ -56,7 +56,7 @@ int calculate_table(int *k, string standard) {
   return EXIT_SUCCESS;
 }
 
-int KMP(int *k, int *R, string str, string std) {
+int KMP(int *k, int *R, string str, string std, int &oc_num) {
   int n = str.length();
   int m = std.length();
   if (m == 0 || n == 0)
@@ -74,6 +74,7 @@ int KMP(int *k, int *R, string str, string std) {
     if (j == m - 1) {
       insert(R, i - m + 1, index);
       j = k[j];
+      oc_num++;
     }
   }
   return EXIT_SUCCESS;
@@ -81,10 +82,28 @@ int KMP(int *k, int *R, string str, string std) {
 
 float calculate_desease_chance(string dna_sequence, string *desease_genes,
                                int sub_string_size, int genes_qty) {
+
+  // Iterating on the all genes list of the desease:
   for (int i = 0; i < genes_qty; i++) {
-    cout << desease_genes[i] + " ";
+    string sub_string = "";
+    int gene_length = desease_genes[i].length(), ocurrences_num = 0;
+    cout << desease_genes[i] + "->";
+
+    // Iterating on the gene characters:
+    for (int j = 0; j < gene_length; j++) {
+      sub_string += desease_genes[i].at(j);
+
+      // Condition where the sub string is ready:
+      if ((j + 1) % sub_string_size == 0) {
+        int *k = new int[sub_string_size];
+        int *ocurrences = new int[gene_length];
+        KMP(k, ocurrences, desease_genes[i], sub_string, ocurrences_num);
+        sub_string = "";
+      }
+    }
+    cout << "(" + desease_genes[i] + ") Total ocurrences: " << ocurrences_num
+         << endl;
   }
-  cout << endl;
 
   return EXIT_SUCCESS;
 }
@@ -132,6 +151,7 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
   // Processing all of the diseases and their genes:
   for (int i = 0; getline(input, line); i++) {
     process_desease(output_string, line, dna, deseases, i);
+    cout << endl;
   }
 
   delete[] deseases;
