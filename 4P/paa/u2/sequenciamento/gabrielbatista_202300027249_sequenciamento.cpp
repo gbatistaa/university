@@ -127,7 +127,6 @@ int KMP(int *k, int *R, string str, string std, int minimal_substring_size,
   int index = 0;
   for (int i = 0, j = -1; i < n; i++) {
     while (j >= 0 && (j + 1 >= m || std[j + 1] != str[i])) {
-      cout << oc_num << " ";
       if (oc_num >= minimal_substring_size) {
         minimal_size_ocurrencies += oc_num;
       }
@@ -139,7 +138,6 @@ int KMP(int *k, int *R, string str, string std, int minimal_substring_size,
     }
     if (j == m - 1) {
       insert(R, i - m + 1, index);
-      cout << oc_num << " ";
       if (oc_num >= minimal_substring_size) {
         minimal_size_ocurrencies += oc_num;
       }
@@ -156,21 +154,19 @@ int calculate_disease_chance(string dna_sequence, string *disease_genes,
   int probable_genes = 0;
   // Iterating on the all genes list of the desease:
   for (int i = 0; i < genes_qty; i++) {
-    int gene_length = disease_genes[i].length(),
-        dna_size = dna_sequence.length(), ocurrences_num = 0,
-        biggest_sequence_lenght = 0, minimal_size_ocurrencies = 0;
-    cout << disease_genes[i] + "->";
+    int gene_length = disease_genes[i].length(), ocurrences_num = 0,
+        minimal_size_ocurrencies = 0;
 
     int *k = new int[gene_length];
     int *ocurrences = new int[gene_length];
     KMP(k, ocurrences, dna_sequence, disease_genes[i], sub_string_size,
         ocurrences_num, minimal_size_ocurrencies);
 
-    cout << endl;
     if (minimal_size_ocurrencies >= sub_string_size)
       probable_genes++;
   }
-  int disease_chance = ceil(((float)probable_genes / genes_qty) * 100);
+  int disease_chance = round(((float)probable_genes / genes_qty) * 100);
+  disease_chance = disease_chance >= 90 ? 100 : disease_chance;
   return disease_chance;
 }
 
@@ -213,12 +209,8 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
 
   // Processing all of the diseases and their genes:
 
-  cout << dna->dna_sequence << endl;
-  cout << endl;
-
   for (int i = 0; getline(input, line); i++) {
     process_disease(output_string, line, dna, diseases, i);
-    cout << endl;
   }
 
   sortDiseases(diseases, diseases_qty);
