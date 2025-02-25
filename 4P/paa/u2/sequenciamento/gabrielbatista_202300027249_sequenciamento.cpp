@@ -90,10 +90,6 @@ void sortDiseases(Disease *diseases, int n) {
   for (int i = 0; i < n; i++) {
     diseases[i] = temp[i];
   }
-
-  // Libera a memória alocada
-  delete[] arr;
-  delete[] temp;
 }
 
 int insert(int *R, int pos, int &index) {
@@ -174,8 +170,8 @@ int calculate_disease_chance(string dna_sequence, string *disease_genes,
     if (minimal_size_ocurrencies >= sub_string_size)
       probable_genes++;
   }
-  int desease_chance = ceil(((float)probable_genes / genes_qty) * 100);
-  return desease_chance;
+  int disease_chance = ceil(((float)probable_genes / genes_qty) * 100);
+  return disease_chance;
 }
 
 int process_disease(string &output_string, string disease_line, DNA *dna,
@@ -192,10 +188,10 @@ int process_disease(string &output_string, string disease_line, DNA *dna,
     iss >> diseases[i].genes[g];
   }
 
-  int desease_chance =
+  int disease_chance =
       calculate_disease_chance(dna->dna_sequence, diseases[i].genes,
                                output_string, dna->sub_string_size, genes_qty);
-
+  diseases[i].disease_chance = disease_chance;
   return EXIT_SUCCESS;
 }
 
