@@ -39,25 +39,38 @@ int insert(int *R, int pos, int &index) {
 }
 
 int calculate_table(int *k, string standard) {
-  for (int i = 1, j = -1; i < standard.length(); i++) {
-    while (j >= 0 && standard.at(j + 1) != standard.at(i))
+  int m = standard.length();
+  if (m == 0)
+    return EXIT_SUCCESS;
+
+  k[0] = -1; // Inicialização do array k
+  for (int i = 1, j = -1; i < m; i++) {
+    while (j >= 0 && standard.at(j + 1) != standard.at(i)) {
       j = k[j];
-    if (standard.at(j + 1) == standard.at(i))
+    }
+    if (j + 1 < m && standard.at(j + 1) == standard.at(i)) {
       j++;
+    }
     k[i] = j;
   }
   return EXIT_SUCCESS;
 }
 
-int KMP(int *k, int *R, string T, string P) {
-  int n = T.length(), m = P.length();
-  calculate_table(k, P);
+int KMP(int *k, int *R, string str, string std) {
+  int n = str.length();
+  int m = std.length();
+  if (m == 0 || n == 0)
+    return EXIT_SUCCESS;
+
+  calculate_table(k, std);
   int index = 0;
   for (int i = 0, j = -1; i < n; i++) {
-    while (j >= 0 && P[j + 1] != T[i])
+    while (j >= 0 && (j + 1 >= m || std[j + 1] != str[i])) {
       j = k[j];
-    if (P[j + 1] == T[i])
+    }
+    if (j + 1 < m && std[j + 1] == str[i]) {
       j++;
+    }
     if (j == m - 1) {
       insert(R, i - m + 1, index);
       j = k[j];
@@ -67,7 +80,12 @@ int KMP(int *k, int *R, string T, string P) {
 }
 
 float calculate_desease_chance(string dna_sequence, string *desease_genes,
-                               int sub_string_size) {
+                               int sub_string_size, int genes_qty) {
+  for (int i = 0; i < genes_qty; i++) {
+    cout << desease_genes[i] + " ";
+  }
+  cout << endl;
+
   return EXIT_SUCCESS;
 }
 
@@ -86,6 +104,9 @@ int process_desease(string &output_string, string desease_line, DNA *dna,
   for (int g = 0; g < genes_qty; g++) {
     iss >> deseases[i].genes[g];
   }
+
+  calculate_desease_chance(dna->dna_sequence, deseases[i].genes,
+                           dna->sub_string_size, genes_qty);
 
   output_string += "\n";
 
