@@ -154,51 +154,47 @@ int KMP(int *k, int *R, string str, string std, int minimal_substring_size,
   return EXIT_SUCCESS;
 }
 
-float calculate_desease_chance(string dna_sequence, string *desease_genes,
-                               string &output_string, int sub_string_size,
-                               int genes_qty) {
+int calculate_disease_chance(string dna_sequence, string *disease_genes,
+                             string &output_string, int sub_string_size,
+                             int genes_qty) {
   int probable_genes = 0;
   // Iterating on the all genes list of the desease:
   for (int i = 0; i < genes_qty; i++) {
-    int gene_length = desease_genes[i].length(),
+    int gene_length = disease_genes[i].length(),
         dna_size = dna_sequence.length(), ocurrences_num = 0,
         biggest_sequence_lenght = 0, minimal_size_ocurrencies = 0;
-    cout << desease_genes[i] + "->";
+    cout << disease_genes[i] + "->";
 
     int *k = new int[gene_length];
     int *ocurrences = new int[gene_length];
-    KMP(k, ocurrences, dna_sequence, desease_genes[i], sub_string_size,
+    KMP(k, ocurrences, dna_sequence, disease_genes[i], sub_string_size,
         ocurrences_num, minimal_size_ocurrencies);
 
     cout << endl;
     if (minimal_size_ocurrencies >= sub_string_size)
       probable_genes++;
   }
-  float desease_chance = ceil(((float)probable_genes / genes_qty) * 100);
-  output_string += to_string((int)desease_chance) + "%";
+  int desease_chance = ceil(((float)probable_genes / genes_qty) * 100);
   return desease_chance;
 }
 
-int process_desease(string &output_string, string desease_line, DNA *dna,
-                    Disease *&deseases, int i) {
-  istringstream iss(desease_line);
+int process_disease(string &output_string, string disease_line, DNA *dna,
+                    Disease *&diseases, int i) {
+  istringstream iss(disease_line);
   int genes_qty = 0;
 
-  iss >> deseases[i].code;
-  output_string += deseases[i].code + "->";
-
+  iss >> diseases[i].code;
   iss >> genes_qty;
 
-  deseases[i].genes = new string[genes_qty];
+  diseases[i].genes = new string[genes_qty];
 
   for (int g = 0; g < genes_qty; g++) {
-    iss >> deseases[i].genes[g];
+    iss >> diseases[i].genes[g];
   }
 
-  calculate_desease_chance(dna->dna_sequence, deseases[i].genes, output_string,
-                           dna->sub_string_size, genes_qty);
-
-  output_string += "\n";
+  int desease_chance =
+      calculate_disease_chance(dna->dna_sequence, diseases[i].genes,
+                               output_string, dna->sub_string_size, genes_qty);
 
   return EXIT_SUCCESS;
 }
@@ -212,12 +208,12 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
   getline(input, dna->dna_sequence);
 
   // Reading the diseases quantity:
-  int deseases_qty;
+  int diseases_qty;
   getline(input, line);
-  deseases_qty = stoi(line);
+  diseases_qty = stoi(line);
 
   // Allocating memory for the diseases list:
-  Disease *deseases = new Disease[deseases_qty];
+  Disease *diseases = new Disease[diseases_qty];
 
   // Processing all of the diseases and their genes:
 
@@ -225,11 +221,18 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
   cout << endl;
 
   for (int i = 0; getline(input, line); i++) {
-    process_desease(output_string, line, dna, deseases, i);
+    process_disease(output_string, line, dna, diseases, i);
     cout << endl;
   }
 
-  delete[] deseases;
+  sortDiseases(diseases, diseases_qty);
+
+  for (int i = 0; i < diseases_qty; i++) {
+    output_string +=
+        diseases[i].code + "->" + to_string(diseases[i].disease_chance) + "%\n";
+  }
+
+  delete[] diseases;
 
   return EXIT_SUCCESS;
 }
