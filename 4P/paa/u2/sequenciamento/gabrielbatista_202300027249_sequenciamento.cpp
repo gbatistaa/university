@@ -33,9 +33,43 @@ double getMemoryUsageMB() {
   return rss * sysconf(_SC_PAGESIZE) / (1024.0 * 1024.0);
 }
 
-// float calculate_desease_chance(string dna_sequence, string *desease_genes,
-//                                int sub_string_size) {
-//                                }
+int insert(int *R, int pos, int &index) {
+  R[index++] = pos;
+  return EXIT_SUCCESS;
+}
+
+int calculate_table(int *k, string standard) {
+  for (int i = 1, j = -1; i < standard.length(); i++) {
+    while (j >= 0 && standard.at(j + 1) != standard.at(i))
+      j = k[j];
+    if (standard.at(j + 1) == standard.at(i))
+      j++;
+    k[i] = j;
+  }
+  return EXIT_SUCCESS;
+}
+
+int KMP(int *k, int *R, string T, string P) {
+  int n = T.length(), m = P.length();
+  calculate_table(k, P);
+  int index = 0;
+  for (int i = 0, j = -1; i < n; i++) {
+    while (j >= 0 && P[j + 1] != T[i])
+      j = k[j];
+    if (P[j + 1] == T[i])
+      j++;
+    if (j == m - 1) {
+      insert(R, i - m + 1, index);
+      j = k[j];
+    }
+  }
+  return EXIT_SUCCESS;
+}
+
+float calculate_desease_chance(string dna_sequence, string *desease_genes,
+                               int sub_string_size) {
+  return EXIT_SUCCESS;
+}
 
 int process_desease(string &output_string, string desease_line, DNA *dna,
                     Desease *&deseases, int i) {
