@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -21,6 +22,7 @@ class Desease {
 public:
   string code = "";
   string *genes = nullptr;
+  int desease_chance = 0;
 };
 
 double getMemoryUsageMB() {
@@ -56,56 +58,65 @@ int calculate_table(int *k, string standard) {
   return EXIT_SUCCESS;
 }
 
-int KMP(int *k, int *R, string str, string std, int &oc_num) {
+int KMP(int *k, int *R, string str, string std, int minimal_substring_size,
+        int &oc_num, int &minimal_size_ocurrencies) {
   int n = str.length();
   int m = std.length();
   if (m == 0 || n == 0)
     return EXIT_SUCCESS;
+  string cs = "";
 
   calculate_table(k, std);
   int index = 0;
   for (int i = 0, j = -1; i < n; i++) {
     while (j >= 0 && (j + 1 >= m || std[j + 1] != str[i])) {
+      cout << oc_num << " ";
+      if (oc_num >= minimal_substring_size) {
+        minimal_size_ocurrencies += oc_num;
+      }
+      oc_num = 0;
       j = k[j];
     }
     if (j + 1 < m && std[j + 1] == str[i]) {
-      j++;
+      j++, oc_num++;
     }
     if (j == m - 1) {
       insert(R, i - m + 1, index);
+      cout << oc_num << " ";
+      if (oc_num >= minimal_substring_size) {
+        minimal_size_ocurrencies += oc_num;
+      }
+      cout << "|Encontrou ";
+      oc_num = 0;
       j = k[j];
-      oc_num++;
     }
   }
   return EXIT_SUCCESS;
 }
 
 float calculate_desease_chance(string dna_sequence, string *desease_genes,
-                               int sub_string_size, int genes_qty) {
-
+                               string &output_string, int sub_string_size,
+                               int genes_qty) {
+  int probable_genes = 0;
   // Iterating on the all genes list of the desease:
   for (int i = 0; i < genes_qty; i++) {
-    string sub_string = "";
-    int gene_length = desease_genes[i].length(), ocurrences_num = 0;
+    int gene_length = desease_genes[i].length(),
+        dna_size = dna_sequence.length(), ocurrences_num = 0,
+        biggest_sequence_lenght = 0, minimal_size_ocurrencies = 0;
     cout << desease_genes[i] + "->";
 
-    // Iterating on the gene characters:
-    for (int j = 0; j < gene_length; j++) {
-      sub_string += desease_genes[i].at(j);
+    int *k = new int[gene_length];
+    int *ocurrences = new int[gene_length];
+    KMP(k, ocurrences, dna_sequence, desease_genes[i], sub_string_size,
+        ocurrences_num, minimal_size_ocurrencies);
 
-      // Condition where the sub string is ready:
-      if ((j + 1) % sub_string_size == 0) {
-        int *k = new int[sub_string_size];
-        int *ocurrences = new int[gene_length];
-        KMP(k, ocurrences, desease_genes[i], sub_string, ocurrences_num);
-        sub_string = "";
-      }
-    }
-    cout << "(" + desease_genes[i] + ") Total ocurrences: " << ocurrences_num
-         << endl;
+    cout << endl;
+    if (minimal_size_ocurrencies >= sub_string_size)
+      probable_genes++;
   }
-
-  return EXIT_SUCCESS;
+  float desease_chance = ceil(((float)probable_genes / genes_qty) * 100);
+  output_string += to_string((int)desease_chance) + "%";
+  return desease_chance;
 }
 
 int process_desease(string &output_string, string desease_line, DNA *dna,
@@ -124,7 +135,7 @@ int process_desease(string &output_string, string desease_line, DNA *dna,
     iss >> deseases[i].genes[g];
   }
 
-  calculate_desease_chance(dna->dna_sequence, deseases[i].genes,
+  calculate_desease_chance(dna->dna_sequence, deseases[i].genes, output_string,
                            dna->sub_string_size, genes_qty);
 
   output_string += "\n";
@@ -149,6 +160,10 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
   Desease *deseases = new Desease[deseases_qty];
 
   // Processing all of the diseases and their genes:
+
+  cout << dna->dna_sequence << endl;
+  cout << endl;
+
   for (int i = 0; getline(input, line); i++) {
     process_desease(output_string, line, dna, deseases, i);
     cout << endl;
@@ -176,7 +191,7 @@ int main(int argc, char *argv[]) {
     cerr << "Erro ao abrir output" << endl;
     return EXIT_FAILURE;
   }
-  cout << "Output aberto com sucesso!" << endl;
+  cout << "Output aberto com sucesso!\n" << endl;
 
   string output_string = "";
 
@@ -193,7 +208,7 @@ int main(int argc, char *argv[]) {
 
   double ram_after = getMemoryUsageMB();
 
-  cout << "\nExecution time: " << duration.count() << " s" << endl;
+  cout << "Execution time: " << duration.count() << " s" << endl;
   cout << "Memory Usage: " << (ram_after - ram_before) << " MB" << endl;
 
   return EXIT_SUCCESS;
