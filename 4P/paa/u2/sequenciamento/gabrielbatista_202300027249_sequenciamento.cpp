@@ -7,6 +7,7 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <unistd.h>
 
 using namespace std;
@@ -171,7 +172,7 @@ int calculate_disease_chance(string dna_sequence, string *disease_genes,
 }
 
 int process_disease(string &output_string, string disease_line, DNA *dna,
-                    Disease *&diseases, int i) {
+                    Disease *diseases, int i) {
   istringstream iss(disease_line);
   int genes_qty = 0;
 
@@ -203,14 +204,42 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
   int diseases_qty;
   getline(input, line);
   diseases_qty = stoi(line);
-
-  // Allocating memory for the diseases list:
   Disease *diseases = new Disease[diseases_qty];
 
-  // Processing all of the diseases and their genes:
+  // Allocate a dynamic array to store all disease lines
+  string *disease_lines = new string[diseases_qty];
+  for (int i = 0; i < diseases_qty; i++) {
+    getline(input, disease_lines[i]);
+  }
 
-  for (int i = 0; getline(input, line); i++) {
-    process_disease(output_string, line, dna, diseases, i);
+  // Determine the number of available threads
+  unsigned int num_threads = thread::hardware_concurrency();
+  if (num_threads == 0)
+    num_threads = 2; // Fallback in case detection fails
+
+  // Calculate the size of each chunk (balancing the lines)
+  int chunk_size = diseases_qty / num_threads;
+  int remainder = diseases_qty % num_threads;
+
+  // Create a dynamic array of threads
+  thread *threads = new thread[num_threads];
+
+  int start_index = 0;
+  for (unsigned int t = 0; t < num_threads; t++) {
+    int start = start_index;
+    int end = start + chunk_size + (t < (unsigned int)remainder ? 1 : 0);
+    threads[t] =
+        thread([start, end, disease_lines, &output_string, dna, diseases]() {
+          for (int i = start; i < end; i++) {
+            process_disease(output_string, disease_lines[i], dna, diseases, i);
+          }
+        });
+    start_index = end;
+  }
+
+  // Wait for all threads to finish
+  for (unsigned int t = 0; t < num_threads; t++) {
+    threads[t].join();
   }
 
   sortDiseases(diseases, diseases_qty);
