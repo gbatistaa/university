@@ -214,6 +214,7 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
 
   // Determine the number of available threads
   unsigned int num_threads = thread::hardware_concurrency();
+  cout << "Threads number: " << num_threads << endl;
   if (num_threads == 0)
     num_threads = 2; // Fallback in case detection fails
 
