@@ -256,33 +256,38 @@ int read_file(ifstream &input, string &output_string, DNA *&dna) {
 }
 
 int main(int argc, char *argv[]) {
+  int exec_num;
+  cout << "Execution times: ";
+  cin >> exec_num;
+
   double ram_before = getMemoryUsageMB();
   auto start = high_resolution_clock::now();
+  for (int i = 0; i < exec_num; i++) {
+    ifstream input(argv[1]);
+    ofstream output(argv[2]);
 
-  ifstream input(argv[1]);
-  ofstream output(argv[2]);
+    if (!input.is_open()) {
+      cerr << "Erro ao abrir input" << endl;
+      return EXIT_FAILURE;
+    }
+    cout << "Input aberto com sucesso!" << endl;
 
-  if (!input.is_open()) {
-    cerr << "Erro ao abrir input" << endl;
-    return EXIT_FAILURE;
+    if (!output.is_open()) {
+      cerr << "Erro ao abrir output" << endl;
+      return EXIT_FAILURE;
+    }
+    cout << "Output aberto com sucesso!\n" << endl;
+
+    string output_string = "";
+
+    DNA *dna = new DNA();
+
+    read_file(input, output_string, dna);
+
+    delete dna;
+
+    output << output_string;
   }
-  cout << "Input aberto com sucesso!" << endl;
-
-  if (!output.is_open()) {
-    cerr << "Erro ao abrir output" << endl;
-    return EXIT_FAILURE;
-  }
-  cout << "Output aberto com sucesso!\n" << endl;
-
-  string output_string = "";
-
-  DNA *dna = new DNA();
-
-  read_file(input, output_string, dna);
-
-  delete dna;
-
-  output << output_string;
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
