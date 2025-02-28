@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include <unistd.h>
 
 using namespace std;
+using namespace std::chrono;
 
 class Data {
 public:
@@ -19,6 +21,16 @@ public:
   Data *datas = nullptr;
   int size = 0;
 };
+
+double getMemoryUsageMB() {
+  ifstream fp("/proc/self/statm");
+  long rss = 0L;
+  string dummy;
+  if (fp) {
+    fp >> dummy >> rss;
+  }
+  return rss * sysconf(_SC_PAGESIZE) / (1024.0 * 1024.0);
+}
 
 int read_file(ifstream &input, DataList *&data_list) {
   string line = "";
@@ -46,6 +58,9 @@ int read_file(ifstream &input, DataList *&data_list) {
 
 int main(int argc, char *argv[]) {
 
+  double ram_before = getMemoryUsageMB();
+  auto start = high_resolution_clock::now();
+
   ifstream input(argv[1]);
   ofstream output(argv[2]);
 
@@ -64,6 +79,14 @@ int main(int argc, char *argv[]) {
   DataList *data_list = new DataList();
 
   read_file(input, data_list);
+
+  auto end = high_resolution_clock::now();
+  duration<double> duration = end - start;
+
+  double ram_after = getMemoryUsageMB();
+
+  cout << "Execution time: " << duration.count() << " s" << endl;
+  cout << "Memory Usage: " << (ram_after - ram_before) << " MB" << endl;
 
   return EXIT_SUCCESS;
 }
