@@ -32,6 +32,14 @@ double getMemoryUsageMB() {
   return rss * sysconf(_SC_PAGESIZE) / (1024.0 * 1024.0);
 }
 
+int RLE(Data data) {
+  data.bytes
+
+          cout
+      << "Hello World!" << endl;
+  return EXIT_SUCCESS;
+}
+
 int read_file(ifstream &input, DataList *&data_list) {
   string line = "";
 
