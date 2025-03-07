@@ -1,6 +1,8 @@
 #include <chrono>
 #include <cstdlib>
+#include <format>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -32,12 +34,24 @@ double getMemoryUsageMB() {
   return rss * sysconf(_SC_PAGESIZE) / (1024.0 * 1024.0);
 }
 
-int RLE(Data data) {
-  data.bytes
+string RLE(Data data) {
+  int qty = 1;
+  string curr_byte = data.bytes[0], data_compress = "";
+  for (int i = 1; i < data.size; i++) {
+    if (data.bytes[i] == data.bytes[i - 1]) {
+      qty++;
+    } else {
+      stringstream ss;
+      ss << hex << setw(2) << setfill('0') << qty;
+      data_compress += ss.str() + curr_byte;
+      qty = 1, curr_byte = data.bytes[i];
+    }
+  }
+  stringstream ss;
+  ss << hex << setw(2) << setfill('0') << qty;
+  data_compress += ss.str() + curr_byte;
 
-          cout
-      << "Hello World!" << endl;
-  return EXIT_SUCCESS;
+  return data_compress;
 }
 
 int read_file(ifstream &input, DataList *&data_list) {
@@ -87,6 +101,11 @@ int main(int argc, char *argv[]) {
   DataList *data_list = new DataList();
 
   read_file(input, data_list);
+
+  for (int i = 0; i < data_list->size; i++) {
+    string data_compress = RLE(data_list->datas[i]);
+    cout << data_compress << endl;
+  }
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
