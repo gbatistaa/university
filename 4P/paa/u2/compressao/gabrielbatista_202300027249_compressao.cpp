@@ -1,6 +1,5 @@
 #include <chrono>
 #include <cstdlib>
-#include <format>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -36,13 +35,13 @@ double getMemoryUsageMB() {
 
 class HuffmanNode {
 public:
-  char this_character;
+  string this_string;
   int this_frequency;
   HuffmanNode *this_left;
   HuffmanNode *this_right;
 
-  HuffmanNode(char character, int frequency) {
-    this_character = character;
+  HuffmanNode(string str, int frequency) {
+    this_string = str;
     this_frequency = frequency;
     this_left = nullptr;
     this_right = nullptr;
@@ -91,38 +90,97 @@ public:
   bool this_is_empty() { return this_front == nullptr; }
 };
 
+class FrequencyMap {
+public:
+  struct MapNode {
+    string this_string;
+    int this_frequency;
+    MapNode *this_next;
+  };
+  MapNode *this_head;
+  FrequencyMap() { this_head = nullptr; }
+
+  void this_add(string str) {
+    MapNode *current = this_head;
+    while (current) {
+      if (current->this_string == str) {
+        current->this_frequency++;
+        return;
+      }
+      current = current->this_next;
+    }
+    MapNode *newNode = new MapNode{str, 1, this_head};
+    this_head = newNode;
+  }
+
+  MapNode *this_get_head() { return this_head; }
+};
+
 class HuffmanTree {
 private:
   HuffmanNode *this_root;
 
-  void this_generate_codes(HuffmanNode *node, string code, string codes[256]) {
+  struct CodeNode {
+    string this_string;
+    string this_code;
+    CodeNode *this_next;
+  };
+  CodeNode *this_codes_head;
+
+  void this_generate_codes(HuffmanNode *node, string code) {
     if (!node)
       return;
     if (!node->this_left && !node->this_right) {
-      codes[(unsigned char)node->this_character] = code;
+      if (code == "") {
+        code = "0";
+      }
+      CodeNode *newCode =
+          new CodeNode{node->this_string, code, this_codes_head};
+      this_codes_head = newCode;
+      return;
     }
-    if (node->this_left) {
-      this_generate_codes(node->this_left, code + "0", codes);
+    this_generate_codes(node->this_left, code + "0");
+    this_generate_codes(node->this_right, code + "1");
+  }
+
+  string this_get_code(string str) {
+    CodeNode *current = this_codes_head;
+    while (current) {
+      if (current->this_string == str)
+        return current->this_code;
+      current = current->this_next;
     }
-    if (node->this_right) {
-      this_generate_codes(node->this_right, code + "1", codes);
+    return "";
+  }
+
+  string binary_to_hex(const string &binary) {
+    stringstream ss;
+    for (size_t i = 0; i < binary.size(); i += 4) {
+      string nibble = binary.substr(i, 4);
+      int value = stoi(nibble, nullptr, 2);
+      ss << hex << value;
     }
+    return ss.str();
   }
 
 public:
-  HuffmanTree() { this_root = nullptr; }
+  HuffmanTree() {
+    this_root = nullptr;
+    this_codes_head = nullptr;
+  }
 
-  void this_build(const string &text) {
-    int frequency[256] = {0};
-    for (char ch : text) {
-      frequency[(unsigned char)ch]++;
+  void this_build(Data &data) {
+    FrequencyMap frequencyMap;
+    for (int i = 0; i < data.size; i++) {
+      frequencyMap.this_add(data.bytes[i]);
     }
 
     PriorityQueue queue;
-    for (int i = 0; i < 256; i++) {
-      if (frequency[i] > 0) {
-        queue.this_insert(new HuffmanNode((char)i, frequency[i]));
-      }
+    FrequencyMap::MapNode *current = frequencyMap.this_get_head();
+    while (current) {
+      queue.this_insert(
+          new HuffmanNode(current->this_string, current->this_frequency));
+      current = current->this_next;
     }
 
     while (!queue.this_is_empty()) {
@@ -133,23 +191,21 @@ public:
       }
       HuffmanNode *right = queue.this_extract_min();
       HuffmanNode *merged =
-          new HuffmanNode('\0', left->this_frequency + right->this_frequency);
+          new HuffmanNode("", left->this_frequency + right->this_frequency);
       merged->this_left = left;
       merged->this_right = right;
       queue.this_insert(merged);
     }
+
+    this_generate_codes(this_root, "");
   }
 
-  string this_compress(Data data) {
-    string codes[256];
-    this_generate_codes(this_root, "", codes);
-    string data_compress;
+  string HUF(Data &data) {
+    string compressed_data;
     for (int i = 0; i < data.size; i++) {
-      for (int j = 0; j < data.bytes[i].length(); j++) {
-        data_compress += codes[(unsigned char)data.bytes[i].at(j)];
-      }
+      compressed_data += this_get_code(data.bytes[i]);
     }
-    return data_compress;
+    return binary_to_hex(compressed_data);
   }
 };
 
@@ -163,7 +219,8 @@ string RLE(Data data) {
       stringstream ss;
       ss << hex << setw(2) << setfill('0') << qty;
       data_compress += ss.str() + curr_byte;
-      qty = 1, curr_byte = data.bytes[i];
+      qty = 1;
+      curr_byte = data.bytes[i];
     }
   }
   stringstream ss;
@@ -176,13 +233,13 @@ string RLE(Data data) {
 int read_file(ifstream &input, DataList *&data_list) {
   string line = "";
 
-  // Allocating memoy for the datas list:
+  // Aloca memória para a lista de dados:
   getline(input, line);
   int data_list_size = stoi(line);
   data_list->size = data_list_size;
   data_list->datas = new Data[data_list_size];
 
-  // Allocating memory for each data set:
+  // Aloca memória para cada conjunto de dados:
   for (int i = 0; getline(input, line); i++) {
     istringstream iss(line);
     iss >> data_list->datas[i].size;
@@ -223,6 +280,11 @@ int main(int argc, char *argv[]) {
   read_file(input, data_list);
 
   for (int i = 0; i < data_list->size; i++) {
+    HuffmanTree string_tree;
+    string_tree.this_build(data_list->datas[i]);
+    string compress_huf = string_tree.HUF(data_list->datas[i]);
+    cout << "Huffman compress: " << compress_huf << endl;
+
     string compress_rle = RLE(data_list->datas[i]);
     output_string += to_string(i) + "->RLE=" + compress_rle + "\n";
   }
