@@ -30,8 +30,8 @@ class Package {
 public:
   string code;
   float value = 0;
-  int weight = 0;
-  int volume = 0;
+  float weight = 0;
+  float volume = 0;
 };
 
 class PackageList {
@@ -42,15 +42,12 @@ public:
 
 int read_file(ifstream &input, VehicleList *&vehicle_list,
               PackageList *&package_list) {
-
-  // Reading and allocating memory for the vehicle list:
+  // Leitura e alocação da lista de veículos:
   string line;
   getline(input, line);
   istringstream iss(line);
   iss >> vehicle_list->size;
   vehicle_list->list = new Vehicle[vehicle_list->size];
-
-  // Reading all the vehicles data:
   int v = 0;
   while (true) {
     getline(input, line);
@@ -58,17 +55,13 @@ int read_file(ifstream &input, VehicleList *&vehicle_list,
     if (line.length() < 5) {
       break;
     }
-    // Put the line data on the vehicles list (tested):
     iss >> vehicle_list->list[v].sign;
     iss >> vehicle_list->list[v].max_weight;
     iss >> vehicle_list->list[v++].max_volume;
   }
-  // Reading and allocating memory for the package list:
-
+  // Leitura e alocação da lista de pacotes:
   package_list->size = stoi(line);
   package_list->list = new Package[package_list->size];
-
-  // Reading all the packages data:
   int p = 0;
   while (getline(input, line)) {
     istringstream iss(line);
@@ -77,86 +70,129 @@ int read_file(ifstream &input, VehicleList *&vehicle_list,
     iss >> package_list->list[p].weight;
     iss >> package_list->list[p++].volume;
   }
-
   return EXIT_SUCCESS;
 }
 
+// Versão otimizada que preserva a lógica original usando “rolling arrays” (duas
+// camadas) e uma matriz de decisão 3D
 int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
                            string &output_string) {
-  int packages = package_list->size + 1;
-  int max_weight = vehicle.max_weight + 1;
-  int max_volume = vehicle.max_volume + 1;
+  int n = package_list->size;
+  int W = vehicle.max_weight + 1; // capacidades de 0 a max_weight
+  int V = vehicle.max_volume + 1; // capacidades de 0 a max_volume
 
-  // Initializing the backpack with null values:
-  float **backpack[packages];
-  for (int i = 0; i < packages; i++) {
-    backpack[i] = new float *[max_weight];
-    for (int w = 0; w < max_weight; w++) {
-      backpack[i][w] = new float[max_volume];
-      for (int v = 0; v < max_volume; v++) {
-        backpack[i][w][v] = 0.0f;
+  // Aloca duas matrizes 2D para DP: dp_prev (camada anterior) e dp_curr (camada
+  // atual)
+  float **dp_prev = new float *[W];
+  float **dp_curr = new float *[W];
+  for (int w = 0; w < W; w++) {
+    dp_prev[w] = new float[V];
+    dp_curr[w] = new float[V];
+    for (int v = 0; v < V; v++) {
+      dp_prev[w][v] = 0.0f;
+      dp_curr[w][v] = 0.0f;
+    }
+  }
+
+  // Aloca uma matriz de decisões 3D: decision[i][w][v] guarda o índice do
+  // pacote escolhido ao processar o i-ésimo pacote para a capacidade (w,v)
+  int ***decision = new int **[n + 1];
+  for (int i = 0; i <= n; i++) {
+    decision[i] = new int *[W];
+    for (int w = 0; w < W; w++) {
+      decision[i][w] = new int[V];
+      for (int v = 0; v < V; v++) {
+        decision[i][w][v] = -1;
       }
     }
   }
 
-  for (int i = 1; i < packages; i++) {
-    for (int w = 1; w < max_weight; w++) {
-      for (int v = 1; v < max_volume; v++) {
-        if (package_list->list[i - 1].weight <= w &&
-            package_list->list[i - 1].volume <= v) {
-          float sum = backpack[i - 1][w - package_list->list[i - 1].weight]
-                              [v - package_list->list[i - 1].volume] +
-                      package_list->list[i - 1].value;
-          float prev = backpack[i - 1][w][v];
-          backpack[i][w][v] = sum > prev ? sum : prev;
-        } else {
-          backpack[i][w][v] = backpack[i - 1][w][v];
+  // Processa os pacotes um a um (i de 1 a n)
+  for (int i = 1; i <= n; i++) {
+    Package pkg = package_list->list[i - 1];
+    for (int w = 0; w < W; w++) {
+      for (int v = 0; v < V; v++) {
+        // Se não pegar o pacote, mantém o valor anterior
+        dp_curr[w][v] = dp_prev[w][v];
+        decision[i][w][v] = -1;
+        // Se o pacote cabe nesta capacidade e ainda não foi armazenado
+        if (pkg.value != STORED && w >= pkg.weight && v >= pkg.volume) {
+          float candidate =
+              dp_prev[w - (int)pkg.weight][v - (int)pkg.volume] + pkg.value;
+          if (candidate > dp_curr[w][v]) {
+            dp_curr[w][v] = candidate;
+            decision[i][w][v] =
+                i - 1; // registra que o pacote (i-1) foi escolhido
+          }
         }
       }
     }
+    // Copia a camada atual para a anterior para o próximo item
+    for (int w = 0; w < W; w++) {
+      for (int v = 0; v < V; v++) {
+        dp_prev[w][v] = dp_curr[w][v];
+      }
+    }
   }
 
-  float max_value = backpack[packages - 1][max_weight - 1][max_volume - 1];
-
+  float max_value = dp_prev[W - 1][V - 1];
   ostringstream oss;
   oss << fixed << setprecision(2) << max_value;
-
   output_string += "[" + vehicle.sign + "]R$" + oss.str() + ",";
   oss.str("");
 
-  string used_pkgs_codes = "";
-  int a = packages - 1, b = max_weight - 1, c = max_volume - 1;
+  // Backtracking: percorre os pacotes em ordem inversa (de i = n até 1)
+  int w = W - 1, v = V - 1;
+  int i = n;
   float used_weight = 0, used_volume = 0;
-  while (a > 0 && b > 0 && c > 0) {
-    if (backpack[a][b][c] != backpack[a - 1][b][c]) {
-      b -= package_list->list[a - 1].weight;
-      c -= package_list->list[a - 1].volume;
-      used_weight += package_list->list[a - 1].weight;
-      used_volume += package_list->list[a - 1].volume;
-      used_pkgs_codes = package_list->list[a - 1].code + "," + used_pkgs_codes;
-      package_list->list[a - 1].value = STORED;
+  string used_pkgs_codes = "";
+  while (i > 0 && w >= 0 && v >= 0) {
+    if (decision[i][w][v] != -1) {
+      int pkgIndex = decision[i][w][v];
+      Package pkg = package_list->list[pkgIndex];
+      used_pkgs_codes = pkg.code + "," + used_pkgs_codes;
+      used_weight += pkg.weight;
+      used_volume += pkg.volume;
+      // Marca o pacote como armazenado (para não ser considerado nas
+      // pendências)
+      package_list->list[pkgIndex].value = STORED;
+      w -= pkg.weight;
+      v -= pkg.volume;
     }
-    a--;
+    i--;
   }
-  used_pkgs_codes.pop_back();
+  if (!used_pkgs_codes.empty())
+    used_pkgs_codes.pop_back(); // remove a última vírgula
+
   float uw_perct = ceil((used_weight / vehicle.max_weight) * 100);
   float uv_perct = ceil((used_volume / vehicle.max_volume) * 100);
-
   oss << fixed << setprecision(0) << used_weight;
   output_string += oss.str() + "KG";
   oss.str("");
-
   oss << fixed << setprecision(0) << uw_perct;
   output_string += "(" + oss.str() + "%),";
   oss.str("");
-
   oss << fixed << setprecision(0) << used_volume;
   output_string += oss.str() + "L";
   oss.str("");
-
   oss << fixed << setprecision(0) << uv_perct;
   output_string += "(" + oss.str() + "%)->" + used_pkgs_codes;
-  oss.str("");
+
+  // Libera a memória alocada para as matrizes de DP
+  for (int w = 0; w < W; w++) {
+    delete[] dp_prev[w];
+    delete[] dp_curr[w];
+  }
+  delete[] dp_prev;
+  delete[] dp_curr;
+  // Libera a memória da matriz de decisão
+  for (int i = 0; i <= n; i++) {
+    for (int w = 0; w < W; w++) {
+      delete[] decision[i][w];
+    }
+    delete[] decision[i];
+  }
+  delete[] decision;
 
   return EXIT_SUCCESS;
 }
@@ -164,7 +200,6 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
 int calculate_pendencies(PackageList *&package_list, string &output_string) {
   float pendent_value = 0, pendent_weight = 0, pendent_volume = 0;
   string pendent_packages_codes = "";
-
   for (int i = package_list->size - 1; i >= 0; i--) {
     if (package_list->list[i].value != STORED) {
       pendent_value += package_list->list[i].value;
@@ -174,9 +209,10 @@ int calculate_pendencies(PackageList *&package_list, string &output_string) {
           package_list->list[i].code + "," + pendent_packages_codes;
     }
   }
-  pendent_packages_codes.pop_back();
+  if (!pendent_packages_codes.empty())
+    pendent_packages_codes.pop_back();
   ostringstream oss;
-
+  cout << pendent_value << endl;
   oss << fixed << setprecision(2) << pendent_value;
   output_string += "[PENDENTE]:R$" + oss.str() + ",";
   oss.str("");
@@ -185,48 +221,35 @@ int calculate_pendencies(PackageList *&package_list, string &output_string) {
   oss.str("");
   oss << fixed << setprecision(0) << pendent_volume;
   output_string += oss.str() + "L->" + pendent_packages_codes;
-
   return EXIT_SUCCESS;
 }
 
 int main(int args, char *argv[]) {
   auto start = high_resolution_clock::now();
-
   ifstream input(argv[1]);
   ofstream output(argv[2]);
-
   if (!input.is_open()) {
     cerr << "erro ao abrir input" << endl;
     return EXIT_FAILURE;
   }
-
   cout << "Input aberto com sucesso!" << endl;
-
   if (!output.is_open()) {
     cerr << "erro ao abrir output" << endl;
     return EXIT_FAILURE;
   }
-
   cout << "Output aberto com sucesso!\n" << endl;
-
   PackageList *package_list = new PackageList();
   VehicleList *vehicle_list = new VehicleList();
   string output_string;
-
   read_file(input, vehicle_list, package_list);
-
   for (int i = 0; i < vehicle_list->size; i++) {
     maximize_vehicle_value(package_list, vehicle_list->list[i], output_string);
     output_string += "\n";
   }
-
   calculate_pendencies(package_list, output_string);
-
   output << output_string;
-
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
   cout << "Execution time: " << duration.count() << " s" << endl;
-
   return EXIT_SUCCESS;
 }
