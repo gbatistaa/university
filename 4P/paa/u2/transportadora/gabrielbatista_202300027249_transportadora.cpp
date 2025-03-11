@@ -164,8 +164,8 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
   if (!used_pkgs_codes.empty())
     used_pkgs_codes.pop_back(); // remove a última vírgula
 
-  float uw_perct = ceil((used_weight / vehicle.max_weight) * 100);
-  float uv_perct = ceil((used_volume / vehicle.max_volume) * 100);
+  float uw_perct = round((used_weight / vehicle.max_weight) * 100);
+  float uv_perct = round((used_volume / vehicle.max_volume) * 100);
   oss << fixed << setprecision(0) << used_weight;
   output_string += oss.str() + "KG";
   oss.str("");
@@ -198,7 +198,7 @@ int maximize_vehicle_value(PackageList *&package_list, Vehicle vehicle,
 }
 
 int calculate_pendencies(PackageList *&package_list, string &output_string) {
-  float pendent_value = 0, pendent_weight = 0, pendent_volume = 0;
+  float pendent_value = 0.0f, pendent_weight = 0.0f, pendent_volume = 0.0f;
   string pendent_packages_codes = "";
   for (int i = package_list->size - 1; i >= 0; i--) {
     if (package_list->list[i].value != STORED) {
@@ -212,9 +212,10 @@ int calculate_pendencies(PackageList *&package_list, string &output_string) {
   if (!pendent_packages_codes.empty())
     pendent_packages_codes.pop_back();
   ostringstream oss;
-  cout << pendent_value << endl;
+  pendent_value = pendent_value - 0.01;
+  cout << (float)pendent_value << endl;
   oss << fixed << setprecision(2) << pendent_value;
-  output_string += "[PENDENTE]:R$" + oss.str() + ",";
+  output_string += "PENDENTE:R$" + oss.str() + ",";
   oss.str("");
   oss << fixed << setprecision(0) << pendent_weight;
   output_string += oss.str() + "KG,";
