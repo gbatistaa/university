@@ -49,6 +49,7 @@ int read_file(ifstream &input, string &output_string,
   string line = "";
   getline(input, line);
   int labyrinths_num = stoi(line);
+  labyrinth_list->size = labyrinths_num;
   labyrinth_list->list = new Labyrinth[labyrinths_num];
 
   // Reading each labyrinth:
@@ -64,7 +65,7 @@ int read_file(ifstream &input, string &output_string,
     labyrinth_list->list[l].grid = new LabyrinthNode *[rows];
 
     // Reading each labyrinth grid positions;
-    for (int i = 0; i < labyrinth_list->list->rows; i++) {
+    for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
       labyrinth_list->list[l].grid[i] = new LabyrinthNode[cols];
 
       getline(input, line);
@@ -115,7 +116,7 @@ int main(int args, char *argv[]) {
   for (int l = 0; l < labyrinth_list->size; l++) {
     for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
       for (int j = 0; j < labyrinth_list->list[l].columns; j++) {
-        cout << (int)labyrinth_list->list->grid[i][j].freedom << " ";
+        cout << labyrinth_list->list[l].grid[i][j].freedom << " ";
       }
       cout << endl;
     }
