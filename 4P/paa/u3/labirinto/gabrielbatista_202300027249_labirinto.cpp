@@ -2,23 +2,35 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <unistd.h>
 
 using namespace std;
 using namespace std::chrono;
 
+enum Freedom { FREE, NOT_FREE, START };
+
+enum Directions { RIGHT, TOP, LEFT, BOTTOM };
+
 class LabyrinthNode {
 public:
   int cln;
   int row;
-  bool isFree;
+  Freedom freedom;
+};
+
+class Labyrinth {
+public:
+  int columns;
+  int rows;
+  LabyrinthNode **grid = nullptr;
 };
 
 class LabyrinthList {
 public:
-  LabyrinthNode *list = nullptr;
   int size = 0;
+  Labyrinth *list = nullptr;
 };
 
 double getMemoryUsageMB() {
@@ -35,14 +47,44 @@ int read_file(ifstream &input, string &output_string,
               LabyrinthList *&labyrinth_list) {
 
   string line = "";
-
   getline(input, line);
   int labyrinths_num = stoi(line);
-  labyrinth_list->list = new LabyrinthNode[labyrinths_num];
+  labyrinth_list->list = new Labyrinth[labyrinths_num];
 
-  for (int i = 0; i < labyrinths_num; i++) {
+  // Reading each labyrinth:
+  for (int l = 0; l < labyrinths_num; l++) {
+    getline(input, line);
+    istringstream iss(line);
+    iss >> labyrinth_list->list[l].columns;
+    iss >> labyrinth_list->list[l].rows;
+
+    const int rows = labyrinth_list->list[l].rows;
+    const int cols = labyrinth_list->list[l].columns;
+
+    labyrinth_list->list[l].grid = new LabyrinthNode *[rows];
+
+    // Reading each labyrinth grid positions;
+    for (int i = 0; i < labyrinth_list->list->rows; i++) {
+      labyrinth_list->list[l].grid[i] = new LabyrinthNode[cols];
+
+      getline(input, line);
+      istringstream iss(line);
+      string curr_freedom = "";
+      for (int j = 0; iss >> curr_freedom; j++) {
+        switch (curr_freedom.at(0)) {
+        case '0':
+          labyrinth_list->list[l].grid[i][j].freedom = FREE;
+          break;
+        case '1':
+          labyrinth_list->list[l].grid[i][j].freedom = NOT_FREE;
+          break;
+        default:
+          labyrinth_list->list[l].grid[i][j].freedom = START;
+          break;
+        }
+      }
+    }
   }
-
   return EXIT_SUCCESS;
 }
 
@@ -69,6 +111,16 @@ int main(int args, char *argv[]) {
 
   LabyrinthList *labyrinth_list = new LabyrinthList();
   read_file(input, output_string, labyrinth_list);
+
+  for (int l = 0; l < labyrinth_list->size; l++) {
+    for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
+      for (int j = 0; j < labyrinth_list->list[l].columns; j++) {
+        cout << (int)labyrinth_list->list->grid[i][j].freedom << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
