@@ -89,6 +89,29 @@ int read_file(ifstream &input, string &output_string,
   return EXIT_SUCCESS;
 }
 
+bool does_it_have_exit(Labyrinth labyrinth) {
+  int rows_num = labyrinth.rows;
+  int cols_num = labyrinth.columns;
+
+  for (int i = 0, j = 0; i < rows_num; i++)
+    if (labyrinth.grid[i][j].freedom == FREE)
+      return true;
+
+  for (int j = 0, i = 0; j < cols_num; j++)
+    if (labyrinth.grid[i][j].freedom == FREE)
+      return true;
+
+  for (int j = 0, i = rows_num - 1; j < cols_num; j++)
+    if (labyrinth.grid[i][j].freedom == FREE)
+      return true;
+
+  for (int i = 0, j = cols_num - 1; i < rows_num; i++)
+    if (labyrinth.grid[i][j].freedom == FREE)
+      return true;
+
+  return false;
+}
+
 int main(int args, char *argv[]) {
   double ram_before = getMemoryUsageMB();
   auto start = high_resolution_clock::now();
