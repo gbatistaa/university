@@ -117,7 +117,36 @@ int does_it_have_exit(Labyrinth &labyrinth) {
   return EXIT_SUCCESS;
 }
 
-int find_lab_exit(Labyrinth &labyrinth) {}
+int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
+  cout << "current path: " << endl;
+
+  Directions curr_dir = RIGHT;
+  int curr_pos[2] = {labyrinth.start_pos[0], labyrinth.start_pos[1]};
+
+  while (true) {
+    switch (curr_dir) {
+    case RIGHT:
+      // Verifies if the current position is on th wall:
+      if (curr_pos[0] < labyrinth.rows - 1) {
+        if (labyrinth)
+      }
+      break;
+
+    case TOP:
+      break;
+
+    case LEFT:
+      break;
+
+    case BOTTOM:
+      break;
+
+    default:
+      break;
+    }
+  }
+  return EXIT_SUCCESS;
+}
 
 int main(int args, char *argv[]) {
   double ram_before = getMemoryUsageMB();
@@ -145,18 +174,17 @@ int main(int args, char *argv[]) {
 
   for (int l = 0; l < labyrinth_list->size; l++) {
     does_it_have_exit(labyrinth_list->list[l]);
-    cout << labyrinth_list->list[l].has_exit << endl;
   }
 
-  // for (int l = 0; l < labyrinth_list->size; l++) {
-  //   for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
-  //     for (int j = 0; j < labyrinth_list->list[l].columns; j++) {
-  //       cout << labyrinth_list->list[l].grid[i][j].freedom << " ";
-  //     }
-  //     cout << endl;
-  //   }
-  //   cout << endl;
-  // }
+  for (int l = 0; l < labyrinth_list->size; l++) {
+    for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
+      for (int j = 0; j < labyrinth_list->list[l].columns; j++) {
+        cout << labyrinth_list->list[l].grid[i][j].freedom << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
