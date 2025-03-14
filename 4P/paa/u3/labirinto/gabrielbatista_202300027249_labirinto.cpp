@@ -15,15 +15,17 @@ enum Directions { RIGHT, TOP, LEFT, BOTTOM };
 
 class LabyrinthNode {
 public:
-  int cln;
-  int row;
+  int row = 0;
+  int cln = 0;
   Freedom freedom;
 };
 
 class Labyrinth {
 public:
-  int columns;
-  int rows;
+  int rows = 0;
+  int columns = 0;
+  int *start_pos;
+  bool has_exit;
   LabyrinthNode **grid = nullptr;
 };
 
@@ -63,6 +65,7 @@ int read_file(ifstream &input, string &output_string,
     const int cols = labyrinth_list->list[l].columns;
 
     labyrinth_list->list[l].grid = new LabyrinthNode *[rows];
+    labyrinth_list->list[l].start_pos = new int[2];
 
     // Reading each labyrinth grid positions;
     for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
@@ -81,6 +84,8 @@ int read_file(ifstream &input, string &output_string,
           break;
         default:
           labyrinth_list->list[l].grid[i][j].freedom = START;
+          labyrinth_list->list[l].start_pos[0] = i;
+          labyrinth_list->list[l].start_pos[1] = j;
           break;
         }
       }
@@ -89,28 +94,30 @@ int read_file(ifstream &input, string &output_string,
   return EXIT_SUCCESS;
 }
 
-bool does_it_have_exit(Labyrinth labyrinth) {
+int does_it_have_exit(Labyrinth &labyrinth) {
   int rows_num = labyrinth.rows;
   int cols_num = labyrinth.columns;
 
   for (int i = 0, j = 0; i < rows_num; i++)
     if (labyrinth.grid[i][j].freedom == FREE)
-      return true;
+      labyrinth.has_exit = true;
 
   for (int j = 0, i = 0; j < cols_num; j++)
     if (labyrinth.grid[i][j].freedom == FREE)
-      return true;
+      labyrinth.has_exit = true;
 
   for (int j = 0, i = rows_num - 1; j < cols_num; j++)
     if (labyrinth.grid[i][j].freedom == FREE)
-      return true;
+      labyrinth.has_exit = true;
 
   for (int i = 0, j = cols_num - 1; i < rows_num; i++)
     if (labyrinth.grid[i][j].freedom == FREE)
-      return true;
+      labyrinth.has_exit = true;
 
-  return false;
+  return EXIT_SUCCESS;
 }
+
+int find_lab_exit(Labyrinth &labyrinth) {}
 
 int main(int args, char *argv[]) {
   double ram_before = getMemoryUsageMB();
@@ -137,14 +144,19 @@ int main(int args, char *argv[]) {
   read_file(input, output_string, labyrinth_list);
 
   for (int l = 0; l < labyrinth_list->size; l++) {
-    for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
-      for (int j = 0; j < labyrinth_list->list[l].columns; j++) {
-        cout << labyrinth_list->list[l].grid[i][j].freedom << " ";
-      }
-      cout << endl;
-    }
-    cout << endl;
+    does_it_have_exit(labyrinth_list->list[l]);
+    cout << labyrinth_list->list[l].has_exit << endl;
   }
+
+  // for (int l = 0; l < labyrinth_list->size; l++) {
+  //   for (int i = 0; i < labyrinth_list->list[l].rows; i++) {
+  //     for (int j = 0; j < labyrinth_list->list[l].columns; j++) {
+  //       cout << labyrinth_list->list[l].grid[i][j].freedom << " ";
+  //     }
+  //     cout << endl;
+  //   }
+  //   cout << endl;
+  // }
 
   auto end = high_resolution_clock::now();
   duration<double> duration = end - start;
