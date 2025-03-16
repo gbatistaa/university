@@ -35,6 +35,12 @@ public:
   Labyrinth *list = nullptr;
 };
 
+typedef struct PositionType {
+  int positions[2];
+  struct PositionType *next_pos;
+  struct PositionType *prev_pos;
+} Position;
+
 double getMemoryUsageMB() {
   ifstream fp("/proc/self/statm");
   long rss = 0L;
@@ -126,19 +132,48 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
   while (true) {
     switch (curr_dir) {
     case RIGHT:
-      // Verifies if the current position is on th wall:
-      if (curr_pos[0] < labyrinth.rows - 1) {
-        if (labyrinth)
+      // Verifies if the current position is not on the wall and free:
+      if (curr_pos[1] < labyrinth.columns - 1 &&
+          labyrinth.grid[curr_pos[0]][curr_pos[1] + 1].freedom == FREE) {
+        curr_pos[1]++;
+      } else {
+        // This condition will be triggered when does not have way out:
+        curr_dir = TOP;
       }
       break;
 
     case TOP:
+      // Verifies if the current position is not on the wall and free:
+      if (curr_pos[0] > 0 &&
+          labyrinth.grid[curr_pos[0] - 1][curr_pos[1]].freedom == FREE) {
+        curr_pos[0]--;
+      } else {
+        // This condition will be triggered when does not have way out:
+        curr_dir = LEFT;
+      }
       break;
 
     case LEFT:
+      // Verifies if the current position is not on the wall and free:
+      if (curr_pos[1] > 0 &&
+          labyrinth.grid[curr_pos[0]][curr_pos[1] - 1].freedom == FREE) {
+        curr_pos[1]--;
+      } else {
+        // This condition will be triggered when does not have way out:
+        curr_dir = BOTTOM;
+      }
       break;
 
     case BOTTOM:
+      // Verifies if the current position is not on the wall and free:
+      if (curr_pos[0] < labyrinth.rows - 1 &&
+          labyrinth.grid[curr_pos[0] + 1][curr_pos[1]].freedom == FREE) {
+        curr_pos[0]++;
+      } else {
+        // This condition will be triggered when does not have way out:
+        labyrinth.grid[curr_pos[0]][curr_pos[1]].freedom = NOT_FREE;
+        curr_dir = RIGHT;
+      }
       break;
 
     default:
