@@ -35,11 +35,43 @@ public:
   Labyrinth *list = nullptr;
 };
 
-typedef struct PositionType {
+class Positions {
+public:
   int positions[2];
-  struct PositionType *next_pos;
-  struct PositionType *prev_pos;
-} Position;
+  struct PositionType *next_pos = nullptr;
+  struct PositionType *prev_pos = nullptr;
+};
+
+class PositionsList {
+public:
+  Positions *root = nullptr;
+  int size;
+};
+void add_position(PositionsList *list, int row, int col) {
+  // Cria um novo nó
+  Positions *newNode = new Positions();
+  newNode->positions[0] = row;
+  newNode->positions[1] = col;
+  newNode->next_pos = nullptr;
+  newNode->prev_pos = nullptr;
+
+  // Se a lista estiver vazia, o novo nó será a raiz
+  if (list->root == nullptr) {
+    list->root = newNode;
+  } else {
+    // Encontra o último nó da lista
+    Positions *current = list->root;
+    while (current->next_pos != nullptr) {
+      current = current->next_pos;
+    }
+    // Adiciona o novo nó no final da lista
+    current->next_pos = newNode;
+    newNode->prev_pos = current;
+  }
+
+  // Incrementa o tamanho da lista
+  list->size++;
+}
 
 double getMemoryUsageMB() {
   ifstream fp("/proc/self/statm");
@@ -127,7 +159,14 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
   cout << "current path: " << endl;
 
   Directions curr_dir = RIGHT;
+  int prev_pos[2] = {};
   int curr_pos[2] = {labyrinth.start_pos[0], labyrinth.start_pos[1]};
+  PositionsList *positions_list = new PositionsList();
+  Positions *root = new Positions;
+  positions_list->root = root;
+  positions_list->size = 1;
+  positions_list->root->positions[0] = curr_pos[0];
+  positions_list->root->positions[1] = curr_pos[1];
 
   while (true) {
     switch (curr_dir) {
@@ -138,6 +177,7 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
         curr_pos[1]++;
       } else {
         // This condition will be triggered when does not have way out:
+        cout << "Não há saída para a direita." << endl;
         curr_dir = TOP;
       }
       break;
@@ -146,9 +186,12 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
       // Verifies if the current position is not on the wall and free:
       if (curr_pos[0] > 0 &&
           labyrinth.grid[curr_pos[0] - 1][curr_pos[1]].freedom == FREE) {
+        prev_pos[0] = curr_pos[0];
+        prev_pos[1] = curr_pos[1];
         curr_pos[0]--;
       } else {
         // This condition will be triggered when does not have way out:
+        cout << "Não há saída para a cima." << endl;
         curr_dir = LEFT;
       }
       break;
@@ -160,6 +203,7 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
         curr_pos[1]--;
       } else {
         // This condition will be triggered when does not have way out:
+        cout << "Não há saída para a esquerda." << endl;
         curr_dir = BOTTOM;
       }
       break;
@@ -171,7 +215,9 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
         curr_pos[0]++;
       } else {
         // This condition will be triggered when does not have way out:
+        cout << "Não há saída para baixo." << endl;
         labyrinth.grid[curr_pos[0]][curr_pos[1]].freedom = NOT_FREE;
+
         curr_dir = RIGHT;
       }
       break;
@@ -207,8 +253,9 @@ int main(int args, char *argv[]) {
   LabyrinthList *labyrinth_list = new LabyrinthList();
   read_file(input, output_string, labyrinth_list);
 
-  for (int l = 0; l < labyrinth_list->size; l++) {
+  for (int l = 1; l < labyrinth_list->size; l++) {
     does_it_have_exit(labyrinth_list->list[l]);
+    find_lab_exit(labyrinth_list->list[l], output_string);
   }
 
   for (int l = 0; l < labyrinth_list->size; l++) {
