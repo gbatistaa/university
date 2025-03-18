@@ -47,31 +47,6 @@ public:
   Positions *root = nullptr;
   int size;
 };
-void add_position(PositionsList *list, int row, int col) {
-  // Cria um novo nó
-  Positions *newNode = new Positions();
-  newNode->positions[0] = row;
-  newNode->positions[1] = col;
-  newNode->next_pos = nullptr;
-  newNode->prev_pos = nullptr;
-
-  // Se a lista estiver vazia, o novo nó será a raiz
-  if (list->root == nullptr) {
-    list->root = newNode;
-  } else {
-    // Encontra o último nó da lista
-    Positions *current = list->root;
-    while (current->next_pos != nullptr) {
-      current = current->next_pos;
-    }
-    // Adiciona o novo nó no final da lista
-    current->next_pos = newNode;
-    newNode->prev_pos = current;
-  }
-
-  // Incrementa o tamanho da lista
-  list->size++;
-}
 
 double getMemoryUsageMB() {
   ifstream fp("/proc/self/statm");
@@ -159,6 +134,7 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
   cout << "current path: " << endl;
 
   Directions curr_dir = RIGHT;
+  Directions prev_dir;
   int prev_pos[2] = {};
   int curr_pos[2] = {labyrinth.start_pos[0], labyrinth.start_pos[1]};
   PositionsList *positions_list = new PositionsList();
@@ -174,6 +150,9 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
       // Verifies if the current position is not on the wall and free:
       if (curr_pos[1] < labyrinth.columns - 1 &&
           labyrinth.grid[curr_pos[0]][curr_pos[1] + 1].freedom == FREE) {
+        // Saving the previous position:
+        prev_pos[0] = curr_pos[0];
+        prev_pos[1] = curr_pos[1];
         curr_pos[1]++;
       } else {
         // This condition will be triggered when does not have way out:
@@ -186,6 +165,7 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
       // Verifies if the current position is not on the wall and free:
       if (curr_pos[0] > 0 &&
           labyrinth.grid[curr_pos[0] - 1][curr_pos[1]].freedom == FREE) {
+        // Saving the previous position:
         prev_pos[0] = curr_pos[0];
         prev_pos[1] = curr_pos[1];
         curr_pos[0]--;
@@ -200,6 +180,9 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
       // Verifies if the current position is not on the wall and free:
       if (curr_pos[1] > 0 &&
           labyrinth.grid[curr_pos[0]][curr_pos[1] - 1].freedom == FREE) {
+        // Saving the previous position:
+        prev_pos[0] = curr_pos[0];
+        prev_pos[1] = curr_pos[1];
         curr_pos[1]--;
       } else {
         // This condition will be triggered when does not have way out:
@@ -210,15 +193,19 @@ int find_lab_exit(Labyrinth &labyrinth, string &output_string) {
 
     case BOTTOM:
       // Verifies if the current position is not on the wall and free:
+      curr_dir = RIGHT;
       if (curr_pos[0] < labyrinth.rows - 1 &&
           labyrinth.grid[curr_pos[0] + 1][curr_pos[1]].freedom == FREE) {
+        // Saving the previous position:
+        prev_pos[0] = curr_pos[0];
+        prev_pos[1] = curr_pos[1];
         curr_pos[0]++;
       } else {
         // This condition will be triggered when does not have way out:
-        cout << "Não há saída para baixo." << endl;
+        cout << "Backtracking." << endl;
         labyrinth.grid[curr_pos[0]][curr_pos[1]].freedom = NOT_FREE;
-
-        curr_dir = RIGHT;
+        curr_pos[0] = prev_pos[0];
+        curr_pos[1] = prev_pos[1];
       }
       break;
 
@@ -255,7 +242,7 @@ int main(int args, char *argv[]) {
 
   for (int l = 1; l < labyrinth_list->size; l++) {
     does_it_have_exit(labyrinth_list->list[l]);
-    find_lab_exit(labyrinth_list->list[l], output_string);
+    // find_lab_exit(labyrinth_list->list[l], output_string);
   }
 
   for (int l = 0; l < labyrinth_list->size; l++) {
