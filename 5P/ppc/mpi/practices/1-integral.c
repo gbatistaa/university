@@ -1,26 +1,24 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <string.h>
-#define MAX_STRING 100
 
-double math_expression(int num) {
-  double result = (double)(num * num) - (4 * num) + 8;
+float math_expression(float num) {
+  float result = (float)(num * num) - (4 * num) + 8;
   return result;
 }
 
-double calculate_area(double lado_1, double lado_2) {
-  double area = (double)lado_1 * lado_2;
+float calculate_area(float lado_1, float lado_2) {
+  float area = (float)lado_1 * lado_2;
   return area;
 }
 
 int main() {
-  char message[MAX_STRING];
   int comm_size;
   int my_rank;
-  double curr_area;
-  double integral_area = 0;
-  double precision = 1000;
-  double sum_areas = 0;
+  float curr_area;
+
+  int precision = 1000;
+  float sum_areas;
 
   MPI_Init(NULL, NULL);
   MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
@@ -30,39 +28,50 @@ int main() {
 
   if (my_rank != 0) {
     /* Criação da mensagem */
-    int range = precision / b;
-    int curr_sum = 0;
+    int range = precision / (b - 1);
+    float curr_sum = 0;
+
+    printf("%d | %d | %d\n", range * (my_rank - 1), range * my_rank, my_rank);
+
     for (int i = range * (my_rank - 1); i < range * my_rank; i++) {
-      double curr_exp_value = math_expression(i / precision);
-      curr_area = calculate_area(curr_exp_value, 1 / precision);
+      float curr_exp_value = math_expression((float)i / range);
+      curr_area = calculate_area(curr_exp_value, (float)1 / range);
+      // printf("%f * %f = %f\n", curr_exp_value, curr_exp_value / range,
+      //        curr_area);
+
       curr_sum += curr_area;
     }
+
     sum_areas = curr_sum;
+
     /* Envio da mensagem para o processo 0 */
-    MPI_Send(&sum_areas, 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+    MPI_Send(&sum_areas, 1, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
   } else {
     /* Impressão da mensagem do processo centralizador */
     printf("Processo centralizador em execução: %d of %d!\n", my_rank,
            comm_size);
 
     MPI_Status status;
+    float integral_area = 0;
 
     for (int q = 1; q < comm_size; q++) {
       /* Recepção da mensagem do processo q */
 
-      MPI_Recv(&sum_areas, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG,
-               MPI_COMM_WORLD, &status);
+      MPI_Recv(&sum_areas, 1, MPI_FLOAT, q, MPI_ANY_TAG, MPI_COMM_WORLD,
+               &status);
 
       integral_area += sum_areas;
 
       /* Impressão da mensagem do processo q */
-      printf("O processo %d recebeu o seguinte valor de área integral: %f "
-             "(status.MPI_SOURCE: %d status.MPI_TAG: %d)\n",
-             my_rank, sum_areas, status.MPI_SOURCE, status.MPI_TAG);
+      // printf("O processo %d recebeu o seguinte valor de área integral: %f "
+      //        "(status.MPI_SOURCE: %d status.MPI_TAG: %d)\n",
+      //        q, sum_areas, status.MPI_SOURCE, status.MPI_TAG);
     }
 
     printf("A integral é: %f\n", integral_area);
   }
+
+  MPI_Finalize();
 
   return 0;
 }
