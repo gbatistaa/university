@@ -14,7 +14,7 @@ public class App {
 
       System.out.println();
 
-      ArrayList<Integer> array = new ArrayList<>();
+      ArrayList<Integer> array = new ArrayList<Integer>();
       array.ensureCapacity(arraySize);
 
       for (int i = 0; i < arraySize; i++) {
