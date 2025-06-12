@@ -5,21 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum Actions {
-  intn = 0,
-  send = 1,
-  recv = 2,
-};
-
-const int processess_config[13][3] = {
-    {0, intn, false}, {2, intn, false}, {0, send, 1}, {1, send, 0},
-    {0, recv, 1},     {1, recv, 0},     {0, send, 2}, {2, send, 0},
-    {0, recv, 2},     {2, recv, 0},     {0, send, 1}, {1, recv, 0},
-    {0, intn, false}};
-
-int processess_config_size =
-    sizeof(processess_config) / sizeof(processess_config[0]);
-
 int create_array_string(int *array, int n, char *buffer, int buf_sz) {
   for (int i = 0; i < n; i++) {
 
@@ -69,6 +54,21 @@ int calculate_buffer_size(int *int_array, int array_length) {
   return total_digit_chars + total_dots + terminator;
 }
 
+enum Actions {
+  intn = 0,
+  send = 1,
+  recv = 2,
+};
+
+const int processess_config[13][3] = {
+    {0, intn, false}, {2, intn, false}, {0, send, 1}, {1, send, 0},
+    {0, recv, 1},     {1, recv, 0},     {0, send, 2}, {2, send, 0},
+    {0, recv, 2},     {2, recv, 0},     {0, send, 1}, {1, recv, 0},
+    {0, intn, false}};
+
+int processess_config_size =
+    sizeof(processess_config) / sizeof(processess_config[0]);
+
 int main() {
   int comm_size, my_rank;
 
@@ -100,11 +100,14 @@ int main() {
 
         create_array_string(vectorial_watch, comm_size, buffer, buffer_size);
 
-        printf("Code %d: Internal Process | %s\n", action, buffer);
+        printf("Code %d: Internal Process of %d | %s\n", action, my_rank,
+               buffer);
         break;
       }
 
       case send:
+        vectorial_watch[my_rank]++;
+
         MPI_Send(vectorial_watch, comm_size, MPI_INT, address, 0,
                  MPI_COMM_WORLD);
 
@@ -124,11 +127,15 @@ int main() {
 
       case recv: {
         vectorial_watch[my_rank]++;
-
         int vectorial_watch_recieved[comm_size];
-
-        MPI_Recv(vectorial_watch_recieved, 3, MPI_INT, address, 0,
+        MPI_Recv(vectorial_watch_recieved, comm_size, MPI_INT, address, 0,
                  MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        for (int n; n < comm_size; n++) {
+          if (vectorial_watch_recieved[n] > vectorial_watch[n]) {
+            vectorial_watch[n] = vectorial_watch_recieved[n];
+          }
+        }
 
         int buffer_size = calculate_buffer_size(vectorial_watch, comm_size);
         char *buffer = calloc(buffer_size, sizeof(char));
