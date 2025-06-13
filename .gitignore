@@ -32,3 +32,5 @@
 .clangd
 5P/ppc/mpi/projects/image.png
 5P/ppc/mpi/projects/.vector
+5P/ppc/threads/examples/.threads1
+github-token.txt
