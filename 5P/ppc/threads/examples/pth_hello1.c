@@ -5,15 +5,19 @@
 
 void *Hello(void *param);  /* Thread function */
 void *Hello2(void *param); /* Thread function */
+void *Hello3(void *param);
 /*--------------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
   long t1_param = 10;
   long t2_param = 15;
+  long t3_param = 20;
   pthread_t t1;
   pthread_t t2;
+  pthread_t t3;
 
   pthread_create(&t1, NULL, Hello, (void *)t1_param);
   pthread_create(&t2, NULL, Hello2, (void *)t2_param);
+  pthread_create(&t3, NULL, Hello3, (void *)t3_param);
 
   int i = 0;
   for (i = 0; i < 5; i++) {
@@ -23,6 +27,7 @@ int main(int argc, char *argv[]) {
 
   pthread_join(t1, NULL);
   pthread_join(t2, NULL);
+  pthread_join(t3, NULL);
 
   return 0;
 } /* main */
@@ -47,3 +52,13 @@ void *Hello2(void *param) {
   }
   return NULL;
 } /* Hello */
+
+void *Hello3(void *param) {
+  long my_id = (long)param; /* Use long in case of 64-bit system */
+  int i = 0;
+  for (i = 0; i < my_id; i++) {
+    printf("Hello3 %d\n", i);
+    sleep(1);
+  }
+  return NULL;
+}
