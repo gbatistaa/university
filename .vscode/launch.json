@@ -2,14 +2,34 @@
   "version": "0.2.0",
   "configurations": [
     {
+<<<<<<< HEAD
+=======
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "name": "Launch Extension",
+      "outFiles": [
+        "${workspaceFolder}/out/**/*.js"
+      ],
+      "preLaunchTask": "npm",
+      "request": "launch",
+      "type": "extensionHost"
+    },
+    {
+>>>>>>> db91ae3caacaf7637e31449109581ffffe38c804
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
+<<<<<<< HEAD
       "cwd": "/home/user/university/4P/paa/u2/sequenciamento",
       "program": "/home/user/university/4P/paa/u2/sequenciamento/build/Debug/outDebug",
+=======
+      "cwd": "/root/gbatistadev/university/4P/paa/u1/quick_sort",
+      "program": "/root/gbatistadev/university/4P/paa/u1/quick_sort/build/Debug/outDebug",
+>>>>>>> db91ae3caacaf7637e31449109581ffffe38c804
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
