@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define PSEUDO_SECOND 0.5
+#define PSEUDO_SECOND 0.2
 
 typedef struct medicacao {
   char nome[50];
@@ -22,18 +22,18 @@ int main() {
   pthread_t b12_thread;
 
   Medicamento *dorflex = (Medicamento *)malloc(sizeof(Medicamento));
-  dorflex->intervalo = 6;
   strcpy(dorflex->nome, "dorflex");
+  dorflex->intervalo = 6;
   dorflex->total = 10;
 
   Medicamento *paracetamol = (Medicamento *)malloc(sizeof(Medicamento));
-  paracetamol->intervalo = 8;
   strcpy(paracetamol->nome, "paracetamol");
+  paracetamol->intervalo = 8;
   paracetamol->total = 12;
 
   Medicamento *b12 = (Medicamento *)malloc(sizeof(Medicamento));
-  b12->intervalo = 24;
   strcpy(b12->nome, "b12");
+  b12->intervalo = 24;
   b12->total = 6;
 
   pthread_create(&dorflex_thread, NULL, Dorflex, (Medicamento *)dorflex);
@@ -51,8 +51,8 @@ int main() {
 void *Dorflex(void *medicamento) {
   Medicamento *dorflex = (Medicamento *)medicamento;
 
-  for (int i = 0; i < dorflex->total; i++) {
-    printf("Lembrete: tomar %s\n", dorflex->nome);
+  for (int i = 1; i <= dorflex->total; i++) {
+    printf("Lembrete: tomar %s | Pílulas restantes %d\n", dorflex->nome, dorflex->total - i);
     sleep(dorflex->intervalo * PSEUDO_SECOND);
   }
 
@@ -62,8 +62,8 @@ void *Dorflex(void *medicamento) {
 void *Paracetamol(void *medicamento) {
   Medicamento *paracetamol = (Medicamento *)medicamento;
 
-  for (int i = 0; i < paracetamol->total; i++) {
-    printf("Lembrete: tomar %s\n", paracetamol->nome);
+  for (int i = 1; i <= paracetamol->total; i++) {
+    printf("Lembrete: tomar %s | Pílulas restantes %d\n", paracetamol->nome, paracetamol->total - i);
     sleep(paracetamol->intervalo * PSEUDO_SECOND);
   }
 
@@ -73,8 +73,8 @@ void *Paracetamol(void *medicamento) {
 void *B12(void *medicamento) {
   Medicamento *b12 = (Medicamento *)medicamento;
 
-  for (int i = 0; i < b12->total; i++) {
-    printf("Lembrete: tomar %s\n", b12->nome);
+  for (int i = 1; i <= b12->total; i++) {
+    printf("Lembrete: tomar %s | Pílulas restantes: %d\n", b12->nome, b12->total - i);
     sleep(b12->intervalo * PSEUDO_SECOND);
   }
 
