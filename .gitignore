@@ -32,4 +32,10 @@
 .clangd
 5P/ppc/mpi/projects/image.png
 5P/ppc/mpi/projects/.vector
+<<<<<<< HEAD
 5P/bd/node_modules
+=======
+5P/ppc/threads/examples/.threads1
+github-token.txt
+5P/ppc/threads/projects/.med
+>>>>>>> 9832515dd455d593cbc741fc59f488ecc1a61785

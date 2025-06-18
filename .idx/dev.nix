@@ -9,6 +9,8 @@
     pkgs.zsh
     pkgs.git
     pkgs.nodejs
+    pkgs.apt
+    pkgs.mpich
     pkgs.sudo
     pkgs.astyle
     pkgs.git-credential-manager
