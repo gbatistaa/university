@@ -1,69 +1,65 @@
 const { MongoClient } = require("mongodb");
 
-const uri = "mongodb://54.175.56.159:27017";
+// aqui é a url com o ip da estância ec2 (amazon linux) e a porta do banco MongoDB
+// Vou inserir dados e criar um usuário com nome e senha professor
+const uri = "mongodb://52.91.46.22:27017";
 const client = new MongoClient(uri);
 
 async function main() {
   try {
     await client.connect();
     const db = client.db("escola");
-    const bibleBooks = db.collection("biblebooks");
+    // await createUser(db, "professor", "professor");
+    const bibleBooks = db.collection("bibleBooks");
 
     await bibleBooks.deleteMany({});
 
     const books = [
       {
-        id: 1,
         name: "Matthew",
-        pages: 28,
+        chapters: 28,
         author: "Matthew",
         testament: "NT",
         yearWritten: 70,
       },
       {
-        id: 2,
         name: "Mark",
-        pages: 16,
+        chapters: 16,
         author: "Mark",
         testament: "NT",
         yearWritten: 65,
       },
       {
-        id: 3,
         name: "Luke",
-        pages: 24,
+        chapters: 24,
         author: "Luke",
         testament: "NT",
         yearWritten: 80,
       },
       {
-        id: 4,
         name: "Genesis",
-        pages: 50,
+        chapters: 50,
         author: "Moses",
         testament: "AT",
         yearWritten: -1450,
       },
       {
-        id: 5,
         name: "Exodus",
-        pages: 40,
+        chapters: 40,
         author: "Moses",
         testament: "AT",
         yearWritten: -1400,
       },
       {
-        id: 6,
         name: "Psalms",
-        pages: 150,
+        chapters: 150,
         author: "David",
         testament: "AT",
         yearWritten: -1000,
       },
       {
-        id: 7,
         name: "Isaiah",
-        pages: 66,
+        chapters: 66,
         author: "Isaiah",
         testament: "AT",
         yearWritten: -700,
@@ -86,6 +82,24 @@ async function main() {
     console.error("Error:", err);
   } finally {
     await client.close();
+  }
+}
+
+async function createUser(db, userName, pwd) {
+  try {
+    await db.command({
+      createUser: userName,
+      pwd: pwd,
+      roles: [{ role: "readWrite", db: "escola" }],
+    });
+    console.log("User 'professor' created.");
+  } catch (err) {
+    // Se o usuário já existir, evita erro
+    if (err.codeName === "DuplicateKey") {
+      console.log("User 'professor' already exists.");
+    } else {
+      throw err;
+    }
   }
 }
 
