@@ -1,43 +1,38 @@
 #include <pthread.h>
 #include <stdio.h>
-#include <time.h>
+#include <unistd.h>
 
 #define NUM_ITER 5
 
-volatile int interested[2] = {0, 0};
-volatile int turn = 0;
+volatile int interested[2] = {0, 0}; // Flags de interesse de cada processo
+volatile int turn = 0;               // Indica de quem é a vez
 
-void enterRegion(int process) {
+void enter_region(int process) {
   int other = 1 - process;
-  interested[process] = 1;
-  turn = process;
-  while (interested[other] && turn == process) {
-    // Busy wait
+  interested[process] = 1; // Este processo quer entrar
+  turn = other;            // Dá a vez ao outro
+  while (interested[other] && turn == other) {
+    // Espera ocupada enquanto o outro quiser entrar e for a vez dele
   }
 }
 
-void leaveRegion(int process) { interested[process] = 0; }
+void leave_region(int process) {
+  interested[process] = 0; // Sai da região crítica
+}
 
-void *criticalSection(void *arg) {
+void *critical_section(void *arg) {
   int process = *(int *)arg;
-  struct timespec req;
-
   for (int i = 0; i < NUM_ITER; i++) {
-    enterRegion(process);
+    enter_region(process);
 
-    // Critical region
-    printf("Process %d in the critical region. Iteration %d\n", process, i + 1);
+    // Região crítica
+    printf("Processo %d na região crítica. Iteração %d\n", process, i + 1);
+    usleep(100000); // 100 ms
 
-    req.tv_sec = 1;
-    req.tv_nsec = 0;
-    nanosleep(&req, NULL);
+    leave_region(process);
 
-    leaveRegion(process);
-
-    // Non-critical region
-    req.tv_sec = 0;
-    req.tv_nsec = 500000000; // 0.5s
-    nanosleep(&req, NULL);
+    // Região não crítica
+    usleep(50000);
   }
 
   return NULL;
@@ -47,8 +42,8 @@ int main() {
   pthread_t t0, t1;
   int p0 = 0, p1 = 1;
 
-  pthread_create(&t0, NULL, criticalSection, &p0);
-  pthread_create(&t1, NULL, criticalSection, &p1);
+  pthread_create(&t0, NULL, critical_section, &p0);
+  pthread_create(&t1, NULL, critical_section, &p1);
 
   pthread_join(t0, NULL);
   pthread_join(t1, NULL);
