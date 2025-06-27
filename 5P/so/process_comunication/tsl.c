@@ -37,7 +37,7 @@ void *worker(void *arg) {
     release_lock(); // EXIT OF THE CRITICAL REGION
 
     // Non -critical region
-    usleep(1000000); // 100ms
+    usleep(1000000); // 1s
   }
 
   return NULL;

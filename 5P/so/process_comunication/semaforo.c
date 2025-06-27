@@ -1,79 +1,97 @@
-#include <pthread.h> // Para criar e gerenciar threads
-#include <stdio.h>   // Para printf
-#include <unistd.h>  // Para usleep (espera em microssegundos)
+#include <pthread.h>
+#include <stdatomic.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #define NUM_ITER 5
 
-// Definição da estrutura do semáforo
+// Estrutura do semáforo com valor atômico
 typedef struct {
-  int value; // Valor atual do semáforo (normalmente 0 ou 1 para binário)
+  atomic_int value;
 } Semaphore;
 
-// Declaração global do semáforo
-Semaphore sem;
+Semaphore sem; // semáforo global
 
-// Função para inicializar o semáforo com valor inicial
-void sem_init(Semaphore *s, int val) { s->value = val; }
+// Inicializa o semáforo
+int sem_init(Semaphore *s, int val) {
+  atomic_init(&s->value, val);
+  return EXIT_SUCCESS;
+}
 
-// Operação down (wait/P) — tenta entrar na região crítica
-void sem_down(Semaphore *s, int id) {
+// Operação down (P/wait) — espera até o semáforo estar disponível
+int sem_down(Semaphore *s) {
   while (1) {
-    // Espera ocupada
-    while (s->value <= 0) {
-      // Busy wait
+    // Tenta fazer fetch_sub se o valor for > 0
+    int expected = atomic_load(&s->value);
+    if (expected > 0) {
+      if (atomic_compare_exchange_strong(&s->value, &expected, expected - 1)) {
+        break; // conseguiu entrar na região crítica
+      }
     }
-
-    // Verifica se pode decrementar
-    if (s->value > 0) {
-      printf("Processo %d executando sem_down. Valor do semáforo antes: %d\n",
-             id, s->value);
-      s->value--; // entra na região crítica
-      printf(
-          "Processo %d entrou na região crítica. Valor do semáforo agora: %d\n",
-          id, s->value);
-      break;
-    }
+    // Espera curta para evitar travamento de CPU (pode ser removido)
+    usleep(100);
   }
+  return EXIT_SUCCESS;
 }
 
-// Operação up (signal/V) — libera a região crítica
-void sem_up(Semaphore *s, int id) {
-  s->value++; // libera o recurso
-  printf("Processo %d executou sem_up. Valor do semáforo agora: %d\n", id,
-         s->value);
+// Operação up (V/signal) — libera a região crítica
+int sem_up(Semaphore *s) {
+  atomic_fetch_add(&s->value, 1);
+  return EXIT_SUCCESS;
 }
 
-// Função executada por cada thread/processo
-void *process(void *arg) {
+// Região crítica simulada
+atomic_int shared_counter = 0;
+
+void *worker(void *arg) {
   int id = *(int *)arg;
 
   for (int i = 0; i < NUM_ITER; i++) {
-    sem_down(&sem, id); // espera pelo semáforo
+    sem_down(&sem);
 
     // Região crítica
-    printf(">>> Processo %d na região crítica. Iteração %d\n", id, i + 1);
-    usleep(1000000); // 100 ms
+    int local = atomic_load(&shared_counter);
+    printf("Thread %d Increasing: %d → %d\n", id, local, local + 1);
+    atomic_store(&shared_counter, local + 1);
 
-    sem_up(&sem, id); // libera o semáforo
+    usleep(100000); // simula trabalho
 
-    // Região não crítica
-    usleep(500000); // 50 ms
+    sem_up(&sem);
+
+    usleep(50000); // região não crítica
   }
 
   return NULL;
 }
 
 int main() {
-  pthread_t t0, t1;
-  int p0 = 0, p1 = 1;
+  pthread_t *threads;
+  int num_threads;
+  long num_threads_available = sysconf(_SC_NPROCESSORS_ONLN);
 
-  sem_init(&sem, 1); // semáforo começa liberado
+  printf("Threads number: ");
+  scanf("%d", &num_threads);
 
-  pthread_create(&t0, NULL, process, &p0);
-  pthread_create(&t1, NULL, process, &p1);
+  if (num_threads > num_threads_available) {
+    printf("Unfortunately I don't have %d threads, I will use my %lu threads",
+           num_threads, num_threads_available);
+    num_threads = (int)num_threads_available;
+  }
 
-  pthread_join(t0, NULL);
-  pthread_join(t1, NULL);
+  threads = (pthread_t *)malloc(sizeof(pthread_t) * num_threads);
 
-  return 0;
+  sem_init(&sem, 1); // semáforo binário (exclusão mútua)
+
+  for (int i = 0; i < num_threads; i++) {
+    pthread_create(&threads[i], NULL, worker, &i);
+  }
+
+  for (int i = 0; i < num_threads; i++) {
+    pthread_join(threads[i], NULL);
+  }
+
+  printf("Final value of the accountant: %d\n", atomic_load(&shared_counter));
+
+  return EXIT_SUCCESS;
 }
