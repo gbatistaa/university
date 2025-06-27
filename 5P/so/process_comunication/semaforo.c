@@ -74,7 +74,7 @@ int main() {
   scanf("%d", &num_threads);
 
   if (num_threads > num_threads_available) {
-    printf("Unfortunately I don't have %d threads, I will use my %lu threads",
+    printf("Unfortunately I don't have %d threads, I will use my %lu threads\n",
            num_threads, num_threads_available);
     num_threads = (int)num_threads_available;
   }
@@ -83,8 +83,11 @@ int main() {
 
   sem_init(&sem, 1); // semáforo binário (exclusão mútua)
 
+  int *ids = malloc(sizeof(int) * num_threads);
+
   for (int i = 0; i < num_threads; i++) {
-    pthread_create(&threads[i], NULL, worker, &i);
+    ids[i] = i;
+    pthread_create(&threads[i], NULL, worker, &ids[i]);
   }
 
   for (int i = 0; i < num_threads; i++) {
