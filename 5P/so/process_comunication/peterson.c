@@ -27,12 +27,12 @@ void *critical_section(void *arg) {
 
     // Região crítica
     printf("Processo %d na região crítica. Iteração %d\n", process, i + 1);
-    usleep(100000); // 100 ms
+    usleep(1000000); // 100 ms
 
     leave_region(process);
 
     // Região não crítica
-    usleep(50000);
+    usleep(500000);
   }
 
   return NULL;
