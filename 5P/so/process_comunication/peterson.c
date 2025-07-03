@@ -5,7 +5,7 @@
 #define NUM_ITER 5
 
 volatile int interested[2] = {0, 0}; // Flags de interesse de cada processo
-volatile int turn = 0;              // Indica de quem é a vez
+volatile int turn = 0;               // Indica de quem é a vez
 
 void enter_region(int process) {
   int other = 1 - process;
@@ -21,7 +21,7 @@ void leave_region(int process) {
 }
 
 void *critical_section(void *arg) {
-  int process = *(int *)arg;
+  const int process = *(int *)arg;
   for (int i = 0; i < NUM_ITER; i++) {
     enter_region(process);
 
