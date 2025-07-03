@@ -1,4 +1,4 @@
-/* Arquivo:  
+/* Arquivo:
  *    pth_semaphore1.c
  *
  * Propósito:
@@ -8,40 +8,36 @@
  * Usage:    ./pth_semaphore1
  *
  */
+#include <pthread.h>
+#include <semaphore.h>
 #include <stdio.h>
-#include <pthread.h> 
-#include <semaphore.h> 
-
 
 sem_t semaphore;
 
-
 /*--------------------------------------------------------------------*/
-int main(int argc, char* argv[]) {
-   sem_init(&semaphore, 0, 2);
+int main(int argc, char *argv[]) {
+  sem_init(&semaphore, 0, 2);
 
-   //sem_post(&semaphore);
-   
-   printf("Waiting...\n");
-   sem_wait(&semaphore);
-   printf("PASS\n\n");
-   
-   sem_post(&semaphore);
+  // sem_post(&semaphore);
 
-   printf("Waiting...\n");
-   sem_wait(&semaphore);
-   printf("PASS\n\n");
+  printf("Waiting...\n");
+  sem_wait(&semaphore);
+  printf("PASS\n\n");
 
-   printf("Waiting...\n");
-   sem_wait(&semaphore);
-   printf("PASS\n\n");
-   
-   printf("Waiting...\n");
-   sem_wait(&semaphore);
-   printf("PASS\n\n");
+  sem_post(&semaphore);
 
-   sem_destroy(&semaphore);
-   return 0;
-}  /* main */
+  printf("Waiting...\n");
+  sem_wait(&semaphore);
+  printf("PASS\n\n");
 
+  printf("Waiting...\n");
+  sem_wait(&semaphore);
+  printf("PASS\n\n");
 
+  printf("Waiting...\n");
+  sem_wait(&semaphore);
+  printf("PASS\n\n");
+
+  sem_destroy(&semaphore);
+  return 0;
+} /* main */

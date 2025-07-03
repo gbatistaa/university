@@ -44,6 +44,7 @@ void *worker(void *arg) {
 }
 
 int main() {
+  system("clear");
   pthread_t t0, t1;
   int id0 = 0, id1 = 1;
 

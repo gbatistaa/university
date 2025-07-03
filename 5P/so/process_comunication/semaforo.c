@@ -4,12 +4,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NUM_ITER 5
-
 // Estrutura do semáforo com valor atômico
 typedef struct {
   atomic_int value;
 } Semaphore;
+
+typedef struct {
+  int id;       // ID da thread
+  int num_iter; // Número de iterações
+} ThreadArgs;
 
 Semaphore sem; // semáforo global
 
@@ -45,14 +48,14 @@ int sem_up(Semaphore *s) {
 atomic_int shared_counter = 0;
 
 void *worker(void *arg) {
-  int id = *(int *)arg;
+  ThreadArgs *args = (ThreadArgs *)arg; // Converte o ponteiro para a struct
 
-  for (int i = 0; i < NUM_ITER; i++) {
+  for (int i = 0; i < args->num_iter; i++) {
     sem_down(&sem);
 
     // Região crítica
     int local = atomic_load(&shared_counter);
-    printf("Thread %d Increasing: %d → %d\n", id, local, local + 1);
+    printf("Thread %d Increasing: %d → %d\n", args->id + 1, local, local + 1);
     atomic_store(&shared_counter, local + 1);
 
     usleep(100000); // simula trabalho
@@ -66,8 +69,9 @@ void *worker(void *arg) {
 }
 
 int main() {
+  system("clear");
   pthread_t *threads;
-  int num_threads;
+  int num_threads, num_iter;
   long num_threads_available = sysconf(_SC_NPROCESSORS_ONLN);
 
   printf("Threads number: ");
@@ -79,22 +83,30 @@ int main() {
     num_threads = (int)num_threads_available;
   }
 
+  printf("Iterations per thread: ");
+  scanf("%d", &num_iter);
+
   threads = (pthread_t *)malloc(sizeof(pthread_t) * num_threads);
+  ThreadArgs *args =
+      malloc(sizeof(ThreadArgs) * num_threads); // Aloca um array de structs
 
   sem_init(&sem, 1); // semáforo binário (exclusão mútua)
 
-  int *ids = malloc(sizeof(int) * num_threads);
-
   for (int i = 0; i < num_threads; i++) {
-    ids[i] = i;
-    pthread_create(&threads[i], NULL, worker, &ids[i]);
+    args[i].id = i;              // Define o ID da thread
+    args[i].num_iter = num_iter; // Define o número de iterações
+    pthread_create(&threads[i], NULL, worker,
+                   &args[i]); // Passa o ponteiro para a struct
   }
 
   for (int i = 0; i < num_threads; i++) {
     pthread_join(threads[i], NULL);
   }
 
-  printf("Final value of the accountant: %d\n", atomic_load(&shared_counter));
+  printf("Final value of the counter: %d\n", atomic_load(&shared_counter));
+
+  free(threads); // Libera memória alocada
+  free(args);    // Libera os argumentos
 
   return EXIT_SUCCESS;
 }

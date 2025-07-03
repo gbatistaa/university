@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #define NUM_ITER 5
@@ -14,10 +15,12 @@ void enter_region(int process) {
   while (interested[other] && turn == other) {
     // Espera ocupada enquanto o outro quiser entrar e for a vez dele
   }
+  return;
 }
 
 void leave_region(int process) {
   interested[process] = 0; // Sai da região crítica
+  return;
 }
 
 void *critical_section(void *arg) {
@@ -48,5 +51,5 @@ int main() {
   pthread_join(t0, NULL);
   pthread_join(t1, NULL);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
