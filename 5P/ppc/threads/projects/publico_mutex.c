@@ -2,6 +2,7 @@
 #include <stdatomic.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 int total_public = 0;
 pthread_mutex_t mutex;
@@ -10,6 +11,8 @@ int increment_public(int public) {
   for (int i = 0; i < public; i++) {
     total_public++;
   }
+  printf("Entrou mais %d pessoas\n", public);
+
   return EXIT_SUCCESS;
 }
 
@@ -24,6 +27,7 @@ void *routine(void *arg) {
 }
 
 int main() {
+  system("clear");
   pthread_mutex_init(&mutex, NULL);
 
   int people_per_entry, entries_num;
@@ -39,6 +43,7 @@ int main() {
   for (int i = 0; i < entries_num; i++) {
     ids[i] = i;
     pthread_create(&threads[i], NULL, routine, &people_per_entry);
+    sleep(1);
   }
 
   for (int i = 0; i < entries_num; i++) {
