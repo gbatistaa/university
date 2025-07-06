@@ -3,24 +3,20 @@
 #include <semaphore>
 #include <unordered_map>
 #include <variant>
-#include <iterator>
 #include <vector>
+// #include <thread>
 
 using namespace std;
 
 // Tipo customizado que permite uma variável receber vários tipos de dados
-
 using variant_t = variant<string, bool, int, double>;
 
-counting_semaphore<2> sem(2);
+counting_semaphore<8> sem(6);
 
 // Classe de tipagem de cada linha da tabela
-class table_line : public unordered_map<string, variant_t>
-{
-};
+class table_line : public unordered_map<string, variant_t> {};
 
-class table
-{
+class table {
 
 public:
   string table_name;
@@ -28,21 +24,17 @@ public:
   vector<table_line> table_lines; // Lista de linhas das tabelas
 
   // Iniciar a tabela adicionando os campos de propriedades
-  void init_table(vector<string> props, string table_name)
-  {
+  void init_table(vector<string> props, string table_name) {
     this->table_name = table_name;
-    vector<string>
-        props_complete = props;
+    vector<string> props_complete = props;
     // Adiciona por padrão a propriedade id a todos as tabelas criadas
     props_complete.insert(props_complete.begin(), "id");
     this->table_props = props_complete;
   }
 
   // Função de inserir dados na tabela (sem id)
-  void insert(vector<variant_t> values)
-  {
-    if (values.size() > 0 && values.size() == this->table_props.size() - 1)
-    {
+  void insert(vector<variant_t> values) {
+    if (values.size() > 0 && values.size() == this->table_props.size() - 1) {
       table_line new_line;
       new_line[this->table_props.at(0)] = (int)this->table_lines.size();
       for (int i = 1; i < this->table_props.size(); i++)
@@ -51,40 +43,35 @@ public:
     }
   }
 
-  void delete_where(string prop, variant_t expected_value)
-  {
-    for (auto it = this->table_lines.begin(); it != this->table_lines.end();)
-    {
+  void delete_where(string prop, variant_t expected_value) {
+    for (auto it = this->table_lines.begin(); it != this->table_lines.end();) {
       if (it->at(prop) == expected_value)
-        it = this->table_lines.erase(it); // erase retorna o próximo iterador válido
+        it = this->table_lines.erase(
+            it); // erase retorna o próximo iterador válido
       else
         it++;
     }
   }
 
-  void delete_all()
-  {
+  void delete_all() {
     this->table_lines.clear();
     cout << "\033[32mAll elements were successfully removed!\033[0m" << endl;
   }
 
-  void update_to(string prop, variant_t expected_value, unordered_map<string, variant_t> new_values)
-  {
-    for (int i = 0; i < this->table_lines.size(); i++)
-    {
+  void update_to(string prop, variant_t expected_value,
+                 unordered_map<string, variant_t> new_values) {
+    for (int i = 0; i < this->table_lines.size(); i++) {
       table_line line = this->table_lines.at(i);
-      if (line.at(prop) == expected_value)
-      {
+      if (line.at(prop) == expected_value) {
         cout << "(";
-        visit([](auto &&value)
-              { cout << value; }, line.at("id"));
+        visit([](auto &&value) { cout << value; }, line.at("id"));
         cout << ") Changed Props: | ";
-        for (const auto &[prop_changed, new_value] : new_values)
-        {
+        for (const auto &[prop_changed, new_value] : new_values) {
           this->table_lines.at(i)[prop_changed] = new_value;
           cout << "\033[32m" << prop_changed + ": ";
-          visit([](auto &&value)
-                { cout << "\033[33m" << value << "\033[0m | "; }, new_value);
+          visit(
+              [](auto &&value) { cout << "\033[33m" << value << "\033[0m | "; },
+              new_value);
         }
         cout << endl;
       }
@@ -92,51 +79,39 @@ public:
   }
 
   // Método para listar todos os elementosde uma tabela
-  void find_all()
-  {
-    if (!this->table_lines.empty())
-    {
-      for (int i = 0; i < this->table_lines.size(); i++)
-      {
+  void find_all() {
+    if (!this->table_lines.empty()) {
+      for (int i = 0; i < this->table_lines.size(); i++) {
         table_line line = this->table_lines.at(i);
         cout << "(";
-        visit([](auto &&value)
-              { cout << value; }, line.at("id"));
+        visit([](auto &&value) { cout << value; }, line.at("id"));
         cout << ") ";
-        for (int j = 1; j < this->table_props.size(); j++)
-        {
+        for (int j = 1; j < this->table_props.size(); j++) {
           cout << table_props.at(j) << ": ";
-          visit([](auto &&value)
-                { cout << value; }, line[table_props.at(j)]);
+          visit([](auto &&value) { cout << value; }, line[table_props.at(j)]);
           if (j < this->table_props.size() - 1)
             cout << " | ";
         }
         cout << endl;
       }
-    }
-    else
-    {
-      cout << "\033[31mThere is no elements on table " << this->table_name << ".\033[0m" << endl;
+    } else {
+      cout << "\033[31mThere is no elements on table " << this->table_name
+           << ".\033[0m" << endl;
     }
   }
 
-  // Método para listar todos os elementos de uma tabela cujo valor da propriedade é igual ao esperado
-  void find_where(string prop, variant_t expected_value)
-  {
-    for (int i = 0; i < this->table_lines.size(); i++)
-    {
+  // Método para listar todos os elementos de uma tabela cujo valor da
+  // propriedade é igual ao esperado
+  void find_where(string prop, variant_t expected_value) {
+    for (int i = 0; i < this->table_lines.size(); i++) {
       table_line line = this->table_lines.at(i);
-      if (line.at(prop) == expected_value)
-      {
+      if (line.at(prop) == expected_value) {
         cout << "(";
-        visit([](auto &&value)
-              { cout << value; }, line.at("id"));
+        visit([](auto &&value) { cout << value; }, line.at("id"));
         cout << ") ";
-        for (int j = 1; j < this->table_props.size(); j++)
-        {
+        for (int j = 1; j < this->table_props.size(); j++) {
           cout << table_props.at(j) << ": ";
-          visit([](auto &&value)
-                { cout << value; }, line[table_props.at(j)]);
+          visit([](auto &&value) { cout << value; }, line[table_props.at(j)]);
           if (j < this->table_props.size() - 1)
             cout << " | ";
         }
@@ -147,14 +122,11 @@ public:
 };
 
 // Classe de tipagem do hashmap de tabelas
-template <typename T>
-class tables_map
-{
+template <typename T> class tables_map {
 public:
   unordered_map<string, T> tables;
 
-  void create_table(string table_name, vector<string> table_props)
-  {
+  void create_table(string table_name, vector<string> table_props) {
     table new_table;
     new_table.init_table(table_props, table_name);
     this->tables.insert({table_name, new_table});
@@ -163,18 +135,54 @@ public:
   }
 };
 
-int main()
-{
+int main() {
   tables_map<table> database;
 
-  vector<string> student_props = {"name", "age", "cpf", "iea", "code", "approved"};
+  vector<string> student_props = {
+      "name", "age", "cpf", "iea", "code", "approved",
+  };
   database.create_table("students", student_props);
 
-  vector<variant_t> student1 = {"Gabriel Batista Barbosa", 21, "05354093546", 7.5396, "202300027249", true};
-  vector<variant_t> student2 = {"Larissa Mendes Rocha", 22, "12439876532", 8.1342, "202200018734", true};
-  vector<variant_t> student3 = {"Pedro Henrique Silva Costa", 21, "89765432109", 6.4287, "202300026513", false};
-  vector<variant_t> student4 = {"Ana Carolina Lima Souza", 19, "34561278900", 9.0021, "202400091234", true};
-  vector<variant_t> student5 = {"Lucas Fernando Oliveira", 23, "76321049875", 7.7854, "202100023981", false};
+  vector<variant_t> student1 = {
+      "Gabriel Batista Barbosa",
+      21,
+      "05354093546",
+      7.5396,
+      "202300027249",
+      true,
+  };
+  vector<variant_t> student2 = {
+      "Larissa Mendes Bittencourt",
+      22,
+      "12439876532",
+      8.1342,
+      "202200018734",
+      true,
+  };
+  vector<variant_t> student3 = {
+      "Pedro Henrique Silva Costa",
+      21,
+      "89765432109",
+      6.4287,
+      "202300026513",
+      false,
+  };
+  vector<variant_t> student4 = {
+      "Ana Carolina Lima Souza",
+      19,
+      "34561278900",
+      9.0021,
+      "202400091234",
+      true,
+  };
+  vector<variant_t> student5 = {
+      "Lucas Fernando Oliveira",
+      23,
+      "76321049875",
+      7.7854,
+      "202100023981",
+      false,
+  };
 
   database.tables.at("students").insert(student1);
   database.tables.at("students").insert(student2);
@@ -198,7 +206,8 @@ int main()
       {"iea", 9.75},
       {"approved", false},
   };
-  database.tables.at("students").update_to("name", "Gabriel Batista Barbosa", new_values1);
+  database.tables.at("students")
+      .update_to("name", "Gabriel Batista Barbosa", new_values1);
   cout << endl;
 
   database.tables.at("students").find_all();
