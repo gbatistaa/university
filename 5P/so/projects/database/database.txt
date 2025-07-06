@@ -1,0 +1,13 @@
+- A lista contendo todas as tabelas vai ser uma hashmap <string, table>
+- Cada tabela vai ser um vector de hashmaps (linhas)
+- Cada atributo de classe vai ser uma chave e o valor vai ser o valor da chave
+
+- Na implementação de um Banco de Dados, há uma restrição para que no máximo 10
+consultas sejam realizadas simultaneamente, ao passo que apenas 1 operação de
+escrita (insert, update ou delete) pode ocorrer simultaneamente.
+- Caso uma 11a consulta tente ser realizada, ela deve ser bloqueada até que alguma
+consulta finalize
+- No momento da operação de escrita, não pode haver consultas no banco de dados
+- Implemente uma classe que discipline o acesso ao Banco de dados
+- Implemente as 4 operações CRUD (Create, Read, Update e Delete)
+- Crie um programa para testar e mostrar o funcionamento da(s) sua(s) classe(s)

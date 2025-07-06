@@ -1,3 +1,26 @@
 {
-  "C_Cpp_Runner.msvcBatchPath": ""
+  "C_Cpp_Runner.msvcBatchPath": "",
+  "files.associations": {
+    "*.C": "c",
+    "*.nix": "markdown",
+    "map": "cpp",
+    "unordered_map": "cpp",
+    "iterator": "cpp",
+    "deque": "cpp",
+    "string": "cpp",
+    "vector": "cpp",
+    "iostream": "cpp",
+    "variant": "cpp",
+    "type_traits": "cpp",
+    "array": "cpp",
+    "tuple": "cpp",
+    "charconv": "cpp",
+    "chrono": "cpp",
+    "optional": "cpp",
+    "format": "cpp",
+    "ratio": "cpp",
+    "system_error": "cpp",
+    "functional": "cpp",
+    "utility": "cpp"
+  }
 }
