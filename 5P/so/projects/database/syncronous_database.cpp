@@ -70,26 +70,28 @@ public:
 
   void update_to(string prop, variant_t expected_value, unordered_map<string, variant_t> new_values)
   {
-    for (table_line line : this->table_lines)
+    for (int i = 0; i < this->table_lines.size(); i++)
     {
+      table_line line = this->table_lines.at(i);
       if (line.at(prop) == expected_value)
       {
         cout << "(";
         visit([](auto &&value)
               { cout << value; }, line.at("id"));
-        cout << ") Changed Props: |";
+        cout << ") Changed Props: | ";
         for (const auto &[prop_changed, new_value] : new_values)
         {
-          line[prop_changed] = new_value;
+          this->table_lines.at(i)[prop_changed] = new_value;
           cout << "\033[32m" << prop_changed + ": ";
           visit([](auto &&value)
-                { cout << "\033[33m" << value << "|\033[m"; }, new_value);
+                { cout << "\033[33m" << value << "\033[0m | "; }, new_value);
         }
         cout << endl;
       }
     }
   }
 
+  // Método para listar todos os elementosde uma tabela
   void find_all()
   {
     if (!this->table_lines.empty())
@@ -105,7 +107,7 @@ public:
         {
           cout << table_props.at(j) << ": ";
           visit([](auto &&value)
-                { cout << value; }, line[table_props.at(j)]); // Imprime o valor com base no seu tipo
+                { cout << value; }, line[table_props.at(j)]);
           if (j < this->table_props.size() - 1)
             cout << " | ";
         }
@@ -118,6 +120,7 @@ public:
     }
   }
 
+  // Método para listar todos os elementos de uma tabela cujo valor da propriedade é igual ao esperado
   void find_where(string prop, variant_t expected_value)
   {
     for (int i = 0; i < this->table_lines.size(); i++)
@@ -133,7 +136,7 @@ public:
         {
           cout << table_props.at(j) << ": ";
           visit([](auto &&value)
-                { cout << value; }, line[table_props.at(j)]); // Imprime o valor com base no seu tipo
+                { cout << value; }, line[table_props.at(j)]);
           if (j < this->table_props.size() - 1)
             cout << " | ";
         }

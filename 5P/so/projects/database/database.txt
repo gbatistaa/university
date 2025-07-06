@@ -5,7 +5,7 @@
 - Na implementação de um Banco de Dados, há uma restrição para que no máximo 10
 consultas sejam realizadas simultaneamente, ao passo que apenas 1 operação de
 escrita (insert, update ou delete) pode ocorrer simultaneamente.
-- Caso uma 11a consulta tente ser realizada, ela deve ser bloqueada até que alguma
+- Caso uma 11ª consulta tente ser realizada, ela deve ser bloqueada até que alguma
 consulta finalize
 - No momento da operação de escrita, não pode haver consultas no banco de dados
 - Implemente uma classe que discipline o acesso ao Banco de dados
