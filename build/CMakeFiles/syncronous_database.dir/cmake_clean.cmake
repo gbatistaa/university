@@ -1,0 +1,38 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/syncronous_database.dir/link.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/bst.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/bst.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/gabrielbatista_202300027249_porto.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/gabrielbatista_202300027249_porto.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/hash-map.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/hash-map.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/quick_sort/gabrielbatista_202300027249_quicksort.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u1/quick_sort/gabrielbatista_202300027249_quicksort.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/compressao/gabrielbatista_202300027249_compressao.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/compressao/gabrielbatista_202300027249_compressao.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/sequenciamento/gabrielbatista_202300027249_sequenciamento.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/sequenciamento/gabrielbatista_202300027249_sequenciamento.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/f.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/f.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/4P/statistics/u1/data_analitics.cpp.o"
+  "CMakeFiles/syncronous_database.dir/4P/statistics/u1/data_analitics.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.o"
+  "CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/5P/so/projects/database/data.cpp.o"
+  "CMakeFiles/syncronous_database.dir/5P/so/projects/database/data.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o"
+  "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o.d"
+  "syncronous_database"
+  "syncronous_database.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/syncronous_database.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

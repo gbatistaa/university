@@ -1,38 +1,41 @@
+#include "data.h"
+#include <barrier>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <semaphore>
+#include <thread>
+#include <unistd.h>
 #include <unordered_map>
 #include <variant>
 #include <vector>
-// #include <thread>
 
 using namespace std;
 
-// Tipo customizado que permite uma variável receber vários tipos de dados
+const int MAX_THREADS = thread::hardware_concurrency();
+
 using variant_t = variant<string, bool, int, double>;
 
-counting_semaphore<8> sem(6);
+mutex console_mutex;
+barrier syncronization_barrier(MAX_THREADS - 2);
+counting_semaphore<6> read_operations_sem(MAX_THREADS - 2);
 
-// Classe de tipagem de cada linha da tabela
+// Tipo de linha
 class table_line : public unordered_map<string, variant_t> {};
 
 class table {
-
 public:
   string table_name;
-  vector<string> table_props;     // Lista de propriedades da tabela
-  vector<table_line> table_lines; // Lista de linhas das tabelas
+  vector<string> table_props;
+  vector<table_line> table_lines;
 
-  // Iniciar a tabela adicionando os campos de propriedades
   void init_table(vector<string> props, string table_name) {
     this->table_name = table_name;
     vector<string> props_complete = props;
-    // Adiciona por padrão a propriedade id a todos as tabelas criadas
     props_complete.insert(props_complete.begin(), "id");
     this->table_props = props_complete;
   }
 
-  // Função de inserir dados na tabela (sem id)
   void insert(vector<variant_t> values) {
     if (values.size() > 0 && values.size() == this->table_props.size() - 1) {
       table_line new_line;
@@ -46,177 +49,155 @@ public:
   void delete_where(string prop, variant_t expected_value) {
     for (auto it = this->table_lines.begin(); it != this->table_lines.end();) {
       if (it->at(prop) == expected_value)
-        it = this->table_lines.erase(
-            it); // erase retorna o próximo iterador válido
+        it = this->table_lines.erase(it);
       else
-        it++;
+        ++it;
     }
   }
 
   void delete_all() {
+    console_mutex.lock();
     this->table_lines.clear();
-    cout << "\033[32mAll elements were successfully removed!\033[0m" << endl;
+    cout << "\033[32mAll elements were successfully removed!\033[0m\n";
+    console_mutex.lock();
   }
 
   void update_to(string prop, variant_t expected_value,
                  unordered_map<string, variant_t> new_values) {
+    vector<int> updated_lines;
+
+    // Atualiza as propriedades e guarda índices que foram atualizados:
     for (int i = 0; i < this->table_lines.size(); i++) {
-      table_line line = this->table_lines.at(i);
+      table_line &line = this->table_lines.at(i);
       if (line.at(prop) == expected_value) {
-        cout << "(";
-        visit([](auto &&value) { cout << value; }, line.at("id"));
-        cout << ") Changed Props: | ";
         for (const auto &[prop_changed, new_value] : new_values) {
-          this->table_lines.at(i)[prop_changed] = new_value;
-          cout << "\033[32m" << prop_changed + ": ";
-          visit(
-              [](auto &&value) { cout << "\033[33m" << value << "\033[0m | "; },
-              new_value);
+          line[prop_changed] = new_value;
         }
-        cout << endl;
+        updated_lines.push_back(i);
       }
     }
+
+    // Leitura dos dados atualizados
+    console_mutex.lock();
+    for (int i : updated_lines) {
+      const table_line &line = this->table_lines.at(i);
+      cout << "(";
+      visit([](auto &&value) { cout << value; }, line.at("id"));
+      cout << ") Changed Props: | ";
+      for (const auto &[prop_changed, new_value] : new_values) {
+        cout << "\033[32m" << prop_changed << ": ";
+        visit([](auto &&v) { cout << "\033[33m" << v << "\033[0m | "; },
+              new_value);
+      }
+      cout << endl;
+    }
+    console_mutex.unlock();
   }
 
-  // Método para listar todos os elementosde uma tabela
   void find_all() {
+    console_mutex.lock();
+
     if (!this->table_lines.empty()) {
-      for (int i = 0; i < this->table_lines.size(); i++) {
-        table_line line = this->table_lines.at(i);
+      for (const auto &line : this->table_lines) {
         cout << "(";
-        visit([](auto &&value) { cout << value; }, line.at("id"));
+        visit([](auto &&v) { cout << v; }, line.at("id"));
         cout << ") ";
-        for (int j = 1; j < this->table_props.size(); j++) {
+        for (size_t j = 1; j < this->table_props.size(); j++) {
           cout << table_props.at(j) << ": ";
-          visit([](auto &&value) { cout << value; }, line[table_props.at(j)]);
+          visit([](auto &&v) { cout << v; }, line.at(table_props.at(j)));
           if (j < this->table_props.size() - 1)
             cout << " | ";
         }
         cout << endl;
+        usleep(50000);
       }
     } else {
       cout << "\033[31mThere is no elements on table " << this->table_name
-           << ".\033[0m" << endl;
+           << ".\033[0m\n";
     }
+    console_mutex.unlock();
   }
 
-  // Método para listar todos os elementos de uma tabela cujo valor da
-  // propriedade é igual ao esperado
-  void find_where(string prop, variant_t expected_value) {
-    for (int i = 0; i < this->table_lines.size(); i++) {
-      table_line line = this->table_lines.at(i);
-      if (line.at(prop) == expected_value) {
+  template <typename Fn>
+  void find_where(string prop, Fn function, variant_t expected_value) {
+    // Bloqueando a escrita no console por outras threads
+    console_mutex.lock();
+
+    for (const auto &line : this->table_lines) {
+      if (function(line.at(prop), expected_value)) {
         cout << "(";
         visit([](auto &&value) { cout << value; }, line.at("id"));
         cout << ") ";
-        for (int j = 1; j < this->table_props.size(); j++) {
+        for (size_t j = 1; j < this->table_props.size(); j++) {
           cout << table_props.at(j) << ": ";
-          visit([](auto &&value) { cout << value; }, line[table_props.at(j)]);
+          visit([](auto &&value) { cout << value; },
+                line.at(table_props.at(j)));
           if (j < this->table_props.size() - 1)
             cout << " | ";
         }
-        cout << endl;
+        cout << endl << endl;
       }
     }
+
+    console_mutex.unlock();
   }
 };
 
-// Classe de tipagem do hashmap de tabelas
+// Agora o map guarda shared_ptr<table>
 template <typename T> class tables_map {
 public:
-  unordered_map<string, T> tables;
+  unordered_map<string, shared_ptr<T>> tables;
 
   void create_table(string table_name, vector<string> table_props) {
-    table new_table;
-    new_table.init_table(table_props, table_name);
+    shared_ptr<T> new_table = make_shared<T>();
+    new_table->init_table(table_props, table_name);
     this->tables.insert({table_name, new_table});
-
-    return;
+    cout << "\033[32mTabela " << table_name << " criada com sucesso!\033[0m\n";
   }
 };
 
+// Instância global do banco
+tables_map<table> database;
+
+void read_routine(int id) {
+  read_operations_sem.acquire();
+
+  cout << "\033[32mThread " << "\033[33m" << id
+       << "\033[32m acquired the semaphore!\033[0m\n";
+
+  // Antes de começarem o processamento de leitura, todas as threads todas
+  // entrarão juntas na região crítica, com uma barreira de sincronização
+  syncronization_barrier.arrive_and_wait();
+
+  database.tables.at("stocks")->find_all();
+
+  read_operations_sem.release();
+
+  cout << "\033[31mThread " << "\033[33m" << id
+       << "\033[31m released the semaphore!\033[0m\n";
+}
+
 int main() {
-  tables_map<table> database;
-
-  vector<string> student_props = {
-      "name", "age", "cpf", "iea", "code", "approved",
-  };
-  database.create_table("students", student_props);
-
-  vector<variant_t> student1 = {
-      "Gabriel Batista Barbosa",
-      21,
-      "05354093546",
-      7.5396,
-      "202300027249",
-      true,
-  };
-  vector<variant_t> student2 = {
-      "Larissa Mendes Bittencourt",
-      22,
-      "12439876532",
-      8.1342,
-      "202200018734",
-      true,
-  };
-  vector<variant_t> student3 = {
-      "Pedro Henrique Silva Costa",
-      21,
-      "89765432109",
-      6.4287,
-      "202300026513",
-      false,
-  };
-  vector<variant_t> student4 = {
-      "Ana Carolina Lima Souza",
-      19,
-      "34561278900",
-      9.0021,
-      "202400091234",
-      true,
-  };
-  vector<variant_t> student5 = {
-      "Lucas Fernando Oliveira",
-      23,
-      "76321049875",
-      7.7854,
-      "202100023981",
-      false,
+  vector<string> stock_props = {
+      "ticker", "company_name", "price", "market_cap", "volume",
   };
 
-  database.tables.at("students").insert(student1);
-  database.tables.at("students").insert(student2);
-  database.tables.at("students").insert(student3);
-  database.tables.at("students").insert(student4);
-  database.tables.at("students").insert(student5);
+  database.create_table("stocks", stock_props);
 
-  database.tables.at("students").find_all();
-  cout << endl;
-  database.tables.at("students").find_where("age", 21);
-  cout << endl;
+  // Inserção dos dados
+  for (const auto &company : companies) {
+    database.tables.at("stocks")->insert(company);
+  }
 
-  database.tables.at("students").delete_where("age", 23);
-  cout << endl;
+  // Criação de threads
+  vector<thread> threads;
+  for (int i = 0; i < MAX_THREADS - 2; i++) {
+    threads.emplace_back(read_routine, i + 1);
+  }
 
-  database.tables.at("students").find_all();
-  cout << endl;
-
-  unordered_map<string, variant_t> new_values1 = {
-      {"age", 22},
-      {"iea", 9.75},
-      {"approved", false},
-  };
-  database.tables.at("students")
-      .update_to("name", "Gabriel Batista Barbosa", new_values1);
-  cout << endl;
-
-  database.tables.at("students").find_all();
-  cout << endl;
-
-  database.tables.at("students").delete_all();
-  cout << endl;
-
-  database.tables.at("students").find_all();
+  for (auto &t : threads) {
+    t.join();
+  }
 
   return EXIT_SUCCESS;
 }
