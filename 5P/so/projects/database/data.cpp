@@ -1,13 +1,22 @@
 #include "data.h"
+#include <iostream>
 #include <vector>
 
 using variant_t = variant<string, bool, int, double>;
 
-bool bigger_than(variant_t a, variant_t b) { return a > b; }
+bool is_bigger_than(variant_t a, variant_t b) { return a > b; }
 
-bool smaller_than(variant_t a, variant_t b) { return a < b; }
+bool is_smaller_than(variant_t a, variant_t b) { return a < b; }
 
-bool equal_to_(variant_t a, variant_t b) { return a == b; }
+bool is_equal_to(variant_t a, variant_t b) { return a == b; }
+
+void thread_msg(string msg, int id) {
+  if (id > 0) {
+    cout << endl
+         << "\033[32mThread " << "\033[33m" << id << " \033[32m fazendo " << msg
+         << "!\033[0m" << endl;
+  }
+};
 
 vector<vector<variant_t>> companies = {
     {"PETR4", "Petrobras", 29.50, 70.4, 32000000},
@@ -45,4 +54,43 @@ vector<vector<variant_t>> companies = {
     {"MCD", "McDonald's", 280.0, 170.0, 7000000},
     {"NKE", "Nike Inc.", 150.0, 200.0, 8000000},
     {"PFE", "Pfizer Inc.", 45.0, 250.0, 28000000},
+};
+
+vector<vector<variant_t>> group1 = {
+    {"ORCL", "Oracle Corporation", 130.5, 350.0, 10000000},
+    {"SAP", "SAP SE", 155.0, 190.0, 5000000},
+    {"CRM", "Salesforce Inc.", 215.3, 210.0, 8000000},
+    {"UBER", "Uber Technologies", 45.2, 90.0, 25000000},
+    {"LYFT", "Lyft Inc.", 12.5, 25.0, 6000000},
+};
+
+vector<vector<variant_t>> group2 = {
+    {"AMD", "Advanced Micro Devices", 110.7, 180.0, 20000000},
+    {"NVDA", "NVIDIA Corp.", 730.0, 3000.0, 27000000},
+    {"QCOM", "Qualcomm Inc.", 145.0, 400.0, 9000000},
+    {"TXN", "Texas Instruments", 165.0, 480.0, 7500000},
+    {"ADBE", "Adobe Inc.", 500.5, 1200.0, 6000000},
+};
+
+vector<vector<variant_t>> group3 = {
+    {"CSCO", "Cisco Systems", 52.3, 210.0, 14000000},
+    {"SONY", "Sony Group", 98.5, 115.0, 4000000},
+    {"PANW", "Palo Alto Networks", 240.0, 300.0, 4500000},
+    {"SHOP", "Shopify Inc.", 65.0, 70.0, 10000000},
+    {"SQ", "Block Inc.", 60.0, 35.0, 8000000},
+};
+
+vector<vector<variant_t>> group4 = {
+    {"DIS", "Walt Disney", 90.0, 160.0, 12000000},
+    {"PEP", "PepsiCo", 170.0, 230.0, 9000000},
+    {"WMT", "Walmart Inc.", 140.0, 400.0, 15000000},
+    {"PG", "Procter & Gamble", 160.0, 350.0, 11000000},
+    {"CVX", "Chevron Corp.", 160.0, 320.0, 10000000},
+};
+
+vector<vector<vector<variant_t>>> companies_extra = {
+    group1,
+    group2,
+    group3,
+    group4,
 };
