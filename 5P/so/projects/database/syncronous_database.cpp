@@ -3,10 +3,12 @@
 #include <condition_variable>
 #include <cstddef>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <mutex>
 #include <semaphore>
+#include <string>
 #include <thread>
 #include <unistd.h>
 #include <unordered_map>
@@ -16,20 +18,19 @@
 using namespace std;
 
 const int THREADS_AVAILABLE = thread::hardware_concurrency();
-const int MAX_READERS = THREADS_AVAILABLE - 2;
+const int MAX_READERS = THREADS_AVAILABLE - 6;
 
 using variant_t = variant<string, bool, int, double>;
 
-// Sistema de sincronização corrigido
-mutex console_mutex;
+mutex console_mutex;          // Controla escritas simultaneas no log
 mutex control_mutex;          // Controla acesso às variáveis de estado
 condition_variable reader_cv; // Para leitores esperarem
 condition_variable writer_cv; // Para escritores esperarem
 
-atomic<int> active_readers{0};     // Leitores ativos
-atomic<int> waiting_readers{0};    // Leitores esperando
-atomic<int> waiting_writers{0};    // Escritores esperando
-atomic<bool> writer_active{false}; // Se há escritor ativo
+atomic_int active_readers{0};     // Leitores ativos
+atomic_int waiting_readers{0};    // Leitores esperando
+atomic_int waiting_writers{0};    // Escritores esperando
+atomic_bool writer_active{false}; // Se há escritor ativo
 
 counting_semaphore<> reader_semaphore(MAX_READERS);
 
@@ -82,6 +83,9 @@ public:
 
   void update_to(string prop, variant_t expected_value, table_line new_values,
                  int thread_id) {
+    string filename = "atualizar_" + to_string(thread_id) + ".txt";
+    ofstream file(filename);
+
     vector<table_line> updated_lines;
 
     // Atualiza as propriedades e guarda linhas que foram atualizadas
@@ -92,52 +96,52 @@ public:
         }
         updated_lines.push_back(line);
       }
+      usleep(100000);
     }
 
-    usleep(100000);
-
     {
-      lock_guard<mutex> console_lock(console_mutex);
-      cout << "Thread " << thread_id << " realizou atualização.\n";
+      file << "Thread " << thread_id << " realizou atualização.\n";
 
       // Leitura dos dados atualizados
       for (const auto &updated_line : updated_lines) {
-        cout << "(";
-        visit([](auto &&value) { cout << value; }, updated_line.at("id"));
-        cout << ") Changed Props: | ";
+        file << "(";
+        visit([&file](auto &&value) { file << value; }, updated_line.at("id"));
+        file << ") Changed Props: | ";
         for (const auto &[prop_changed, new_value] : new_values) {
-          cout << "\033[32m" << prop_changed << ": ";
-          visit([](auto &&v) { cout << "\033[33m" << v << "\033[0m | "; },
+          file << "\033[32m" << prop_changed << ": ";
+          visit([&file](auto &&v) { file << "\033[33m" << v << "\033[0m | "; },
                 new_value);
         }
-        cout << endl;
+        file << endl;
       }
     }
   }
 
   void find_all(int thread_id) {
-    lock_guard<mutex> console_lock(console_mutex);
+    string filename = "leitura_" + to_string(thread_id) + ".txt";
+    ofstream file(filename);
+
     if (!this->table_lines.empty()) {
       for (const auto &line : this->table_lines) {
-        cout << "(";
+        file << "(";
         visit(
-            [](auto &&value) {
+            [&file](auto &&value) {
               if constexpr (is_same_v<decay_t<decltype(value)>, int>)
-                cout << (value + 1);
+                file << (value + 1);
               else
-                cout << value;
+                file << value;
             },
             line.at("id"));
 
-        cout << ") ";
+        file << ") ";
         for (size_t j = 1; j < this->table_props.size(); j++) {
-          cout << table_props.at(j) << ": ";
-          visit([](auto &&v) { cout << v; }, line.at(table_props.at(j)));
+          file << table_props.at(j) << ": ";
+          visit([&file](auto &&v) { file << v; }, line.at(table_props.at(j)));
           if (j < this->table_props.size() - 1)
-            cout << " | ";
+            file << " | ";
         }
-        cout << endl;
-        usleep(100000);
+        file << endl;
+        usleep(300000);
       }
     } else {
       cout << "\033[31mThere is no elements on table " << this->table_name
@@ -148,28 +152,31 @@ public:
   template <typename Fn>
   void find_where(string prop, Fn function, variant_t expected_value,
                   int thread_id) {
-    lock_guard<mutex> console_lock(console_mutex);
+    string filename = "leitura_" + to_string(thread_id) + ".txt";
+    ofstream file(filename);
+
     for (const auto &line : this->table_lines) {
-      if (function(line.at(prop), expected_value)) {
-        cout << "(";
+      if (function(line.at(prop), expected_value) && file.is_open()) {
+        file << "(";
         visit(
-            [](auto &&value) {
+            [&file](auto &&value) {
               if constexpr (is_same_v<decay_t<decltype(value)>, int>)
-                cout << (value + 1);
+                file << (value + 1);
               else
                 cout << value;
             },
             line.at("id"));
 
-        cout << ") ";
+        file << ") ";
         for (size_t j = 1; j < this->table_props.size(); j++) {
-          cout << table_props.at(j) << ": ";
-          visit([](auto &&value) { cout << value; },
+          file << table_props.at(j) << ": ";
+          visit([&file](auto &&value) { file << value; },
                 line.at(table_props.at(j)));
           if (j < this->table_props.size() - 1)
-            cout << " | ";
+            file << " | ";
         }
-        cout << endl;
+        file << endl;
+        usleep(300000);
       }
     }
   }
@@ -183,22 +190,50 @@ public:
     shared_ptr<T> new_table = make_shared<T>();
     new_table->init_table(table_props, table_name);
     this->tables.insert({table_name, new_table});
-    cout << "\033[32mTabela " << table_name << " criada com sucesso!\033[0m"
-         << endl
+    cout << "\033[32mTabela \033[36m" << table_name
+         << " \033[32mcriada com sucesso!\033[0m" << endl
          << endl;
   }
 };
 
 tables_map<table> database;
 
-// Função para aquisição de leitura - implementa o padrão readers-writers com
-// prioridade para escritores
+// Função para aquisição de leitura
 void acquire_read_lock(int thread_id) {
-  // Primeiro adquire o semáforo que limita o número de leitores
-  reader_semaphore.acquire();
+  // Primeiro tenta adquirir o semáforo que limita o número de leitores
+  bool semaphore_blocked = !reader_semaphore.try_acquire();
+  if (semaphore_blocked) {
+    // Se não conseguiu adquirir imediatamente, loga que está esperando
+    {
+      lock_guard<mutex> console_lock(console_mutex);
+      cout << "\033[34mThread \033[33m" << thread_id
+           << "\033[34m está esperando para leitura (semáforo cheio).\033[0m\n";
+    }
+    reader_semaphore.acquire(); // Bloqueia até adquirir
+  } else {
+    // Log verde indicando que a thread entrou no semáforo
+    {
+      lock_guard<mutex> console_lock(console_mutex);
+      cout << "\033[32mThread \033[33m" << thread_id
+           << "\033[32m entrou no semáforo de leitura. Vagas disponíveis: "
+              "\033[33m"
+           << MAX_READERS - active_readers.load() - 1 << "\033[0m\n";
+    }
+  }
 
   unique_lock<mutex> lock(control_mutex);
   waiting_readers++;
+
+  // Verifica se há escritor ativo ou escritores esperando
+  if (writer_active.load() || waiting_writers.load()) {
+    // Log indicando que a thread de leitura está esperando por um escritor
+    {
+      lock_guard<mutex> console_lock(console_mutex);
+      cout << "\033[34mThread \033[33m" << thread_id
+           << "\033[34m está esperando para leitura (escrita "
+              "bloqueando).\033[0m\n";
+    }
+  }
 
   // Espera até que:
   // 1. Não haja escritor ativo
@@ -238,8 +273,13 @@ void acquire_write_lock(int thread_id) {
 
   waiting_writers--;
   writer_active = true;
-}
 
+  {
+    lock_guard<mutex> console_lock(console_mutex);
+    cout << "\033[31mThread \033[33m" << thread_id
+         << "\033[31m bloqueou todas as operações para escrita.\033[0m\n";
+  }
+}
 // Função para liberação de escrita
 void release_write_lock(int thread_id) {
   unique_lock<mutex> lock(control_mutex);
@@ -268,8 +308,9 @@ void routine(int id, Fn function, bool is_writer = false) {
 
     {
       lock_guard<mutex> lock(console_mutex);
-      cout << "\033[31mThread " << id
-           << " realizou operação de escrita e liberou o recurso.\033[0m\n";
+      cout << "\033[31mThread \033[33m" << id
+           << " \033[31mrealizou operação de escrita e liberou o "
+              "recurso.\033[0m\n";
     }
 
   } else {
@@ -283,8 +324,9 @@ void routine(int id, Fn function, bool is_writer = false) {
 
     {
       lock_guard<mutex> lock(console_mutex);
-      cout << "\033[32mThread " << id
-           << " realizou operação de leitura e liberou o recurso.\033[0m\n";
+      cout << "\033[32mThread \033[33m" << id
+           << " \033[32mrealizou operação de leitura e liberou o "
+              "recurso.\033[0m\n";
     }
   }
 }
@@ -295,7 +337,6 @@ int main() {
   };
 
   database.create_table("stocks", stock_props);
-  usleep(500000);
 
   // Inserção dos dados iniciais
   for (const auto &company : companies) {
@@ -337,7 +378,7 @@ int main() {
           i,
           [i]() {
             database.tables.at("stocks")->find_where("price", is_bigger_than,
-                                                     30, i);
+                                                     500, i);
           },
           false);
     });
