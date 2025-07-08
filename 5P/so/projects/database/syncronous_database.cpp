@@ -1,8 +1,11 @@
 #include "data.h"
+#include <atomic>
 #include <barrier>
+#include <cstddef>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <semaphore>
 #include <thread>
 #include <unistd.h>
@@ -12,13 +15,20 @@
 
 using namespace std;
 
-const int MAX_THREADS = thread::hardware_concurrency();
+const int THREADS_AVAILABLE = thread::hardware_concurrency();
+const int SEMAPHORE_MAX = THREADS_AVAILABLE - 2;
 
 using variant_t = variant<string, bool, int, double>;
 
+// Entidades de exclusão mútua
+mutex barrier_mutex;
 mutex console_mutex;
-barrier syncronization_barrier(MAX_THREADS - 2);
-counting_semaphore<6> read_operations_sem(MAX_THREADS - 2);
+barrier<> *threads_barrier = nullptr;
+counting_semaphore<6> read_operations_sem(SEMAPHORE_MAX);
+
+// Variáveis de controle de exclusão mútua
+atomic_int threads_not_executed = THREADS_AVAILABLE;
+atomic_int threads_inside_barrier = 0;
 
 // Tipo de linha
 class table_line : public unordered_map<string, variant_t> {};
@@ -59,7 +69,7 @@ public:
     console_mutex.lock();
     this->table_lines.clear();
     cout << "\033[32mAll elements were successfully removed!\033[0m\n";
-    console_mutex.lock();
+    console_mutex.unlock();
   }
 
   void update_to(string prop, variant_t expected_value,
@@ -95,12 +105,18 @@ public:
   }
 
   void find_all() {
-    console_mutex.lock();
 
     if (!this->table_lines.empty()) {
       for (const auto &line : this->table_lines) {
         cout << "(";
-        visit([](auto &&v) { cout << v; }, line.at("id"));
+        visit(
+            [](auto &&value) {
+              if constexpr (is_same_v<decay_t<decltype(value)>, int>)
+                cout << (value + 1);
+              else
+                cout << value;
+            },
+            line.at("id"));
         cout << ") ";
         for (size_t j = 1; j < this->table_props.size(); j++) {
           cout << table_props.at(j) << ": ";
@@ -109,13 +125,12 @@ public:
             cout << " | ";
         }
         cout << endl;
-        usleep(50000);
+        usleep(100000);
       }
     } else {
       cout << "\033[31mThere is no elements on table " << this->table_name
            << ".\033[0m\n";
     }
-    console_mutex.unlock();
   }
 
   template <typename Fn>
@@ -126,7 +141,8 @@ public:
     for (const auto &line : this->table_lines) {
       if (function(line.at(prop), expected_value)) {
         cout << "(";
-        visit([](auto &&value) { cout << value; }, line.at("id"));
+        visit([](auto &&value) { cout << (std::get<int>(value) + 1); },
+              line.at("id"));
         cout << ") ";
         for (size_t j = 1; j < this->table_props.size(); j++) {
           cout << table_props.at(j) << ": ";
@@ -152,29 +168,63 @@ public:
     shared_ptr<T> new_table = make_shared<T>();
     new_table->init_table(table_props, table_name);
     this->tables.insert({table_name, new_table});
-    cout << "\033[32mTabela " << table_name << " criada com sucesso!\033[0m\n";
+    // cout << "\033[32mTabela " << table_name << " criada com
+    // sucesso!\033[0m"<<endl<<endl;
   }
 };
 
 // Instância global do banco
 tables_map<table> database;
 
-void read_routine(int id) {
+template <typename Fn> void read_routine(int id, Fn function) {
+
+  barrier<> *group_barrier = nullptr;
+
   read_operations_sem.acquire();
 
+  console_mutex.lock();
   cout << "\033[32mThread " << "\033[33m" << id
        << "\033[32m acquired the semaphore!\033[0m\n";
+  console_mutex.unlock();
 
-  // Antes de começarem o processamento de leitura, todas as threads todas
+  // Antes de começarem o processamento de leitura, todas as threads
   // entrarão juntas na região crítica, com uma barreira de sincronização
-  syncronization_barrier.arrive_and_wait();
+  barrier_mutex.lock();
 
-  database.tables.at("stocks")->find_all();
+  if (threads_inside_barrier == 0) {
+    int barrier_capacity = SEMAPHORE_MAX < threads_not_executed
+                               ? (int)(SEMAPHORE_MAX)
+                               : (int)(threads_not_executed);
 
+    delete threads_barrier;
+
+    // Criação de nova barreira com o máximo de threads possível
+    // (máximo ou disponível)
+    threads_barrier = new barrier<>(barrier_capacity);
+    threads_inside_barrier = barrier_capacity;
+  }
+
+  group_barrier = threads_barrier;
+  threads_inside_barrier--;
+  threads_not_executed--;
+
+  barrier_mutex.unlock();
+
+  // A thread atual espera o restante das threads chegar até aqui
+  group_barrier->arrive_and_wait();
+
+  console_mutex.lock();
+  cout << endl
+       << "\033[32mThread " << "\033[33m" << id
+       << " \033[32m começando leitura!\033[0m" << endl;
+  function();
+  console_mutex.unlock();
   read_operations_sem.release();
 
+  console_mutex.lock();
   cout << "\033[31mThread " << "\033[33m" << id
        << "\033[31m released the semaphore!\033[0m\n";
+  console_mutex.unlock();
 }
 
 int main() {
@@ -190,9 +240,16 @@ int main() {
   }
 
   // Criação de threads
+  cout << "\033[33m" << THREADS_AVAILABLE
+       << "\033[32m threads criadas com sucesso!\033[0m" << endl
+       << endl;
+
   vector<thread> threads;
-  for (int i = 0; i < MAX_THREADS - 2; i++) {
-    threads.emplace_back(read_routine, i + 1);
+  for (int i = 0; i < THREADS_AVAILABLE; i++) {
+
+    threads.emplace_back([i]() {
+      read_routine(i + 1, []() { database.tables.at("stocks")->find_all(); });
+    });
   }
 
   for (auto &t : threads) {

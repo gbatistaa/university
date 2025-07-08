@@ -82,5 +82,11 @@
   "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o -c /home/gbatistadev/Documents/codes/university/5P/so/projects/database/syncronous_database.cpp",
   "file": "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/syncronous_database.cpp",
   "output": "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o -c /home/gbatistadev/Documents/codes/university/5P/so/projects/database/teste.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/teste.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o"
 }
 ]

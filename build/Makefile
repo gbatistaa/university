@@ -465,6 +465,30 @@ syncronous_database/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.s
 .PHONY : 5P/so/projects/database/syncronous_database.cpp.s
 
+5P/so/projects/database/teste.o: 5P/so/projects/database/teste.cpp.o
+.PHONY : 5P/so/projects/database/teste.o
+
+# target to build an object file
+5P/so/projects/database/teste.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o
+.PHONY : 5P/so/projects/database/teste.cpp.o
+
+5P/so/projects/database/teste.i: 5P/so/projects/database/teste.cpp.i
+.PHONY : 5P/so/projects/database/teste.i
+
+# target to preprocess a source file
+5P/so/projects/database/teste.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.i
+.PHONY : 5P/so/projects/database/teste.cpp.i
+
+5P/so/projects/database/teste.s: 5P/so/projects/database/teste.cpp.s
+.PHONY : 5P/so/projects/database/teste.s
+
+# target to generate assembly for a file
+5P/so/projects/database/teste.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.s
+.PHONY : 5P/so/projects/database/teste.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -516,6 +540,9 @@ help:
 	@echo "... 5P/so/projects/database/syncronous_database.o"
 	@echo "... 5P/so/projects/database/syncronous_database.i"
 	@echo "... 5P/so/projects/database/syncronous_database.s"
+	@echo "... 5P/so/projects/database/teste.o"
+	@echo "... 5P/so/projects/database/teste.i"
+	@echo "... 5P/so/projects/database/teste.s"
 .PHONY : help
 
 

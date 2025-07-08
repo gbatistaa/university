@@ -85,12 +85,12 @@ clean: CMakeFiles/syncronous_database.dir/clean
 CMakeFiles/syncronous_database.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/gbatistadev/Documents/codes/university/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 "Built target syncronous_database"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/gbatistadev/Documents/codes/university/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 "Built target syncronous_database"
 .PHONY : CMakeFiles/syncronous_database.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/syncronous_database.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/gbatistadev/Documents/codes/university/build/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gbatistadev/Documents/codes/university/build/CMakeFiles 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/syncronous_database.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/gbatistadev/Documents/codes/university/build/CMakeFiles 0
 .PHONY : CMakeFiles/syncronous_database.dir/rule
@@ -102,7 +102,7 @@ syncronous_database: CMakeFiles/syncronous_database.dir/rule
 # codegen rule for target.
 CMakeFiles/syncronous_database.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/gbatistadev/Documents/codes/university/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 "Finished codegen for target syncronous_database"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/gbatistadev/Documents/codes/university/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 "Finished codegen for target syncronous_database"
 .PHONY : CMakeFiles/syncronous_database.dir/codegen
 
 # clean rule for target.

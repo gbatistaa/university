@@ -28,6 +28,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/syncronous_database.dir/5P/so/projects/database/data.cpp.o.d"
   "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o"
   "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o.d"
+  "CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o"
+  "CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o.d"
   "syncronous_database"
   "syncronous_database.pdb"
 )

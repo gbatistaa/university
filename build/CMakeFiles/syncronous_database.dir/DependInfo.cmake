@@ -22,6 +22,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/gbatistadev/Documents/codes/university/5P/so/processosEThreads/cpp/1-threads.cpp" "CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.o" "gcc" "CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.o.d"
   "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/data.cpp" "CMakeFiles/syncronous_database.dir/5P/so/projects/database/data.cpp.o" "gcc" "CMakeFiles/syncronous_database.dir/5P/so/projects/database/data.cpp.o.d"
   "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/syncronous_database.cpp" "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o" "gcc" "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o.d"
+  "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/teste.cpp" "CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o" "gcc" "CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o.d"
   "" "syncronous_database" "gcc" "CMakeFiles/syncronous_database.dir/link.d"
   )
 
