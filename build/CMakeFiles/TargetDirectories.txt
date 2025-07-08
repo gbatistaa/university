@@ -1,3 +1,0 @@
-/home/gbatistadev/Documents/codes/university/build/CMakeFiles/syncronous_database.dir
-/home/gbatistadev/Documents/codes/university/build/CMakeFiles/edit_cache.dir
-/home/gbatistadev/Documents/codes/university/build/CMakeFiles/rebuild_cache.dir
