@@ -42,6 +42,12 @@ This repository is organized by course and semester. Each folder contains specif
 3. Follow the instructions or code comments in each file to understand or execute the activities.
 ```
 
+### How to add C++20 to clangd
+
+```bash
+cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+```
+
 ## Contributions
 
 ```bash
