@@ -14,6 +14,11 @@ This repository is organized by course and semester. Each folder contains specif
 │   ├── Graphs and Computational Algorithms
 │   ├── Algorithm Design and Analysis
 │   ├── Applied Statistics
+├── Semester 5
+│   ├── Operating Systems
+│   ├── Databases
+│   ├── Artificial Intelligence
+│   ├── Parallel and Concurrent Programming
 ```
 
 ## Technologies Used
