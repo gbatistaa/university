@@ -1,0 +1,98 @@
+[
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/bst.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u1/poxim_tech/bst.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u1/poxim_tech/bst.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/bst.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/gabrielbatista_202300027249_porto.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u1/poxim_tech/gabrielbatista_202300027249_porto.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u1/poxim_tech/gabrielbatista_202300027249_porto.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/gabrielbatista_202300027249_porto.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/hash-map.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u1/poxim_tech/hash-map.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u1/poxim_tech/hash-map.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u1/poxim_tech/hash-map.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u1/quick_sort/gabrielbatista_202300027249_quicksort.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u1/quick_sort/gabrielbatista_202300027249_quicksort.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u1/quick_sort/gabrielbatista_202300027249_quicksort.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u1/quick_sort/gabrielbatista_202300027249_quicksort.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u2/compressao/gabrielbatista_202300027249_compressao.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u2/compressao/gabrielbatista_202300027249_compressao.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u2/compressao/gabrielbatista_202300027249_compressao.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u2/compressao/gabrielbatista_202300027249_compressao.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u2/sequenciamento/gabrielbatista_202300027249_sequenciamento.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u2/sequenciamento/gabrielbatista_202300027249_sequenciamento.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u2/sequenciamento/gabrielbatista_202300027249_sequenciamento.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u2/sequenciamento/gabrielbatista_202300027249_sequenciamento.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/f.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u2/transportadora/f.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u2/transportadora/f.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/f.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/4P/statistics/u1/data_analitics.cpp.o -c /home/gbatistadev/Documents/codes/university/4P/statistics/u1/data_analitics.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/4P/statistics/u1/data_analitics.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/4P/statistics/u1/data_analitics.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.o -c /home/gbatistadev/Documents/codes/university/5P/so/processosEThreads/cpp/1-threads.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/5P/so/processosEThreads/cpp/1-threads.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/5P/so/projects/database/data.cpp.o -c /home/gbatistadev/Documents/codes/university/5P/so/projects/database/data.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/data.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/5P/so/projects/database/data.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o -c /home/gbatistadev/Documents/codes/university/5P/so/projects/database/syncronous_database.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/syncronous_database.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/5P/so/projects/database/syncronous_database.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o -c /home/gbatistadev/Documents/codes/university/5P/so/projects/database/teste.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/5P/so/projects/database/teste.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.o"
+},
+{
+  "directory": "/home/gbatistadev/Documents/codes/university/build",
+  "command": "/usr/bin/g++   -g -std=gnu++20 -o CMakeFiles/syncronous_database.dir/CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp.o -c /home/gbatistadev/Documents/codes/university/build/CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+  "file": "/home/gbatistadev/Documents/codes/university/build/CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+  "output": "CMakeFiles/syncronous_database.dir/CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp.o"
+}
+]
