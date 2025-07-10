@@ -16,11 +16,11 @@
 #include <vector>
 
 using namespace std;
+using enum ThreadType;
+using variant_t = variant<string, bool, int, double>;
 
 const int THREADS_AVAILABLE = thread::hardware_concurrency();
 const int MAX_READERS = THREADS_AVAILABLE - 6;
-
-using variant_t = variant<string, bool, int, double>;
 
 mutex console_mutex;          // Controla escritas simultaneas no log
 mutex control_mutex;          // Controla acesso às variáveis de estado
@@ -200,18 +200,10 @@ tables_map<table> database;
 
 // Função para aquisição de leitura
 void acquire_read_lock(int thread_id) {
-  // Primeiro tenta adquirir o semáforo que limita o número de leitores
-  bool semaphore_blocked = !reader_semaphore.try_acquire();
-  if (semaphore_blocked) {
-    // Se não conseguiu adquirir imediatamente, loga que está esperando
-    {
-      lock_guard<mutex> console_lock(console_mutex);
-      cout << "\033[34mThread \033[33m" << thread_id
-           << "\033[34m está esperando para leitura (semáforo cheio).\033[0m\n";
-    }
-    reader_semaphore.acquire(); // Bloqueia até adquirir
-  } else {
-    // Log verde indicando que a thread entrou no semáforo
+  // Thread tenta adquirir o semáforo
+  bool semaphore_available = reader_semaphore.try_acquire();
+  if (semaphore_available) {
+    // Semáforo com vaga livre
     {
       lock_guard<mutex> console_lock(console_mutex);
       cout << "\033[32mThread \033[33m" << thread_id
@@ -219,13 +211,21 @@ void acquire_read_lock(int thread_id) {
               "\033[33m"
            << MAX_READERS - active_readers.load() - 1 << "\033[0m\n";
     }
+  } else {
+    // Log verde indicando que a thread entrou no semáforo
+    {
+      lock_guard<mutex> console_lock(console_mutex);
+      cout << "\033[34mThread \033[33m" << thread_id
+           << "\033[34m está esperando para leitura (semáforo cheio).\033[0m\n";
+    }
+    reader_semaphore.acquire(); // Bloqueia até adquirir
   }
 
   unique_lock<mutex> lock(control_mutex);
   waiting_readers++;
 
   // Verifica se há escritor ativo ou escritores esperando
-  if (writer_active.load() || waiting_writers.load()) {
+  if (writer_active.load()) {
     // Log indicando que a thread de leitura está esperando por um escritor
     {
       lock_guard<mutex> console_lock(console_mutex);
@@ -237,9 +237,7 @@ void acquire_read_lock(int thread_id) {
 
   // Espera até que:
   // 1. Não haja escritor ativo
-  // 2. Não haja escritores esperando (prioridade para escritores)
-  reader_cv.wait(
-      lock, []() { return !writer_active.load() && !waiting_writers.load(); });
+  reader_cv.wait(lock, []() { return !writer_active.load(); });
 
   waiting_readers--;
   active_readers++;
