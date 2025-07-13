@@ -28,3 +28,21 @@ def calcular_conflitos(estado):
             if estado[i] == estado[j] or abs(estado[i] - estado[j]) == abs(i - j):
                 conflitos += 1
     return conflitos
+
+def gerar_vizinhos(estado):
+    # Gera todos os vizinhos possíveis movendo uma rainha para outra linha na mesma coluna
+    vizinhos = []
+    n = len(estado)
+    for col in range(n):
+        for row in range(n):
+            if estado[col] != row:
+                novo_estado = list(estado)
+                novo_estado[col] = row
+                vizinhos.append(novo_estado)
+    return vizinhos
+
+import random
+
+def gerar_estado_aleatorio():
+    # Gera um vetor de 8 posições, cada uma representando a linha da rainha na coluna correspondente
+    return [random.randint(0, 7) for _ in range(8)]
