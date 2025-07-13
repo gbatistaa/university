@@ -393,6 +393,54 @@ syncronous_database/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/4P/statistics/u1/data_analitics.cpp.s
 .PHONY : 4P/statistics/u1/data_analitics.cpp.s
 
+5P/ppc/threads/projects/data.o: 5P/ppc/threads/projects/data.cpp.o
+.PHONY : 5P/ppc/threads/projects/data.o
+
+# target to build an object file
+5P/ppc/threads/projects/data.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/data.cpp.o
+.PHONY : 5P/ppc/threads/projects/data.cpp.o
+
+5P/ppc/threads/projects/data.i: 5P/ppc/threads/projects/data.cpp.i
+.PHONY : 5P/ppc/threads/projects/data.i
+
+# target to preprocess a source file
+5P/ppc/threads/projects/data.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/data.cpp.i
+.PHONY : 5P/ppc/threads/projects/data.cpp.i
+
+5P/ppc/threads/projects/data.s: 5P/ppc/threads/projects/data.cpp.s
+.PHONY : 5P/ppc/threads/projects/data.s
+
+# target to generate assembly for a file
+5P/ppc/threads/projects/data.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/data.cpp.s
+.PHONY : 5P/ppc/threads/projects/data.cpp.s
+
+5P/ppc/threads/projects/vendas_paralelas.o: 5P/ppc/threads/projects/vendas_paralelas.cpp.o
+.PHONY : 5P/ppc/threads/projects/vendas_paralelas.o
+
+# target to build an object file
+5P/ppc/threads/projects/vendas_paralelas.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/vendas_paralelas.cpp.o
+.PHONY : 5P/ppc/threads/projects/vendas_paralelas.cpp.o
+
+5P/ppc/threads/projects/vendas_paralelas.i: 5P/ppc/threads/projects/vendas_paralelas.cpp.i
+.PHONY : 5P/ppc/threads/projects/vendas_paralelas.i
+
+# target to preprocess a source file
+5P/ppc/threads/projects/vendas_paralelas.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/vendas_paralelas.cpp.i
+.PHONY : 5P/ppc/threads/projects/vendas_paralelas.cpp.i
+
+5P/ppc/threads/projects/vendas_paralelas.s: 5P/ppc/threads/projects/vendas_paralelas.cpp.s
+.PHONY : 5P/ppc/threads/projects/vendas_paralelas.s
+
+# target to generate assembly for a file
+5P/ppc/threads/projects/vendas_paralelas.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/vendas_paralelas.cpp.s
+.PHONY : 5P/ppc/threads/projects/vendas_paralelas.cpp.s
+
 5P/so/processosEThreads/cpp/1-threads.o: 5P/so/processosEThreads/cpp/1-threads.cpp.o
 .PHONY : 5P/so/processosEThreads/cpp/1-threads.o
 
@@ -416,6 +464,30 @@ syncronous_database/fast:
 5P/so/processosEThreads/cpp/1-threads.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.s
 .PHONY : 5P/so/processosEThreads/cpp/1-threads.cpp.s
+
+5P/so/projects/database/barbeiro.o: 5P/so/projects/database/barbeiro.cpp.o
+.PHONY : 5P/so/projects/database/barbeiro.o
+
+# target to build an object file
+5P/so/projects/database/barbeiro.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/barbeiro.cpp.o
+.PHONY : 5P/so/projects/database/barbeiro.cpp.o
+
+5P/so/projects/database/barbeiro.i: 5P/so/projects/database/barbeiro.cpp.i
+.PHONY : 5P/so/projects/database/barbeiro.i
+
+# target to preprocess a source file
+5P/so/projects/database/barbeiro.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/barbeiro.cpp.i
+.PHONY : 5P/so/projects/database/barbeiro.cpp.i
+
+5P/so/projects/database/barbeiro.s: 5P/so/projects/database/barbeiro.cpp.s
+.PHONY : 5P/so/projects/database/barbeiro.s
+
+# target to generate assembly for a file
+5P/so/projects/database/barbeiro.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/barbeiro.cpp.s
+.PHONY : 5P/so/projects/database/barbeiro.cpp.s
 
 5P/so/projects/database/data.o: 5P/so/projects/database/data.cpp.o
 .PHONY : 5P/so/projects/database/data.o
@@ -513,6 +585,30 @@ CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp.s
 .PHONY : CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp.s
 
+transporte.o: transporte.cpp.o
+.PHONY : transporte.o
+
+# target to build an object file
+transporte.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/transporte.cpp.o
+.PHONY : transporte.cpp.o
+
+transporte.i: transporte.cpp.i
+.PHONY : transporte.i
+
+# target to preprocess a source file
+transporte.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/transporte.cpp.i
+.PHONY : transporte.cpp.i
+
+transporte.s: transporte.cpp.s
+.PHONY : transporte.s
+
+# target to generate assembly for a file
+transporte.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/transporte.cpp.s
+.PHONY : transporte.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -555,9 +651,18 @@ help:
 	@echo "... 4P/statistics/u1/data_analitics.o"
 	@echo "... 4P/statistics/u1/data_analitics.i"
 	@echo "... 4P/statistics/u1/data_analitics.s"
+	@echo "... 5P/ppc/threads/projects/data.o"
+	@echo "... 5P/ppc/threads/projects/data.i"
+	@echo "... 5P/ppc/threads/projects/data.s"
+	@echo "... 5P/ppc/threads/projects/vendas_paralelas.o"
+	@echo "... 5P/ppc/threads/projects/vendas_paralelas.i"
+	@echo "... 5P/ppc/threads/projects/vendas_paralelas.s"
 	@echo "... 5P/so/processosEThreads/cpp/1-threads.o"
 	@echo "... 5P/so/processosEThreads/cpp/1-threads.i"
 	@echo "... 5P/so/processosEThreads/cpp/1-threads.s"
+	@echo "... 5P/so/projects/database/barbeiro.o"
+	@echo "... 5P/so/projects/database/barbeiro.i"
+	@echo "... 5P/so/projects/database/barbeiro.s"
 	@echo "... 5P/so/projects/database/data.o"
 	@echo "... 5P/so/projects/database/data.i"
 	@echo "... 5P/so/projects/database/data.s"
@@ -570,6 +675,9 @@ help:
 	@echo "... CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.o"
 	@echo "... CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.i"
 	@echo "... CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.s"
+	@echo "... transporte.o"
+	@echo "... transporte.i"
+	@echo "... transporte.s"
 .PHONY : help
 
 
