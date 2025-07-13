@@ -16,11 +16,11 @@
 #include <vector>
 
 using namespace std;
+using enum ThreadType;
+using variant_t = variant<string, bool, int, double>;
 
 const int THREADS_AVAILABLE = thread::hardware_concurrency();
-const int MAX_READERS = THREADS_AVAILABLE - 6;
-
-using variant_t = variant<string, bool, int, double>;
+const int MAX_READERS = THREADS_AVAILABLE - 5;
 
 mutex console_mutex;          // Controla escritas simultaneas no log
 mutex control_mutex;          // Controla acesso às variáveis de estado
@@ -200,18 +200,25 @@ tables_map<table> database;
 
 // Função para aquisição de leitura
 void acquire_read_lock(int thread_id) {
-  // Primeiro tenta adquirir o semáforo que limita o número de leitores
-  bool semaphore_blocked = !reader_semaphore.try_acquire();
-  if (semaphore_blocked) {
-    // Se não conseguiu adquirir imediatamente, loga que está esperando
+  // Thread tenta adquirir o semáforo
+  bool semaphore_available = reader_semaphore.try_acquire();
+  if (semaphore_available) {
+    // Semáforo com vaga livre
+    {
+      lock_guard<mutex> console_lock(console_mutex);
+      cout << "\033[32mThread \033[33m" << thread_id
+           << "\033[32m entrou no semáforo de leitura. Vagas disponíveis: "
+              "\033[33m"
+           << MAX_READERS - active_readers.load() - 1 << "\033[0m\n";
+    }
+  } else {
+    // Log verde indicando que a thread entrou no semáforo
     {
       lock_guard<mutex> console_lock(console_mutex);
       cout << "\033[34mThread \033[33m" << thread_id
            << "\033[34m está esperando para leitura (semáforo cheio).\033[0m\n";
     }
     reader_semaphore.acquire(); // Bloqueia até adquirir
-  } else {
-    // Log verde indicando que a thread entrou no semáforo
     {
       lock_guard<mutex> console_lock(console_mutex);
       cout << "\033[32mThread \033[33m" << thread_id
@@ -225,7 +232,7 @@ void acquire_read_lock(int thread_id) {
   waiting_readers++;
 
   // Verifica se há escritor ativo ou escritores esperando
-  if (writer_active.load() || waiting_writers.load()) {
+  if (writer_active.load()) {
     // Log indicando que a thread de leitura está esperando por um escritor
     {
       lock_guard<mutex> console_lock(console_mutex);
@@ -235,11 +242,10 @@ void acquire_read_lock(int thread_id) {
     }
   }
 
-  // Espera até que:
-  // 1. Não haja escritor ativo
-  // 2. Não haja escritores esperando (prioridade para escritores)
-  reader_cv.wait(
-      lock, []() { return !writer_active.load() && !waiting_writers.load(); });
+  // Só vai ter leitura se não tiver nenhuma escrita sendo feita e se esse
+  // leitor for o último da fila
+  reader_cv.wait(lock,
+                 [] { return !writer_active.load() && waiting_writers == 0; });
 
   waiting_readers--;
   active_readers++;
@@ -247,6 +253,7 @@ void acquire_read_lock(int thread_id) {
 
 // Função para liberação de leitura
 void release_read_lock(int thread_id) {
+  // Bloqueia acesso as variáveis atômicas de controle:
   unique_lock<mutex> lock(control_mutex);
   active_readers--;
 
@@ -255,18 +262,16 @@ void release_read_lock(int thread_id) {
     writer_cv.notify_one();
   }
 
-  lock.unlock();
   reader_semaphore.release();
 }
 
 // Função para aquisição de escrita
 void acquire_write_lock(int thread_id) {
+  // Bloqueia acesso as variáveis atômicas de controle:
   unique_lock<mutex> lock(control_mutex);
   waiting_writers++;
 
-  // Espera até que:
-  // 1. Não haja leitores ativos
-  // 2. Não haja escritor ativo
+  // Escrita somente será feita quando não tiver leitor ou escritor ativos
   writer_cv.wait(lock, []() {
     return active_readers.load() == 0 && !writer_active.load();
   });
@@ -285,7 +290,7 @@ void release_write_lock(int thread_id) {
   unique_lock<mutex> lock(control_mutex);
   writer_active = false;
 
-  // Prioridade para escritores: se há escritores esperando, acorda um escritor
+  // se há escritores esperando, acorda um escritor
   // Caso contrário, acorda todos os leitores
   if (waiting_writers > 0) {
     writer_cv.notify_one();
@@ -350,39 +355,64 @@ int main() {
   vector<thread> threads;
 
   int i = 1;
-  // Threads de leitura (primeira parte)
-  for (; i <= THREADS_AVAILABLE / 4; i++) {
+
+  // Leitores 1 a 4
+  for (; i <= 4; i++) {
     threads.emplace_back([i]() {
       routine(i, [i]() { database.tables.at("stocks")->find_all(i); }, false);
     });
   }
 
-  // Threads de escrita
-  for (int j = 0; i <= THREADS_AVAILABLE - 2; i++, j++) {
-    threads.emplace_back([i, j]() {
-      routine(
-          i,
-          [i, j]() {
-            for (const auto &new_company : companies_extra.at(j)) {
-              database.tables.at("stocks")->insert(new_company, i);
-            }
-          },
-          true);
-    });
-  }
+  // Escritor 5
+  threads.emplace_back([i]() {
+    int j = 0;
+    routine(
+        i,
+        [i, j]() {
+          for (const auto &new_company : companies_extra.at(j)) {
+            database.tables.at("stocks")->insert(new_company, i);
+          }
+        },
+        true);
+  });
+  i++;
 
-  // Threads de leitura (segunda parte)
-  for (; i <= THREADS_AVAILABLE; i++) {
-    threads.emplace_back([i]() {
-      routine(
-          i,
-          [i]() {
-            database.tables.at("stocks")->find_where("price", is_bigger_than,
-                                                     500, i);
-          },
-          false);
-    });
-  }
+  // Leitor 6
+  threads.emplace_back([i]() {
+    routine(
+        i,
+        [i]() {
+          database.tables.at("stocks")->find_where("price", is_bigger_than, 500,
+                                                   i);
+        },
+        false);
+  });
+  i++;
+
+  // Escritor 7
+  threads.emplace_back([i]() {
+    int j = 1; // segundo grupo de dados
+    routine(
+        i,
+        [i, j]() {
+          for (const auto &new_company : companies_extra.at(j)) {
+            database.tables.at("stocks")->insert(new_company, i);
+          }
+        },
+        true);
+  });
+  i++;
+
+  // Leitor 8
+  threads.emplace_back([i]() {
+    routine(
+        i,
+        [i]() {
+          database.tables.at("stocks")->find_where("price", is_smaller_than,
+                                                   300, i);
+        },
+        false);
+  });
 
   for (auto &t : threads) {
     t.join();

@@ -25,4 +25,4 @@ extern bool is_equal_to(variant_t a, variant_t b);
 
 extern void thread_msg(string msg, int id);
 
-template <typename Fn> extern void worker(Fn function);
+enum class ThreadType { WRITER = true, READER = false };

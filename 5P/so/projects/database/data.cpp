@@ -39,7 +39,40 @@ bool is_bigger_than(variant_t a, variant_t b) {
       },
       a, b);
 }
-bool is_smaller_than(variant_t a, variant_t b) { return a < b; }
+bool is_smaller_than(variant_t a, variant_t b) {
+  return visit(
+      [](auto &&a_val, auto &&b_val) -> bool {
+        using T = std::decay_t<decltype(a_val)>;
+        using U = std::decay_t<decltype(b_val)>;
+
+        // Comparação direta se os tipos forem iguais
+        if constexpr (std::is_same_v<T, U>) {
+          return a_val < b_val;
+        }
+        // Conversão implícita para double se ambos forem numéricos
+        else if constexpr ((std::is_same_v<T, int> ||
+                            std::is_same_v<T, double>) &&
+                           (std::is_same_v<U, int> ||
+                            std::is_same_v<U, double>)) {
+          return static_cast<double>(a_val) < static_cast<double>(b_val);
+        }
+        // Comparação de strings
+        else if constexpr (std::is_same_v<T, string> &&
+                           std::is_same_v<U, string>) {
+          return a_val < b_val;
+        }
+        // Comparação de bools
+        else if constexpr (std::is_same_v<T, bool> && std::is_same_v<U, bool>) {
+          return a_val < b_val;
+        }
+        // Outras combinações não são comparáveis
+        else {
+          return false; // Ou lançar uma exceção, dependendo do comportamento
+                        // desejado
+        }
+      },
+      a, b);
+}
 
 bool is_equal_to(variant_t a, variant_t b) { return a == b; }
 
