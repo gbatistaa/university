@@ -1,0 +1,6 @@
+CompileFlags:
+  Add: [
+    "-I/usr/include/aarch64-linux-gnu/mpich",
+    "-L/usr/lib/aarch64-linux-gnu",
+    "-lmpich"
+  ]

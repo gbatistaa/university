@@ -4,7 +4,6 @@
 /4P/paa/u2/sequenciamento/output.txt
 4P/statistics/u1/stats.exe
 4P/paa/u2/sequenciamento/deepseek.cpp
-.editorconfig
 4P/paa/u2/transportadora/transportadora.exe
 4P/paa/u2/sequenciamento/derickteles_202300027187_sequenciamento.cpp
 4P/paa/u2/sequenciamento/derick.exe
@@ -29,7 +28,6 @@
 5P/so/processosEThreads/.vscode/settings.json
 5P/so/processosEThreads/cpp/integral
 5P/ppc/mpi/projects/vw.md
-.clangd
 5P/ppc/mpi/projects/image.png
 5P/ppc/mpi/projects/.vector
 5P/bd/node_modules
