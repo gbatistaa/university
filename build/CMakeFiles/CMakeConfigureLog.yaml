@@ -771,3 +771,27 @@ events:
       stdout: |
       exitCode: 1
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1283 (try_compile)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1327 (_MPI_try_staged_settings)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1650 (_MPI_check_lang_works)"
+      - "CMakeLists.txt:6 (find_package)"
+    description: "The MPI test test_mpi for C in mode normal"
+    directories:
+      source: "/home/gbatistadev/Documents/codes/university/build/CMakeFiles/CMakeScratch/TryCompile-AUwnpz"
+      binary: "/home/gbatistadev/Documents/codes/university/build/CMakeFiles/CMakeScratch/TryCompile-AUwnpz"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_C_test_mpi_normal"
+      cached: true
+      stdout: |
+      exitCode: 1
+...
