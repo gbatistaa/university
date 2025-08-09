@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/gbatistadev/Documents/codes/university
+CMAKE_SOURCE_DIR = /home/gbatistadev/Documents/Coding/university
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/gbatistadev/Documents/codes/university/build
+CMAKE_BINARY_DIR = /home/gbatistadev/Documents/Coding/university/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/gbatistadev/Documents/codes/university/build/CMakeFiles /home/gbatistadev/Documents/codes/university/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gbatistadev/Documents/Coding/university/build/CMakeFiles /home/gbatistadev/Documents/Coding/university/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/gbatistadev/Documents/codes/university/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gbatistadev/Documents/Coding/university/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -128,6 +128,78 @@ syncronous_database: cmake_check_build_system
 syncronous_database/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/build
 .PHONY : syncronous_database/fast
+
+3P/binary-tree/binary-search-tree.o: 3P/binary-tree/binary-search-tree.c.o
+.PHONY : 3P/binary-tree/binary-search-tree.o
+
+# target to build an object file
+3P/binary-tree/binary-search-tree.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/binary-tree/binary-search-tree.c.o
+.PHONY : 3P/binary-tree/binary-search-tree.c.o
+
+3P/binary-tree/binary-search-tree.i: 3P/binary-tree/binary-search-tree.c.i
+.PHONY : 3P/binary-tree/binary-search-tree.i
+
+# target to preprocess a source file
+3P/binary-tree/binary-search-tree.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/binary-tree/binary-search-tree.c.i
+.PHONY : 3P/binary-tree/binary-search-tree.c.i
+
+3P/binary-tree/binary-search-tree.s: 3P/binary-tree/binary-search-tree.c.s
+.PHONY : 3P/binary-tree/binary-search-tree.s
+
+# target to generate assembly for a file
+3P/binary-tree/binary-search-tree.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/binary-tree/binary-search-tree.c.s
+.PHONY : 3P/binary-tree/binary-search-tree.c.s
+
+3P/prova-2/sum-leaf.o: 3P/prova-2/sum-leaf.c.o
+.PHONY : 3P/prova-2/sum-leaf.o
+
+# target to build an object file
+3P/prova-2/sum-leaf.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/prova-2/sum-leaf.c.o
+.PHONY : 3P/prova-2/sum-leaf.c.o
+
+3P/prova-2/sum-leaf.i: 3P/prova-2/sum-leaf.c.i
+.PHONY : 3P/prova-2/sum-leaf.i
+
+# target to preprocess a source file
+3P/prova-2/sum-leaf.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/prova-2/sum-leaf.c.i
+.PHONY : 3P/prova-2/sum-leaf.c.i
+
+3P/prova-2/sum-leaf.s: 3P/prova-2/sum-leaf.c.s
+.PHONY : 3P/prova-2/sum-leaf.s
+
+# target to generate assembly for a file
+3P/prova-2/sum-leaf.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/prova-2/sum-leaf.c.s
+.PHONY : 3P/prova-2/sum-leaf.c.s
+
+3P/rbt/red-black-tree.o: 3P/rbt/red-black-tree.c.o
+.PHONY : 3P/rbt/red-black-tree.o
+
+# target to build an object file
+3P/rbt/red-black-tree.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/rbt/red-black-tree.c.o
+.PHONY : 3P/rbt/red-black-tree.c.o
+
+3P/rbt/red-black-tree.i: 3P/rbt/red-black-tree.c.i
+.PHONY : 3P/rbt/red-black-tree.i
+
+# target to preprocess a source file
+3P/rbt/red-black-tree.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/rbt/red-black-tree.c.i
+.PHONY : 3P/rbt/red-black-tree.c.i
+
+3P/rbt/red-black-tree.s: 3P/rbt/red-black-tree.c.s
+.PHONY : 3P/rbt/red-black-tree.s
+
+# target to generate assembly for a file
+3P/rbt/red-black-tree.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/3P/rbt/red-black-tree.c.s
+.PHONY : 3P/rbt/red-black-tree.c.s
 
 4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.o: 4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.cpp.o
 .PHONY : 4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.o
@@ -345,6 +417,30 @@ syncronous_database/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp.s
 .PHONY : 4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.cpp.s
 
+4P/paa/u2/transportadora/gpt.o: 4P/paa/u2/transportadora/gpt.c.o
+.PHONY : 4P/paa/u2/transportadora/gpt.o
+
+# target to build an object file
+4P/paa/u2/transportadora/gpt.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gpt.c.o
+.PHONY : 4P/paa/u2/transportadora/gpt.c.o
+
+4P/paa/u2/transportadora/gpt.i: 4P/paa/u2/transportadora/gpt.c.i
+.PHONY : 4P/paa/u2/transportadora/gpt.i
+
+# target to preprocess a source file
+4P/paa/u2/transportadora/gpt.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gpt.c.i
+.PHONY : 4P/paa/u2/transportadora/gpt.c.i
+
+4P/paa/u2/transportadora/gpt.s: 4P/paa/u2/transportadora/gpt.c.s
+.PHONY : 4P/paa/u2/transportadora/gpt.s
+
+# target to generate assembly for a file
+4P/paa/u2/transportadora/gpt.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/4P/paa/u2/transportadora/gpt.c.s
+.PHONY : 4P/paa/u2/transportadora/gpt.c.s
+
 4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.o: 4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.cpp.o
 .PHONY : 4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.o
 
@@ -393,6 +489,246 @@ syncronous_database/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/4P/statistics/u1/data_analitics.cpp.s
 .PHONY : 4P/statistics/u1/data_analitics.cpp.s
 
+5P/ppc/mpi/examples/mpi1.o: 5P/ppc/mpi/examples/mpi1.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi1.o
+
+# target to build an object file
+5P/ppc/mpi/examples/mpi1.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi1.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi1.c.o
+
+5P/ppc/mpi/examples/mpi1.i: 5P/ppc/mpi/examples/mpi1.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi1.i
+
+# target to preprocess a source file
+5P/ppc/mpi/examples/mpi1.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi1.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi1.c.i
+
+5P/ppc/mpi/examples/mpi1.s: 5P/ppc/mpi/examples/mpi1.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi1.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/examples/mpi1.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi1.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi1.c.s
+
+5P/ppc/mpi/examples/mpi2.o: 5P/ppc/mpi/examples/mpi2.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi2.o
+
+# target to build an object file
+5P/ppc/mpi/examples/mpi2.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi2.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi2.c.o
+
+5P/ppc/mpi/examples/mpi2.i: 5P/ppc/mpi/examples/mpi2.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi2.i
+
+# target to preprocess a source file
+5P/ppc/mpi/examples/mpi2.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi2.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi2.c.i
+
+5P/ppc/mpi/examples/mpi2.s: 5P/ppc/mpi/examples/mpi2.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi2.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/examples/mpi2.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi2.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi2.c.s
+
+5P/ppc/mpi/examples/mpi3.o: 5P/ppc/mpi/examples/mpi3.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi3.o
+
+# target to build an object file
+5P/ppc/mpi/examples/mpi3.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi3.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi3.c.o
+
+5P/ppc/mpi/examples/mpi3.i: 5P/ppc/mpi/examples/mpi3.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi3.i
+
+# target to preprocess a source file
+5P/ppc/mpi/examples/mpi3.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi3.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi3.c.i
+
+5P/ppc/mpi/examples/mpi3.s: 5P/ppc/mpi/examples/mpi3.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi3.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/examples/mpi3.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi3.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi3.c.s
+
+5P/ppc/mpi/examples/mpi4.o: 5P/ppc/mpi/examples/mpi4.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi4.o
+
+# target to build an object file
+5P/ppc/mpi/examples/mpi4.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi4.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi4.c.o
+
+5P/ppc/mpi/examples/mpi4.i: 5P/ppc/mpi/examples/mpi4.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi4.i
+
+# target to preprocess a source file
+5P/ppc/mpi/examples/mpi4.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi4.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi4.c.i
+
+5P/ppc/mpi/examples/mpi4.s: 5P/ppc/mpi/examples/mpi4.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi4.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/examples/mpi4.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi4.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi4.c.s
+
+5P/ppc/mpi/examples/mpi_bcast.o: 5P/ppc/mpi/examples/mpi_bcast.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi_bcast.o
+
+# target to build an object file
+5P/ppc/mpi/examples/mpi_bcast.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi_bcast.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi_bcast.c.o
+
+5P/ppc/mpi/examples/mpi_bcast.i: 5P/ppc/mpi/examples/mpi_bcast.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi_bcast.i
+
+# target to preprocess a source file
+5P/ppc/mpi/examples/mpi_bcast.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi_bcast.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi_bcast.c.i
+
+5P/ppc/mpi/examples/mpi_bcast.s: 5P/ppc/mpi/examples/mpi_bcast.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi_bcast.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/examples/mpi_bcast.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi_bcast.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi_bcast.c.s
+
+5P/ppc/mpi/examples/mpi_trap1.o: 5P/ppc/mpi/examples/mpi_trap1.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi_trap1.o
+
+# target to build an object file
+5P/ppc/mpi/examples/mpi_trap1.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi_trap1.c.o
+.PHONY : 5P/ppc/mpi/examples/mpi_trap1.c.o
+
+5P/ppc/mpi/examples/mpi_trap1.i: 5P/ppc/mpi/examples/mpi_trap1.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi_trap1.i
+
+# target to preprocess a source file
+5P/ppc/mpi/examples/mpi_trap1.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi_trap1.c.i
+.PHONY : 5P/ppc/mpi/examples/mpi_trap1.c.i
+
+5P/ppc/mpi/examples/mpi_trap1.s: 5P/ppc/mpi/examples/mpi_trap1.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi_trap1.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/examples/mpi_trap1.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/examples/mpi_trap1.c.s
+.PHONY : 5P/ppc/mpi/examples/mpi_trap1.c.s
+
+5P/ppc/mpi/practices/1-integral.o: 5P/ppc/mpi/practices/1-integral.c.o
+.PHONY : 5P/ppc/mpi/practices/1-integral.o
+
+# target to build an object file
+5P/ppc/mpi/practices/1-integral.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/practices/1-integral.c.o
+.PHONY : 5P/ppc/mpi/practices/1-integral.c.o
+
+5P/ppc/mpi/practices/1-integral.i: 5P/ppc/mpi/practices/1-integral.c.i
+.PHONY : 5P/ppc/mpi/practices/1-integral.i
+
+# target to preprocess a source file
+5P/ppc/mpi/practices/1-integral.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/practices/1-integral.c.i
+.PHONY : 5P/ppc/mpi/practices/1-integral.c.i
+
+5P/ppc/mpi/practices/1-integral.s: 5P/ppc/mpi/practices/1-integral.c.s
+.PHONY : 5P/ppc/mpi/practices/1-integral.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/practices/1-integral.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/practices/1-integral.c.s
+.PHONY : 5P/ppc/mpi/practices/1-integral.c.s
+
+5P/ppc/mpi/projects/mpi2_me.o: 5P/ppc/mpi/projects/mpi2_me.c.o
+.PHONY : 5P/ppc/mpi/projects/mpi2_me.o
+
+# target to build an object file
+5P/ppc/mpi/projects/mpi2_me.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/projects/mpi2_me.c.o
+.PHONY : 5P/ppc/mpi/projects/mpi2_me.c.o
+
+5P/ppc/mpi/projects/mpi2_me.i: 5P/ppc/mpi/projects/mpi2_me.c.i
+.PHONY : 5P/ppc/mpi/projects/mpi2_me.i
+
+# target to preprocess a source file
+5P/ppc/mpi/projects/mpi2_me.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/projects/mpi2_me.c.i
+.PHONY : 5P/ppc/mpi/projects/mpi2_me.c.i
+
+5P/ppc/mpi/projects/mpi2_me.s: 5P/ppc/mpi/projects/mpi2_me.c.s
+.PHONY : 5P/ppc/mpi/projects/mpi2_me.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/projects/mpi2_me.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/projects/mpi2_me.c.s
+.PHONY : 5P/ppc/mpi/projects/mpi2_me.c.s
+
+5P/ppc/mpi/projects/vector_clock.o: 5P/ppc/mpi/projects/vector_clock.c.o
+.PHONY : 5P/ppc/mpi/projects/vector_clock.o
+
+# target to build an object file
+5P/ppc/mpi/projects/vector_clock.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/projects/vector_clock.c.o
+.PHONY : 5P/ppc/mpi/projects/vector_clock.c.o
+
+5P/ppc/mpi/projects/vector_clock.i: 5P/ppc/mpi/projects/vector_clock.c.i
+.PHONY : 5P/ppc/mpi/projects/vector_clock.i
+
+# target to preprocess a source file
+5P/ppc/mpi/projects/vector_clock.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/projects/vector_clock.c.i
+.PHONY : 5P/ppc/mpi/projects/vector_clock.c.i
+
+5P/ppc/mpi/projects/vector_clock.s: 5P/ppc/mpi/projects/vector_clock.c.s
+.PHONY : 5P/ppc/mpi/projects/vector_clock.s
+
+# target to generate assembly for a file
+5P/ppc/mpi/projects/vector_clock.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/mpi/projects/vector_clock.c.s
+.PHONY : 5P/ppc/mpi/projects/vector_clock.c.s
+
+5P/ppc/threads/projects/avenida_semaphore.o: 5P/ppc/threads/projects/avenida_semaphore.c.o
+.PHONY : 5P/ppc/threads/projects/avenida_semaphore.o
+
+# target to build an object file
+5P/ppc/threads/projects/avenida_semaphore.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/avenida_semaphore.c.o
+.PHONY : 5P/ppc/threads/projects/avenida_semaphore.c.o
+
+5P/ppc/threads/projects/avenida_semaphore.i: 5P/ppc/threads/projects/avenida_semaphore.c.i
+.PHONY : 5P/ppc/threads/projects/avenida_semaphore.i
+
+# target to preprocess a source file
+5P/ppc/threads/projects/avenida_semaphore.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/avenida_semaphore.c.i
+.PHONY : 5P/ppc/threads/projects/avenida_semaphore.c.i
+
+5P/ppc/threads/projects/avenida_semaphore.s: 5P/ppc/threads/projects/avenida_semaphore.c.s
+.PHONY : 5P/ppc/threads/projects/avenida_semaphore.s
+
+# target to generate assembly for a file
+5P/ppc/threads/projects/avenida_semaphore.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/avenida_semaphore.c.s
+.PHONY : 5P/ppc/threads/projects/avenida_semaphore.c.s
+
 5P/ppc/threads/projects/data.o: 5P/ppc/threads/projects/data.cpp.o
 .PHONY : 5P/ppc/threads/projects/data.o
 
@@ -416,6 +752,54 @@ syncronous_database/fast:
 5P/ppc/threads/projects/data.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/data.cpp.s
 .PHONY : 5P/ppc/threads/projects/data.cpp.s
+
+5P/ppc/threads/projects/medicamentos.o: 5P/ppc/threads/projects/medicamentos.c.o
+.PHONY : 5P/ppc/threads/projects/medicamentos.o
+
+# target to build an object file
+5P/ppc/threads/projects/medicamentos.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/medicamentos.c.o
+.PHONY : 5P/ppc/threads/projects/medicamentos.c.o
+
+5P/ppc/threads/projects/medicamentos.i: 5P/ppc/threads/projects/medicamentos.c.i
+.PHONY : 5P/ppc/threads/projects/medicamentos.i
+
+# target to preprocess a source file
+5P/ppc/threads/projects/medicamentos.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/medicamentos.c.i
+.PHONY : 5P/ppc/threads/projects/medicamentos.c.i
+
+5P/ppc/threads/projects/medicamentos.s: 5P/ppc/threads/projects/medicamentos.c.s
+.PHONY : 5P/ppc/threads/projects/medicamentos.s
+
+# target to generate assembly for a file
+5P/ppc/threads/projects/medicamentos.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/medicamentos.c.s
+.PHONY : 5P/ppc/threads/projects/medicamentos.c.s
+
+5P/ppc/threads/projects/publico_mutex.o: 5P/ppc/threads/projects/publico_mutex.c.o
+.PHONY : 5P/ppc/threads/projects/publico_mutex.o
+
+# target to build an object file
+5P/ppc/threads/projects/publico_mutex.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/publico_mutex.c.o
+.PHONY : 5P/ppc/threads/projects/publico_mutex.c.o
+
+5P/ppc/threads/projects/publico_mutex.i: 5P/ppc/threads/projects/publico_mutex.c.i
+.PHONY : 5P/ppc/threads/projects/publico_mutex.i
+
+# target to preprocess a source file
+5P/ppc/threads/projects/publico_mutex.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/publico_mutex.c.i
+.PHONY : 5P/ppc/threads/projects/publico_mutex.c.i
+
+5P/ppc/threads/projects/publico_mutex.s: 5P/ppc/threads/projects/publico_mutex.c.s
+.PHONY : 5P/ppc/threads/projects/publico_mutex.s
+
+# target to generate assembly for a file
+5P/ppc/threads/projects/publico_mutex.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/publico_mutex.c.s
+.PHONY : 5P/ppc/threads/projects/publico_mutex.c.s
 
 5P/ppc/threads/projects/vendas_paralelas.o: 5P/ppc/threads/projects/vendas_paralelas.cpp.o
 .PHONY : 5P/ppc/threads/projects/vendas_paralelas.o
@@ -441,29 +825,509 @@ syncronous_database/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/projects/vendas_paralelas.cpp.s
 .PHONY : 5P/ppc/threads/projects/vendas_paralelas.cpp.s
 
-5P/so/processosEThreads/cpp/1-threads.o: 5P/so/processosEThreads/cpp/1-threads.cpp.o
-.PHONY : 5P/so/processosEThreads/cpp/1-threads.o
+5P/ppc/threads/repo/num_cpu.o: 5P/ppc/threads/repo/num_cpu.c.o
+.PHONY : 5P/ppc/threads/repo/num_cpu.o
 
 # target to build an object file
-5P/so/processosEThreads/cpp/1-threads.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.o
-.PHONY : 5P/so/processosEThreads/cpp/1-threads.cpp.o
+5P/ppc/threads/repo/num_cpu.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/num_cpu.c.o
+.PHONY : 5P/ppc/threads/repo/num_cpu.c.o
 
-5P/so/processosEThreads/cpp/1-threads.i: 5P/so/processosEThreads/cpp/1-threads.cpp.i
-.PHONY : 5P/so/processosEThreads/cpp/1-threads.i
+5P/ppc/threads/repo/num_cpu.i: 5P/ppc/threads/repo/num_cpu.c.i
+.PHONY : 5P/ppc/threads/repo/num_cpu.i
 
 # target to preprocess a source file
-5P/so/processosEThreads/cpp/1-threads.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.i
-.PHONY : 5P/so/processosEThreads/cpp/1-threads.cpp.i
+5P/ppc/threads/repo/num_cpu.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/num_cpu.c.i
+.PHONY : 5P/ppc/threads/repo/num_cpu.c.i
 
-5P/so/processosEThreads/cpp/1-threads.s: 5P/so/processosEThreads/cpp/1-threads.cpp.s
-.PHONY : 5P/so/processosEThreads/cpp/1-threads.s
+5P/ppc/threads/repo/num_cpu.s: 5P/ppc/threads/repo/num_cpu.c.s
+.PHONY : 5P/ppc/threads/repo/num_cpu.s
 
 # target to generate assembly for a file
-5P/so/processosEThreads/cpp/1-threads.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/processosEThreads/cpp/1-threads.cpp.s
-.PHONY : 5P/so/processosEThreads/cpp/1-threads.cpp.s
+5P/ppc/threads/repo/num_cpu.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/num_cpu.c.s
+.PHONY : 5P/ppc/threads/repo/num_cpu.c.s
+
+5P/ppc/threads/repo/pth_condition_variable.o: 5P/ppc/threads/repo/pth_condition_variable.c.o
+.PHONY : 5P/ppc/threads/repo/pth_condition_variable.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_condition_variable.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_condition_variable.c.o
+.PHONY : 5P/ppc/threads/repo/pth_condition_variable.c.o
+
+5P/ppc/threads/repo/pth_condition_variable.i: 5P/ppc/threads/repo/pth_condition_variable.c.i
+.PHONY : 5P/ppc/threads/repo/pth_condition_variable.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_condition_variable.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_condition_variable.c.i
+.PHONY : 5P/ppc/threads/repo/pth_condition_variable.c.i
+
+5P/ppc/threads/repo/pth_condition_variable.s: 5P/ppc/threads/repo/pth_condition_variable.c.s
+.PHONY : 5P/ppc/threads/repo/pth_condition_variable.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_condition_variable.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_condition_variable.c.s
+.PHONY : 5P/ppc/threads/repo/pth_condition_variable.c.s
+
+5P/ppc/threads/repo/pth_estadio_base.o: 5P/ppc/threads/repo/pth_estadio_base.c.o
+.PHONY : 5P/ppc/threads/repo/pth_estadio_base.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_estadio_base.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_estadio_base.c.o
+.PHONY : 5P/ppc/threads/repo/pth_estadio_base.c.o
+
+5P/ppc/threads/repo/pth_estadio_base.i: 5P/ppc/threads/repo/pth_estadio_base.c.i
+.PHONY : 5P/ppc/threads/repo/pth_estadio_base.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_estadio_base.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_estadio_base.c.i
+.PHONY : 5P/ppc/threads/repo/pth_estadio_base.c.i
+
+5P/ppc/threads/repo/pth_estadio_base.s: 5P/ppc/threads/repo/pth_estadio_base.c.s
+.PHONY : 5P/ppc/threads/repo/pth_estadio_base.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_estadio_base.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_estadio_base.c.s
+.PHONY : 5P/ppc/threads/repo/pth_estadio_base.c.s
+
+5P/ppc/threads/repo/pth_hello1.o: 5P/ppc/threads/repo/pth_hello1.c.o
+.PHONY : 5P/ppc/threads/repo/pth_hello1.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_hello1.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_hello1.c.o
+.PHONY : 5P/ppc/threads/repo/pth_hello1.c.o
+
+5P/ppc/threads/repo/pth_hello1.i: 5P/ppc/threads/repo/pth_hello1.c.i
+.PHONY : 5P/ppc/threads/repo/pth_hello1.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_hello1.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_hello1.c.i
+.PHONY : 5P/ppc/threads/repo/pth_hello1.c.i
+
+5P/ppc/threads/repo/pth_hello1.s: 5P/ppc/threads/repo/pth_hello1.c.s
+.PHONY : 5P/ppc/threads/repo/pth_hello1.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_hello1.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_hello1.c.s
+.PHONY : 5P/ppc/threads/repo/pth_hello1.c.s
+
+5P/ppc/threads/repo/pth_hello2.o: 5P/ppc/threads/repo/pth_hello2.c.o
+.PHONY : 5P/ppc/threads/repo/pth_hello2.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_hello2.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_hello2.c.o
+.PHONY : 5P/ppc/threads/repo/pth_hello2.c.o
+
+5P/ppc/threads/repo/pth_hello2.i: 5P/ppc/threads/repo/pth_hello2.c.i
+.PHONY : 5P/ppc/threads/repo/pth_hello2.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_hello2.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_hello2.c.i
+.PHONY : 5P/ppc/threads/repo/pth_hello2.c.i
+
+5P/ppc/threads/repo/pth_hello2.s: 5P/ppc/threads/repo/pth_hello2.c.s
+.PHONY : 5P/ppc/threads/repo/pth_hello2.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_hello2.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_hello2.c.s
+.PHONY : 5P/ppc/threads/repo/pth_hello2.c.s
+
+5P/ppc/threads/repo/pth_lembrete.o: 5P/ppc/threads/repo/pth_lembrete.c.o
+.PHONY : 5P/ppc/threads/repo/pth_lembrete.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_lembrete.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_lembrete.c.o
+.PHONY : 5P/ppc/threads/repo/pth_lembrete.c.o
+
+5P/ppc/threads/repo/pth_lembrete.i: 5P/ppc/threads/repo/pth_lembrete.c.i
+.PHONY : 5P/ppc/threads/repo/pth_lembrete.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_lembrete.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_lembrete.c.i
+.PHONY : 5P/ppc/threads/repo/pth_lembrete.c.i
+
+5P/ppc/threads/repo/pth_lembrete.s: 5P/ppc/threads/repo/pth_lembrete.c.s
+.PHONY : 5P/ppc/threads/repo/pth_lembrete.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_lembrete.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_lembrete.c.s
+.PHONY : 5P/ppc/threads/repo/pth_lembrete.c.s
+
+5P/ppc/threads/repo/pth_mutex1.o: 5P/ppc/threads/repo/pth_mutex1.c.o
+.PHONY : 5P/ppc/threads/repo/pth_mutex1.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_mutex1.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_mutex1.c.o
+.PHONY : 5P/ppc/threads/repo/pth_mutex1.c.o
+
+5P/ppc/threads/repo/pth_mutex1.i: 5P/ppc/threads/repo/pth_mutex1.c.i
+.PHONY : 5P/ppc/threads/repo/pth_mutex1.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_mutex1.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_mutex1.c.i
+.PHONY : 5P/ppc/threads/repo/pth_mutex1.c.i
+
+5P/ppc/threads/repo/pth_mutex1.s: 5P/ppc/threads/repo/pth_mutex1.c.s
+.PHONY : 5P/ppc/threads/repo/pth_mutex1.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_mutex1.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_mutex1.c.s
+.PHONY : 5P/ppc/threads/repo/pth_mutex1.c.s
+
+5P/ppc/threads/repo/pth_pool.o: 5P/ppc/threads/repo/pth_pool.c.o
+.PHONY : 5P/ppc/threads/repo/pth_pool.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_pool.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_pool.c.o
+.PHONY : 5P/ppc/threads/repo/pth_pool.c.o
+
+5P/ppc/threads/repo/pth_pool.i: 5P/ppc/threads/repo/pth_pool.c.i
+.PHONY : 5P/ppc/threads/repo/pth_pool.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_pool.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_pool.c.i
+.PHONY : 5P/ppc/threads/repo/pth_pool.c.i
+
+5P/ppc/threads/repo/pth_pool.s: 5P/ppc/threads/repo/pth_pool.c.s
+.PHONY : 5P/ppc/threads/repo/pth_pool.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_pool.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_pool.c.s
+.PHONY : 5P/ppc/threads/repo/pth_pool.c.s
+
+5P/ppc/threads/repo/pth_race_condition.o: 5P/ppc/threads/repo/pth_race_condition.c.o
+.PHONY : 5P/ppc/threads/repo/pth_race_condition.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_race_condition.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_race_condition.c.o
+.PHONY : 5P/ppc/threads/repo/pth_race_condition.c.o
+
+5P/ppc/threads/repo/pth_race_condition.i: 5P/ppc/threads/repo/pth_race_condition.c.i
+.PHONY : 5P/ppc/threads/repo/pth_race_condition.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_race_condition.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_race_condition.c.i
+.PHONY : 5P/ppc/threads/repo/pth_race_condition.c.i
+
+5P/ppc/threads/repo/pth_race_condition.s: 5P/ppc/threads/repo/pth_race_condition.c.s
+.PHONY : 5P/ppc/threads/repo/pth_race_condition.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_race_condition.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_race_condition.c.s
+.PHONY : 5P/ppc/threads/repo/pth_race_condition.c.s
+
+5P/ppc/threads/repo/pth_race_condition2.o: 5P/ppc/threads/repo/pth_race_condition2.c.o
+.PHONY : 5P/ppc/threads/repo/pth_race_condition2.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_race_condition2.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_race_condition2.c.o
+.PHONY : 5P/ppc/threads/repo/pth_race_condition2.c.o
+
+5P/ppc/threads/repo/pth_race_condition2.i: 5P/ppc/threads/repo/pth_race_condition2.c.i
+.PHONY : 5P/ppc/threads/repo/pth_race_condition2.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_race_condition2.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_race_condition2.c.i
+.PHONY : 5P/ppc/threads/repo/pth_race_condition2.c.i
+
+5P/ppc/threads/repo/pth_race_condition2.s: 5P/ppc/threads/repo/pth_race_condition2.c.s
+.PHONY : 5P/ppc/threads/repo/pth_race_condition2.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_race_condition2.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_race_condition2.c.s
+.PHONY : 5P/ppc/threads/repo/pth_race_condition2.c.s
+
+5P/ppc/threads/repo/pth_semaphore1.o: 5P/ppc/threads/repo/pth_semaphore1.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore1.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_semaphore1.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore1.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore1.c.o
+
+5P/ppc/threads/repo/pth_semaphore1.i: 5P/ppc/threads/repo/pth_semaphore1.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore1.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_semaphore1.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore1.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore1.c.i
+
+5P/ppc/threads/repo/pth_semaphore1.s: 5P/ppc/threads/repo/pth_semaphore1.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore1.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_semaphore1.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore1.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore1.c.s
+
+5P/ppc/threads/repo/pth_semaphore2.o: 5P/ppc/threads/repo/pth_semaphore2.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore2.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_semaphore2.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore2.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore2.c.o
+
+5P/ppc/threads/repo/pth_semaphore2.i: 5P/ppc/threads/repo/pth_semaphore2.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore2.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_semaphore2.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore2.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore2.c.i
+
+5P/ppc/threads/repo/pth_semaphore2.s: 5P/ppc/threads/repo/pth_semaphore2.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore2.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_semaphore2.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore2.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore2.c.s
+
+5P/ppc/threads/repo/pth_semaphore3.o: 5P/ppc/threads/repo/pth_semaphore3.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore3.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_semaphore3.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore3.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore3.c.o
+
+5P/ppc/threads/repo/pth_semaphore3.i: 5P/ppc/threads/repo/pth_semaphore3.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore3.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_semaphore3.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore3.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore3.c.i
+
+5P/ppc/threads/repo/pth_semaphore3.s: 5P/ppc/threads/repo/pth_semaphore3.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore3.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_semaphore3.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore3.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore3.c.s
+
+5P/ppc/threads/repo/pth_semaphore4.o: 5P/ppc/threads/repo/pth_semaphore4.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore4.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_semaphore4.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore4.c.o
+.PHONY : 5P/ppc/threads/repo/pth_semaphore4.c.o
+
+5P/ppc/threads/repo/pth_semaphore4.i: 5P/ppc/threads/repo/pth_semaphore4.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore4.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_semaphore4.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore4.c.i
+.PHONY : 5P/ppc/threads/repo/pth_semaphore4.c.i
+
+5P/ppc/threads/repo/pth_semaphore4.s: 5P/ppc/threads/repo/pth_semaphore4.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore4.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_semaphore4.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_semaphore4.c.s
+.PHONY : 5P/ppc/threads/repo/pth_semaphore4.c.s
+
+5P/ppc/threads/repo/pth_timer.o: 5P/ppc/threads/repo/pth_timer.c.o
+.PHONY : 5P/ppc/threads/repo/pth_timer.o
+
+# target to build an object file
+5P/ppc/threads/repo/pth_timer.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_timer.c.o
+.PHONY : 5P/ppc/threads/repo/pth_timer.c.o
+
+5P/ppc/threads/repo/pth_timer.i: 5P/ppc/threads/repo/pth_timer.c.i
+.PHONY : 5P/ppc/threads/repo/pth_timer.i
+
+# target to preprocess a source file
+5P/ppc/threads/repo/pth_timer.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_timer.c.i
+.PHONY : 5P/ppc/threads/repo/pth_timer.c.i
+
+5P/ppc/threads/repo/pth_timer.s: 5P/ppc/threads/repo/pth_timer.c.s
+.PHONY : 5P/ppc/threads/repo/pth_timer.s
+
+# target to generate assembly for a file
+5P/ppc/threads/repo/pth_timer.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/ppc/threads/repo/pth_timer.c.s
+.PHONY : 5P/ppc/threads/repo/pth_timer.c.s
+
+5P/so/1_process_comunication/monitor.o: 5P/so/1_process_comunication/monitor.c.o
+.PHONY : 5P/so/1_process_comunication/monitor.o
+
+# target to build an object file
+5P/so/1_process_comunication/monitor.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/monitor.c.o
+.PHONY : 5P/so/1_process_comunication/monitor.c.o
+
+5P/so/1_process_comunication/monitor.i: 5P/so/1_process_comunication/monitor.c.i
+.PHONY : 5P/so/1_process_comunication/monitor.i
+
+# target to preprocess a source file
+5P/so/1_process_comunication/monitor.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/monitor.c.i
+.PHONY : 5P/so/1_process_comunication/monitor.c.i
+
+5P/so/1_process_comunication/monitor.s: 5P/so/1_process_comunication/monitor.c.s
+.PHONY : 5P/so/1_process_comunication/monitor.s
+
+# target to generate assembly for a file
+5P/so/1_process_comunication/monitor.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/monitor.c.s
+.PHONY : 5P/so/1_process_comunication/monitor.c.s
+
+5P/so/1_process_comunication/peterson.o: 5P/so/1_process_comunication/peterson.c.o
+.PHONY : 5P/so/1_process_comunication/peterson.o
+
+# target to build an object file
+5P/so/1_process_comunication/peterson.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/peterson.c.o
+.PHONY : 5P/so/1_process_comunication/peterson.c.o
+
+5P/so/1_process_comunication/peterson.i: 5P/so/1_process_comunication/peterson.c.i
+.PHONY : 5P/so/1_process_comunication/peterson.i
+
+# target to preprocess a source file
+5P/so/1_process_comunication/peterson.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/peterson.c.i
+.PHONY : 5P/so/1_process_comunication/peterson.c.i
+
+5P/so/1_process_comunication/peterson.s: 5P/so/1_process_comunication/peterson.c.s
+.PHONY : 5P/so/1_process_comunication/peterson.s
+
+# target to generate assembly for a file
+5P/so/1_process_comunication/peterson.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/peterson.c.s
+.PHONY : 5P/so/1_process_comunication/peterson.c.s
+
+5P/so/1_process_comunication/semaforo.o: 5P/so/1_process_comunication/semaforo.c.o
+.PHONY : 5P/so/1_process_comunication/semaforo.o
+
+# target to build an object file
+5P/so/1_process_comunication/semaforo.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/semaforo.c.o
+.PHONY : 5P/so/1_process_comunication/semaforo.c.o
+
+5P/so/1_process_comunication/semaforo.i: 5P/so/1_process_comunication/semaforo.c.i
+.PHONY : 5P/so/1_process_comunication/semaforo.i
+
+# target to preprocess a source file
+5P/so/1_process_comunication/semaforo.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/semaforo.c.i
+.PHONY : 5P/so/1_process_comunication/semaforo.c.i
+
+5P/so/1_process_comunication/semaforo.s: 5P/so/1_process_comunication/semaforo.c.s
+.PHONY : 5P/so/1_process_comunication/semaforo.s
+
+# target to generate assembly for a file
+5P/so/1_process_comunication/semaforo.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/semaforo.c.s
+.PHONY : 5P/so/1_process_comunication/semaforo.c.s
+
+5P/so/1_process_comunication/tsl.o: 5P/so/1_process_comunication/tsl.c.o
+.PHONY : 5P/so/1_process_comunication/tsl.o
+
+# target to build an object file
+5P/so/1_process_comunication/tsl.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/tsl.c.o
+.PHONY : 5P/so/1_process_comunication/tsl.c.o
+
+5P/so/1_process_comunication/tsl.i: 5P/so/1_process_comunication/tsl.c.i
+.PHONY : 5P/so/1_process_comunication/tsl.i
+
+# target to preprocess a source file
+5P/so/1_process_comunication/tsl.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/tsl.c.i
+.PHONY : 5P/so/1_process_comunication/tsl.c.i
+
+5P/so/1_process_comunication/tsl.s: 5P/so/1_process_comunication/tsl.c.s
+.PHONY : 5P/so/1_process_comunication/tsl.s
+
+# target to generate assembly for a file
+5P/so/1_process_comunication/tsl.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/1_process_comunication/tsl.c.s
+.PHONY : 5P/so/1_process_comunication/tsl.c.s
+
+5P/so/2_threads/cpp/1-threads.o: 5P/so/2_threads/cpp/1-threads.cpp.o
+.PHONY : 5P/so/2_threads/cpp/1-threads.o
+
+# target to build an object file
+5P/so/2_threads/cpp/1-threads.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/2_threads/cpp/1-threads.cpp.o
+.PHONY : 5P/so/2_threads/cpp/1-threads.cpp.o
+
+5P/so/2_threads/cpp/1-threads.i: 5P/so/2_threads/cpp/1-threads.cpp.i
+.PHONY : 5P/so/2_threads/cpp/1-threads.i
+
+# target to preprocess a source file
+5P/so/2_threads/cpp/1-threads.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/2_threads/cpp/1-threads.cpp.i
+.PHONY : 5P/so/2_threads/cpp/1-threads.cpp.i
+
+5P/so/2_threads/cpp/1-threads.s: 5P/so/2_threads/cpp/1-threads.cpp.s
+.PHONY : 5P/so/2_threads/cpp/1-threads.s
+
+# target to generate assembly for a file
+5P/so/2_threads/cpp/1-threads.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/2_threads/cpp/1-threads.cpp.s
+.PHONY : 5P/so/2_threads/cpp/1-threads.cpp.s
+
+5P/so/3_deadlocks/exercise_1.o: 5P/so/3_deadlocks/exercise_1.cpp.o
+.PHONY : 5P/so/3_deadlocks/exercise_1.o
+
+# target to build an object file
+5P/so/3_deadlocks/exercise_1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/3_deadlocks/exercise_1.cpp.o
+.PHONY : 5P/so/3_deadlocks/exercise_1.cpp.o
+
+5P/so/3_deadlocks/exercise_1.i: 5P/so/3_deadlocks/exercise_1.cpp.i
+.PHONY : 5P/so/3_deadlocks/exercise_1.i
+
+# target to preprocess a source file
+5P/so/3_deadlocks/exercise_1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/3_deadlocks/exercise_1.cpp.i
+.PHONY : 5P/so/3_deadlocks/exercise_1.cpp.i
+
+5P/so/3_deadlocks/exercise_1.s: 5P/so/3_deadlocks/exercise_1.cpp.s
+.PHONY : 5P/so/3_deadlocks/exercise_1.s
+
+# target to generate assembly for a file
+5P/so/3_deadlocks/exercise_1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/3_deadlocks/exercise_1.cpp.s
+.PHONY : 5P/so/3_deadlocks/exercise_1.cpp.s
 
 5P/so/projects/database/barbeiro.o: 5P/so/projects/database/barbeiro.cpp.o
 .PHONY : 5P/so/projects/database/barbeiro.o
@@ -561,6 +1425,30 @@ syncronous_database/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/5P/so/projects/database/teste.cpp.s
 .PHONY : 5P/so/projects/database/teste.cpp.s
 
+CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.o: CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.o
+.PHONY : CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.o
+
+# target to build an object file
+CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.o
+.PHONY : CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.o
+
+CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.i: CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.i
+.PHONY : CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.i
+
+# target to preprocess a source file
+CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.i
+.PHONY : CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.i
+
+CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.s: CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.s
+.PHONY : CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.s
+
+# target to generate assembly for a file
+CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/syncronous_database.dir/build.make CMakeFiles/syncronous_database.dir/CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.s
+.PHONY : CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.c.s
+
 CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.o: CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.cpp.o
 .PHONY : CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.o
 
@@ -618,6 +1506,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... syncronous_database"
+	@echo "... 3P/binary-tree/binary-search-tree.o"
+	@echo "... 3P/binary-tree/binary-search-tree.i"
+	@echo "... 3P/binary-tree/binary-search-tree.s"
+	@echo "... 3P/prova-2/sum-leaf.o"
+	@echo "... 3P/prova-2/sum-leaf.i"
+	@echo "... 3P/prova-2/sum-leaf.s"
+	@echo "... 3P/rbt/red-black-tree.o"
+	@echo "... 3P/rbt/red-black-tree.i"
+	@echo "... 3P/rbt/red-black-tree.s"
 	@echo "... 4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.o"
 	@echo "... 4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.i"
 	@echo "... 4P/paa/u1/datagrama/gabrielbatista_202300027249_datagrama.s"
@@ -645,21 +1542,120 @@ help:
 	@echo "... 4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.o"
 	@echo "... 4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.i"
 	@echo "... 4P/paa/u2/transportadora/gabrielbatista_202300027249_transportadora.s"
+	@echo "... 4P/paa/u2/transportadora/gpt.o"
+	@echo "... 4P/paa/u2/transportadora/gpt.i"
+	@echo "... 4P/paa/u2/transportadora/gpt.s"
 	@echo "... 4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.o"
 	@echo "... 4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.i"
 	@echo "... 4P/paa/u3/labirinto/gabrielbatista_202300027249_labirinto.s"
 	@echo "... 4P/statistics/u1/data_analitics.o"
 	@echo "... 4P/statistics/u1/data_analitics.i"
 	@echo "... 4P/statistics/u1/data_analitics.s"
+	@echo "... 5P/ppc/mpi/examples/mpi1.o"
+	@echo "... 5P/ppc/mpi/examples/mpi1.i"
+	@echo "... 5P/ppc/mpi/examples/mpi1.s"
+	@echo "... 5P/ppc/mpi/examples/mpi2.o"
+	@echo "... 5P/ppc/mpi/examples/mpi2.i"
+	@echo "... 5P/ppc/mpi/examples/mpi2.s"
+	@echo "... 5P/ppc/mpi/examples/mpi3.o"
+	@echo "... 5P/ppc/mpi/examples/mpi3.i"
+	@echo "... 5P/ppc/mpi/examples/mpi3.s"
+	@echo "... 5P/ppc/mpi/examples/mpi4.o"
+	@echo "... 5P/ppc/mpi/examples/mpi4.i"
+	@echo "... 5P/ppc/mpi/examples/mpi4.s"
+	@echo "... 5P/ppc/mpi/examples/mpi_bcast.o"
+	@echo "... 5P/ppc/mpi/examples/mpi_bcast.i"
+	@echo "... 5P/ppc/mpi/examples/mpi_bcast.s"
+	@echo "... 5P/ppc/mpi/examples/mpi_trap1.o"
+	@echo "... 5P/ppc/mpi/examples/mpi_trap1.i"
+	@echo "... 5P/ppc/mpi/examples/mpi_trap1.s"
+	@echo "... 5P/ppc/mpi/practices/1-integral.o"
+	@echo "... 5P/ppc/mpi/practices/1-integral.i"
+	@echo "... 5P/ppc/mpi/practices/1-integral.s"
+	@echo "... 5P/ppc/mpi/projects/mpi2_me.o"
+	@echo "... 5P/ppc/mpi/projects/mpi2_me.i"
+	@echo "... 5P/ppc/mpi/projects/mpi2_me.s"
+	@echo "... 5P/ppc/mpi/projects/vector_clock.o"
+	@echo "... 5P/ppc/mpi/projects/vector_clock.i"
+	@echo "... 5P/ppc/mpi/projects/vector_clock.s"
+	@echo "... 5P/ppc/threads/projects/avenida_semaphore.o"
+	@echo "... 5P/ppc/threads/projects/avenida_semaphore.i"
+	@echo "... 5P/ppc/threads/projects/avenida_semaphore.s"
 	@echo "... 5P/ppc/threads/projects/data.o"
 	@echo "... 5P/ppc/threads/projects/data.i"
 	@echo "... 5P/ppc/threads/projects/data.s"
+	@echo "... 5P/ppc/threads/projects/medicamentos.o"
+	@echo "... 5P/ppc/threads/projects/medicamentos.i"
+	@echo "... 5P/ppc/threads/projects/medicamentos.s"
+	@echo "... 5P/ppc/threads/projects/publico_mutex.o"
+	@echo "... 5P/ppc/threads/projects/publico_mutex.i"
+	@echo "... 5P/ppc/threads/projects/publico_mutex.s"
 	@echo "... 5P/ppc/threads/projects/vendas_paralelas.o"
 	@echo "... 5P/ppc/threads/projects/vendas_paralelas.i"
 	@echo "... 5P/ppc/threads/projects/vendas_paralelas.s"
-	@echo "... 5P/so/processosEThreads/cpp/1-threads.o"
-	@echo "... 5P/so/processosEThreads/cpp/1-threads.i"
-	@echo "... 5P/so/processosEThreads/cpp/1-threads.s"
+	@echo "... 5P/ppc/threads/repo/num_cpu.o"
+	@echo "... 5P/ppc/threads/repo/num_cpu.i"
+	@echo "... 5P/ppc/threads/repo/num_cpu.s"
+	@echo "... 5P/ppc/threads/repo/pth_condition_variable.o"
+	@echo "... 5P/ppc/threads/repo/pth_condition_variable.i"
+	@echo "... 5P/ppc/threads/repo/pth_condition_variable.s"
+	@echo "... 5P/ppc/threads/repo/pth_estadio_base.o"
+	@echo "... 5P/ppc/threads/repo/pth_estadio_base.i"
+	@echo "... 5P/ppc/threads/repo/pth_estadio_base.s"
+	@echo "... 5P/ppc/threads/repo/pth_hello1.o"
+	@echo "... 5P/ppc/threads/repo/pth_hello1.i"
+	@echo "... 5P/ppc/threads/repo/pth_hello1.s"
+	@echo "... 5P/ppc/threads/repo/pth_hello2.o"
+	@echo "... 5P/ppc/threads/repo/pth_hello2.i"
+	@echo "... 5P/ppc/threads/repo/pth_hello2.s"
+	@echo "... 5P/ppc/threads/repo/pth_lembrete.o"
+	@echo "... 5P/ppc/threads/repo/pth_lembrete.i"
+	@echo "... 5P/ppc/threads/repo/pth_lembrete.s"
+	@echo "... 5P/ppc/threads/repo/pth_mutex1.o"
+	@echo "... 5P/ppc/threads/repo/pth_mutex1.i"
+	@echo "... 5P/ppc/threads/repo/pth_mutex1.s"
+	@echo "... 5P/ppc/threads/repo/pth_pool.o"
+	@echo "... 5P/ppc/threads/repo/pth_pool.i"
+	@echo "... 5P/ppc/threads/repo/pth_pool.s"
+	@echo "... 5P/ppc/threads/repo/pth_race_condition.o"
+	@echo "... 5P/ppc/threads/repo/pth_race_condition.i"
+	@echo "... 5P/ppc/threads/repo/pth_race_condition.s"
+	@echo "... 5P/ppc/threads/repo/pth_race_condition2.o"
+	@echo "... 5P/ppc/threads/repo/pth_race_condition2.i"
+	@echo "... 5P/ppc/threads/repo/pth_race_condition2.s"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore1.o"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore1.i"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore1.s"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore2.o"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore2.i"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore2.s"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore3.o"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore3.i"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore3.s"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore4.o"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore4.i"
+	@echo "... 5P/ppc/threads/repo/pth_semaphore4.s"
+	@echo "... 5P/ppc/threads/repo/pth_timer.o"
+	@echo "... 5P/ppc/threads/repo/pth_timer.i"
+	@echo "... 5P/ppc/threads/repo/pth_timer.s"
+	@echo "... 5P/so/1_process_comunication/monitor.o"
+	@echo "... 5P/so/1_process_comunication/monitor.i"
+	@echo "... 5P/so/1_process_comunication/monitor.s"
+	@echo "... 5P/so/1_process_comunication/peterson.o"
+	@echo "... 5P/so/1_process_comunication/peterson.i"
+	@echo "... 5P/so/1_process_comunication/peterson.s"
+	@echo "... 5P/so/1_process_comunication/semaforo.o"
+	@echo "... 5P/so/1_process_comunication/semaforo.i"
+	@echo "... 5P/so/1_process_comunication/semaforo.s"
+	@echo "... 5P/so/1_process_comunication/tsl.o"
+	@echo "... 5P/so/1_process_comunication/tsl.i"
+	@echo "... 5P/so/1_process_comunication/tsl.s"
+	@echo "... 5P/so/2_threads/cpp/1-threads.o"
+	@echo "... 5P/so/2_threads/cpp/1-threads.i"
+	@echo "... 5P/so/2_threads/cpp/1-threads.s"
+	@echo "... 5P/so/3_deadlocks/exercise_1.o"
+	@echo "... 5P/so/3_deadlocks/exercise_1.i"
+	@echo "... 5P/so/3_deadlocks/exercise_1.s"
 	@echo "... 5P/so/projects/database/barbeiro.o"
 	@echo "... 5P/so/projects/database/barbeiro.i"
 	@echo "... 5P/so/projects/database/barbeiro.s"
@@ -672,6 +1668,9 @@ help:
 	@echo "... 5P/so/projects/database/teste.o"
 	@echo "... 5P/so/projects/database/teste.i"
 	@echo "... 5P/so/projects/database/teste.s"
+	@echo "... CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.o"
+	@echo "... CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.i"
+	@echo "... CMakeFiles/3.31.6/CompilerIdC/CMakeCCompilerId.s"
 	@echo "... CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.o"
 	@echo "... CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.i"
 	@echo "... CMakeFiles/3.31.6/CompilerIdCXX/CMakeCXXCompilerId.s"

@@ -21,22 +21,23 @@ async function executeQuery(client, queryString) {
 }
 
 async function connectToDatabase(filePath) {
-  console.log(filePath);
   let db;
   try {
+    console.clear();
     db = await pool.connect();
     console.log("Conexão bem-sucedida ao banco de dados PostgreSQL!");
-    await executeSQLfile(db, filePath);
-    // const rows = await executeQuery(
-    //   db,
-    //   `SELECT DISTINCT *
-    //     FROM universidade.plano
-    //   LEFT JOIN universidade.departamento d ON d.chefe = mat_professor
-    //     WHERE mat_estudante IS NOT NULL
-    //   OR d.chefe IS NOT NULL;`
-    // );
+    if (filePath) await executeSQLfile(db, filePath);
+    const rows = await executeQuery(
+      db,
+      `SELECT u.primeiro_nome, u.sobrenome, COUNT(DISTINCT e.id_exemplar) as livros_emprestados
+       FROM universidade.emprestimo e
+       JOIN universidade.exemplar ex ON ex.id_exemplar = e.id_exemplar
+       JOIN universidade.usuario u ON u.cpf = e.cpf
+       GROUP BY u.primeiro_nome, u.sobrenome;
+       `
+    );
 
-    // console.table(rows);
+    console.table(rows);
   } catch (err) {
     console.error("Error when connecting to the database:", err.stack);
   } finally {
@@ -45,4 +46,4 @@ async function connectToDatabase(filePath) {
   }
 }
 
-await connectToDatabase("./sql/clinica_schema.sql");
+await connectToDatabase("./sql/universidade_schema.sql");
