@@ -1,7 +1,6 @@
 #include <mpi.h>
 #include <pthread.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #define VECTOR_SIZE 3
