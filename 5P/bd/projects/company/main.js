@@ -1,4 +1,4 @@
-import { pool } from "../utils/pool.js";
+import { pool } from "../../utils/pool.js";
 import { executeSQLfile } from "./executeSQLFile.js";
 
 export async function connectToDatabaseAndExec(pool, filePath) {
@@ -8,15 +8,7 @@ export async function connectToDatabaseAndExec(pool, filePath) {
     db = await pool.connect();
     console.log("Conexão bem-sucedida ao banco de dados PostgreSQL!");
     if (filePath) await executeSQLfile(db, filePath);
-    const rows = await executeQuery(
-      db,
-      `SELECT u.primeiro_nome, u.sobrenome, COUNT(DISTINCT e.id_exemplar) as livros_emprestados
-       FROM universidade.emprestimo e
-       JOIN universidade.exemplar ex ON ex.id_exemplar = e.id_exemplar
-       JOIN universidade.usuario u ON u.cpf = e.cpf
-       GROUP BY u.primeiro_nome, u.sobrenome;
-       `
-    );
+    const rows = await executeQuery(db, ``);
 
     console.table(rows);
   } catch (err) {
