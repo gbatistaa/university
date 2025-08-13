@@ -1,0 +1,15 @@
+1. Crie uma transação para aumentar em 10% o salário de todos os desenvolvedores, e reverta a operação caso algum erro ocorra.
+2. Inicie uma transação que insira um novo cliente e um projeto para ele, garantindo que ambos sejam inseridos juntos.
+3. Simule uma transação de transferência de um funcionário de um departamento para outro, atualizando o registro de departamento e seu histórico de salário.
+4. Use SAVEPOINT para dividir uma transação que insere múltiplos funcionários, revertendo apenas a inserção do último.
+5. Crie uma transação para excluir um cliente e todos os seus projetos, revertendo se houver erro.
+6. Inicie uma transação para registrar um aumento salarial e a atribuição de um novo projeto a um funcionário.
+7. Faça uma transação que insira três novas tarefas para um projeto e reverta se qualquer uma falhar.
+8. Atualize o status de todas as tarefas de um projeto para 'Concluído' dentro de uma transação.
+9. Insira um novo projeto e associe a ele três funcionários diferentes, garantindo atomicidade.
+10. Transfira todos os funcionários de um projeto encerrado para outro ativo usando transação.
+11. Insira uma linguagem de programação nova e atribua a ela um funcionário, revertendo se a atribuição falhar.
+12. Crie uma transação que insira um novo departamento e mova dois funcionários para ele.
+13. Simule uma transação de pagamento, registrando o pagamento em uma tabela de logs e atualizando o histórico de salário.
+14. Atualize o cliente associado a um projeto e reverta se o cliente não existir.
+15. Use transações para criar um cliente, projeto e tarefas associadas, garantindo que tudo seja registrado de forma consistente.
