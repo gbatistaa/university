@@ -1,4 +1,4 @@
-1. Quantos programadores possuem um salário atual maior que 5000?
+1. Quantos programadores possuem um salário atual maior que 10000?
 2. Liste o número de funcionários por departamento.
 3. Quantos projetos cada cliente possui contratados?
 4. Liste, para cada projeto, a quantidade de funcionários envolvidos.
