@@ -1,5 +1,6 @@
+import { executeQuery } from "../../utils/executeQuery.js";
+import { executeSQLfile } from "../../utils/executeSQLFile.js";
 import { pool } from "../../utils/pool.js";
-import { executeSQLfile } from "./executeSQLFile.js";
 
 export async function connectToDatabaseAndExec(pool, filePath) {
   let db;
@@ -8,7 +9,21 @@ export async function connectToDatabaseAndExec(pool, filePath) {
     db = await pool.connect();
     console.log("Conexão bem-sucedida ao banco de dados PostgreSQL!");
     if (filePath) await executeSQLfile(db, filePath);
-    const rows = await executeQuery(db, ``);
+    const rows = await executeQuery(
+      db,
+      `WITH anas_department AS (
+        SELECT *
+        FROM company.departments d
+        JOIN company.employees e USING(dept_id)
+        WHERE CONCAT(e.first_name, ' ', e.last_name) = 'Ana Oliveira'
+       )
+
+       SELECT first_name, last_name
+       FROM company.employees e
+       JOIN company.departments d USING(dept_id)
+       WHERE anas_department.dept_id = d.dept_id ;
+      `
+    );
 
     console.table(rows);
   } catch (err) {
@@ -19,4 +34,4 @@ export async function connectToDatabaseAndExec(pool, filePath) {
   }
 }
 
-await connectToDatabase(pool, "./sql/universidade_schema.sql");
+await connectToDatabaseAndExec(pool);
