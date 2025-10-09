@@ -60,3 +60,5 @@ github-token.txt
 build
 5P/so/sort.js
 5P/ppc/.lamport
+venv
+.venv

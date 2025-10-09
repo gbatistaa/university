@@ -7,10 +7,12 @@
   packages = [
     pkgs.gcc
     pkgs.zsh
+    pkgs.conda
     pkgs.git
     pkgs.nodejs
     pkgs.apt
     pkgs.mpich
+    pkgs.python311
     pkgs.sudo
     pkgs.astyle
     pkgs.git-credential-manager
