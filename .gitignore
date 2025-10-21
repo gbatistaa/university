@@ -55,3 +55,11 @@ github-token.txt
 5P/ppc/threads/projects/.vendas
 5P/ppc/threads/repo/.cond
 5P/ppc/threads/repo/.pool
+<<<<<<< HEAD
+=======
+build
+5P/so/sort.js
+5P/ppc/.lamport
+venv
+.venv
+>>>>>>> 61760f30aff9071fa169b33ecc2e9370ba609fd2

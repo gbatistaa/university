@@ -38,7 +38,7 @@ char *create_array_string(int *array, int n) {
     return NULL;
   }
   int buf_sz = calculate_buffer_size(array, n);
-  char *buffer = malloc(buf_sz);
+  char *buffer = (char *)malloc(buf_sz);
   if (!buffer) {
     return NULL;
   }
@@ -92,8 +92,8 @@ int main() {
   MPI_Comm_size(MPI_COMM_WORLD, &comm_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
-  int *vector_clock = calloc(comm_size, sizeof(int));
-  int *new_vector_clock = calloc(comm_size, sizeof(int));
+  int *vector_clock = (int *)calloc(comm_size, sizeof(int));
+  int *new_vector_clock = (int *)calloc(comm_size, sizeof(int));
   vector_clock[comm_size] = my_rank;
 
   switch (my_rank) {

@@ -1,0 +1,40 @@
+Detalhes da etapa 4:
+
+- Essa etapa possui como objetivo implementar o algoritmo de snapshot de Chand/Lamport em cima da etapa 3
+- No algoritmo de Chandy/Lamport um dos processos é o INICIADOR que é responsável por iniciar o algoritmo chamando a função SNAPSHOT.
+No esquema o processo P0 está sendo o iniciador. Os demais processos são chamados de PARTICIPANTES. As tarefas realizadas pelo INICIADOR e
+por cada PARTICIPANTE são descritas a seguir:
+
+INICIADOR:
+
+- Passo 1. Inicia o algoritmo distribuído de snapshot chamando a função SNAPSHOT como uma das operações além das três básicas (SAND, RECIEVE, EVENT).
+o programador é que decidade qual processo será o iniciador e em que local do código da thread de relógios vetoriais (thread central) a função será chamada.
+- Passo 2. Salva o estado corrente do relógio local no momneto da chamada da função SNAPSHOT.
+- Passo 3. Envia marcadores para todos os demais processos (os marcadores são colocados na fila de envio para que a thread de envio as encaminhe via MPI).
+Um marcador pode ser implementado como um relógio especial do algoritmo de snapshot com os estados (-1, -1, -1).
+- Passo 4. Para cada canal de entrada salva todo relógio recebido em uma lista separada por canal até que seja recebido um marcador por aquele canal.
+Como o iniciador (P0) está em comunicação com mais dois processos (P1 e P2), ele teria dois canais de entrada hipotéticos Canal 1->0 por onde ele recebe
+mensagens de P1 e Canal 1->0 por onde ele recebe mensagens de P1. O alogoritmo de SNAPSHOT para no iniciador quando ele já tiver recebido um marcador por
+cada um dos canais de entrada. Nesse momneto o iniciador imprime o seu resultado parcial do snapshot contendo: o estado que foi salvo no Passo 2 e as mensagens
+salvas de cada canal de entrada.
+
+PARTICIPANTE:
+
+- Passo 1. Só começa a realizar sua parte no snapshot quando recebe o primeiro marcador de um dos seus vizinhos. Os demais passos a seguir são semelhantes ao que
+o processo INICIALIZADOR realiza.
+- Passo 2. Salva o estado corrente do relógio local. Um cuidado que deve ser tomado é garantir que a fila de recepção esteja vazia antes que estado corrent do relógio
+local seja salvo. Se a fila não estiver vazia, significa que ainda há relógios antigos (anteriores ao recebimenbto do marcador) que precisam ser processador antes que
+o snapshot do participante seja realizado. Para isso deve-se monitorar a fila de recepção para garantir que todos os relógios dela já tenham sido consumidos e
+processados pela thread central antes de tentar salvar o estado corrente do relógio do processo como parte do snapshot local.
+- Passo 3. Envia marcadores para todos os demais processos (os marcadores também são colocados na fila de envio para que a thread de envio as encaminhe via MPI
+seguindo a mesma ordem FIFO).
+- Passo 4. Para cada canal de entrada por onde não foi recebido o primeiro marcador salva todo relógio recebido em uma lista separada por canal até que seja recebido
+um marcador por aquele canal. O algoritmo de SNAPSHOT para no PARTICIPANTE quando ele já tiver recebido um marcador por aquele canal. o Algoritmo de SNAPSHOT para no
+PARTICIPANTE quando ele já tiver recebido um marcador por cada um dos canais de entrada. Nesse momento o participante imprime o seu resultado parcial do snapshot
+contendo: o estado que foi salvo no item 2 e as mensagens salvas de cada canal de entrada.
+
+A execução do algoritmo de SNAPSHOT deve ocorrer em paralelo com o fluxo de mensagens. Isso significa que os estados dos relógios não devem ser alterados por influência
+do algoritmo de SNAPSHOT
+
+Como o fluxo de operações dos três processos é pequeno pode ser que os resultados de estado dos canais dos três processos não contenham tantas mensagens.
+E bem provável que a maioria dos canais fique com estado vazio
