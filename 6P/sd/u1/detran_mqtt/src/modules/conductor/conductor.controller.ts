@@ -4,35 +4,29 @@ import { ConductorService } from './conductor.service';
 import { CreateConductorDto } from './dto/create-conductor.dto';
 import { UpdateConductorDto } from './dto/update-conductor.dto';
 
+// O controller MQTT escuta os eventos:
 @Controller()
 export class ConductorController {
   constructor(private readonly conductorService: ConductorService) {}
 
+  // registrar condutor
   @EventPattern('createConductor')
   create(@Payload() createConductorDto: CreateConductorDto) {
     return this.conductorService.create(createConductorDto);
   }
 
-  @EventPattern('findAllConductor')
-  findAll() {
-    return this.conductorService.findAll();
-  }
-
+  // buscar informações de um condutor
   @EventPattern('findOneConductor')
-  findOne(@Payload() id: number) {
+  findOne(@Payload() id: string) {
     return this.conductorService.findOne(id);
   }
 
+  // atualizar condutor
   @EventPattern('updateConductor')
   update(@Payload() updateConductorDto: UpdateConductorDto) {
     return this.conductorService.update(
-      updateConductorDto.id,
+      updateConductorDto.cpf,
       updateConductorDto,
     );
-  }
-
-  @EventPattern('removeConductor')
-  remove(@Payload() id: number) {
-    return this.conductorService.remove(id);
   }
 }
