@@ -1,5 +1,5 @@
 import { CommonEntity } from 'src/modules/common/entities/common.entity';
-import { Conductor } from 'src/modules/conductor/entities/conductor.entity';
+import { Conductor } from 'src/modules/ms-conductor/entities/conductor.entity';
 import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 
 @Entity()

@@ -1,5 +1,5 @@
 import { CommonEntity } from 'src/modules/common/entities/common.entity';
-import { Vehicle } from 'src/modules/vehicle/entities/vehicle.entity';
+import { Vehicle } from 'src/modules/ms-vehicle/entities/vehicle.entity';
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 
 @Entity()
