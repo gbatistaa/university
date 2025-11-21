@@ -24,10 +24,6 @@ export class ConductorService {
     return createdConductor;
   }
 
-  findAll() {
-    return `This action returns all conductor`;
-  }
-
   findOne(id: string) {
     return `This action returns a #${id} conductor`;
   }

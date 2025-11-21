@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { VehicleService } from './vehicle.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
@@ -24,5 +24,10 @@ export class VehicleController {
   @EventPattern('commands/vehicle/calculateIPVA')
   calculateIPVA(@Payload() calculateIPVADto: { sign: string }) {
     return this.vehicleService.calculateIPVA(calculateIPVADto);
+  }
+
+  @MessagePattern('commands/vehicle/findOne')
+  findOneVehicle(@Payload() sign: string) {
+    return this.vehicleService.findOneVehicle(sign);
   }
 }

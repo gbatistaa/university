@@ -67,4 +67,16 @@ export class VehicleService {
       );
     }
   }
+
+  async findOneVehicle(sign: string) {
+    const vehicle = await this.repo.findOne({ where: { sign } });
+
+    if (!vehicle) {
+      throw new NotFoundException(
+        `Vehicle with sign ${sign} does not exist on the database`,
+      );
+    }
+
+    return vehicle;
+  }
 }

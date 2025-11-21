@@ -1,1 +1,5 @@
-export class CreatePenaltyDto {}
+export class CreatePenaltyDto {
+  description: string;
+  pontuation: number;
+  conductorCpf: string;
+}

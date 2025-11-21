@@ -1,26 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreatePenaltyDto } from './dto/create-penalty.dto';
-import { UpdatePenaltyDto } from './dto/update-penalty.dto';
+import { Penalty } from './entities/penalty.entity';
+import { Repository } from 'typeorm';
+import { ClientProxy } from '@nestjs/microservices';
+import { InjectRepository } from '@nestjs/typeorm';
+import { firstValueFrom } from 'rxjs';
+import { Vehicle } from '../ms-vehicle/entities/vehicle.entity';
 
 @Injectable()
 export class PenaltyService {
-  create(createPenaltyDto: CreatePenaltyDto) {
-    return 'This action adds a new penalty';
+  constructor(
+    @Inject('MQTT_CLIENT') private readonly mqttClient: ClientProxy,
+    @InjectRepository(Penalty) private repo: Repository<Penalty>,
+  ) {}
+
+  createPenalty(createPenaltyDto: CreatePenaltyDto) {
+    const penalty = this.repo.create(createPenaltyDto);
+    return this.repo.save(penalty);
   }
 
-  findAll() {
-    return `This action returns all penalty`;
-  }
+  async getVehiclePenalties(sign: string) {
+    const vehicle$ = this.mqttClient.send<Vehicle>('commands/vehicle/findOne', {
+      sign,
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} penalty`;
-  }
+    const vehicle: Vehicle = await firstValueFrom<Vehicle>(vehicle$);
 
-  update(id: number, updatePenaltyDto: UpdatePenaltyDto) {
-    return `This action updates a #${id} penalty`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} penalty`;
+    console.log('Veículo encontrado:', vehicle);
+    return vehicle;
   }
 }
