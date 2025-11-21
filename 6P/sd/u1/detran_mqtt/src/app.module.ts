@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConductorModule } from './modules/ms-conductor/conductor.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VehicleModule } from './modules/ms-vehicle/vehicle.module';
+import { PenaltyModule } from './modules/penalty/penalty.module';
 import path from 'path';
 
 @Module({
@@ -16,6 +17,7 @@ import path from 'path';
     }),
     ConductorModule,
     VehicleModule,
+    PenaltyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
