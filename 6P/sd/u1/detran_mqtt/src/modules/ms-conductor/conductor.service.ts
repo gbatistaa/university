@@ -14,12 +14,12 @@ export class ConductorService {
     @InjectRepository(Conductor) private repo: Repository<Conductor>,
   ) {}
 
-  async create(createConductorDto: CreateConductorDto) {
+  async signupConductor(createConductorDto: CreateConductorDto) {
     const createdConductor = this.repo.create(createConductorDto);
     await this.repo.save(createdConductor);
 
     // emissão de evento de registro de condutor:
-    this.mqttClient.emit('createConductor', createdConductor);
+    this.mqttClient.emit('event/conductor/signup', createdConductor);
 
     return createdConductor;
   }

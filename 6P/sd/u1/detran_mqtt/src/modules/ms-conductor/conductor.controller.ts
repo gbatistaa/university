@@ -10,19 +10,19 @@ export class ConductorController {
   constructor(private readonly conductorService: ConductorService) {}
 
   // registrar condutor
-  @EventPattern('createConductor')
-  create(@Payload() createConductorDto: CreateConductorDto) {
-    return this.conductorService.create(createConductorDto);
+  @EventPattern('commands/conductor/signup')
+  signupConductor(@Payload() createConductorDto: CreateConductorDto) {
+    return this.conductorService.signupConductor(createConductorDto);
   }
 
   // buscar informações de um condutor
-  @EventPattern('findOneConductor')
+  @EventPattern('commands/conductor/findOne')
   findOne(@Payload() id: string) {
     return this.conductorService.findOne(id);
   }
 
   // atualizar condutor
-  @EventPattern('updateConductor')
+  @EventPattern('commands/conductor/update')
   update(@Payload() updateConductorDto: UpdateConductorDto) {
     return this.conductorService.update(
       updateConductorDto.cpf,

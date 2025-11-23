@@ -1,5 +1,15 @@
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
 export class CreatePenaltyDto {
+  @IsString()
+  @IsNotEmpty()
   description: string;
+
+  @IsNumber()
+  @IsNotEmpty()
   pontuation: number;
-  conductorCpf: string;
+
+  @IsString()
+  @IsNotEmpty()
+  vehicleSign: string;
 }

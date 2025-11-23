@@ -1,6 +1,14 @@
 import { CommonEntity } from 'src/modules/common/entities/common.entity';
 import { Conductor } from 'src/modules/ms-conductor/entities/conductor.entity';
-import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import { Penalty } from 'src/modules/ms-penalty/entities/penalty.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from 'typeorm';
 
 @Entity()
 @Unique(['sign'])
@@ -20,4 +28,7 @@ export class Vehicle extends CommonEntity {
   @ManyToOne(() => Conductor, (conductor) => conductor.cpf)
   @JoinColumn({ name: 'conductorCpf', referencedColumnName: 'cpf' })
   conductor: Conductor;
+
+  @OneToMany(() => Penalty, (penalty) => penalty.vehicle)
+  penalties: Penalty[];
 }

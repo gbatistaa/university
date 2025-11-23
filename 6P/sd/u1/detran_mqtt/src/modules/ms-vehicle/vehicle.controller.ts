@@ -8,26 +8,37 @@ import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
-  @EventPattern('commands/vehicle/signup')
-  async create(@Payload() createVehicleDto: CreateVehicleDto) {
-    return await this.vehicleService.signup(createVehicleDto);
+  @MessagePattern('commands/vehicle/signedThisYear')
+  async getVehiclesSignedThisYear(@Payload() year: number) {
+    return await this.vehicleService.getVehiclesSignedThisYear(year);
   }
 
-  @EventPattern('commands/vehicle/updateConductor')
-  update(@Payload() updateVehicleDto: UpdateVehicleDto) {
+  @MessagePattern('commands/vehicle/signup')
+  async signupVehicle(@Payload() createVehicleDto: CreateVehicleDto) {
+    return await this.vehicleService.signupVehicle(createVehicleDto);
+  }
+
+  @MessagePattern('commands/vehicle/updateConductor')
+  async updateVehicleConductor(
+    @Payload()
+    updateVehiclePayload: {
+      sign: string;
+      updateVehicleDto: UpdateVehicleDto;
+    },
+  ) {
     return this.vehicleService.updateVehicleConductor(
-      updateVehicleDto.sign as string,
-      updateVehicleDto,
+      updateVehiclePayload.sign,
+      updateVehiclePayload.updateVehicleDto,
     );
   }
 
   @EventPattern('commands/vehicle/calculateIPVA')
-  calculateIPVA(@Payload() calculateIPVADto: { sign: string }) {
-    return this.vehicleService.calculateIPVA(calculateIPVADto);
+  calculateIPVA(@Payload() calculateIPVAPayload: { sign: string }) {
+    return this.vehicleService.calculateIPVA(calculateIPVAPayload);
   }
 
   @MessagePattern('commands/vehicle/findOne')
-  findOneVehicle(@Payload() sign: string) {
-    return this.vehicleService.findOneVehicle(sign);
+  findOneVehicle(@Payload() payload: { sign: string }) {
+    return this.vehicleService.findOneVehicle(payload.sign);
   }
 }

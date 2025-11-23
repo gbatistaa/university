@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreatePenaltyDto } from './dto/create-penalty.dto';
 import { Penalty } from './entities/penalty.entity';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom } from 'rxjs';
@@ -14,19 +14,34 @@ export class PenaltyService {
     @InjectRepository(Penalty) private repo: Repository<Penalty>,
   ) {}
 
-  createPenalty(createPenaltyDto: CreatePenaltyDto) {
+  launchPenalty(createPenaltyDto: CreatePenaltyDto) {
     const penalty = this.repo.create(createPenaltyDto);
+    this.mqttClient.emit('events/penalty/launch', penalty);
+
     return this.repo.save(penalty);
   }
 
-  async getVehiclePenalties(sign: string) {
+  async getVehiclePenalties(vehiclePayload: { sign: string; year: string }) {
     const vehicle$ = this.mqttClient.send<Vehicle>('commands/vehicle/findOne', {
-      sign,
+      sign: vehiclePayload.sign,
     });
 
     const vehicle: Vehicle = await firstValueFrom<Vehicle>(vehicle$);
+    const penalties = await this.repo.find({
+      where: {
+        vehicleSign: vehicle.sign,
+        createdAt: Raw((alias) => `strftime('%Y', ${alias}) = :year`, {
+          year: vehiclePayload.year,
+        }),
+      },
+    });
 
-    console.log('Veículo encontrado:', vehicle);
-    return vehicle;
+    this.mqttClient.emit('events/penalty/vehiclePenalties', {
+      vehicleSign: vehicle.sign,
+      year: vehiclePayload.year,
+      penaltiesCount: penalties.length,
+    });
+
+    return penalties;
   }
 }

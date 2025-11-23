@@ -19,16 +19,33 @@ export class VehicleService {
     @InjectRepository(Vehicle) private repo: Repository<Vehicle>,
   ) {}
 
+  async getVehiclesSignedThisYear(year: number) {
+    const vehicles = await this.repo
+      .createQueryBuilder('vehicle')
+      .where("strftime('%Y', vehicle.createdAt) = :year", {
+        year: String(year),
+      })
+      .getMany();
+
+    return vehicles;
+  }
   // Serviço para emplacar veículos:
-  async signup(createVehicleDto: CreateVehicleDto) {
-    // Salvar o veículo no banco
-    const signupedVehicle = this.repo.create(createVehicleDto);
-    await this.repo.save(signupedVehicle);
+  async signupVehicle(createVehicleDto: CreateVehicleDto) {
+    try {
+      // Salvar o veículo no banco
+      const signupedVehicle = this.repo.create(createVehicleDto);
+      await this.repo.save(signupedVehicle);
 
-    // Emitir evento MQTT para algum listener
-    this.mqttClient.emit('events/vehicle/signup', signupedVehicle);
+      // Emitir evento MQTT para algum listener
+      this.mqttClient.emit('events/vehicle/signup', signupedVehicle);
 
-    return signupedVehicle;
+      return signupedVehicle;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Unexpected error on the vehicle signup',
+      );
+    }
   }
 
   async updateVehicleConductor(

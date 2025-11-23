@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { PenaltyService } from './penalty.service';
 import { CreatePenaltyDto } from './dto/create-penalty.dto';
 
@@ -7,13 +7,15 @@ import { CreatePenaltyDto } from './dto/create-penalty.dto';
 export class PenaltyController {
   constructor(private readonly penaltyService: PenaltyService) {}
 
-  @EventPattern('commands/penalty/create')
-  create(@Payload() createPenaltyDto: CreatePenaltyDto) {
-    return this.penaltyService.createPenalty(createPenaltyDto);
+  @MessagePattern('commands/penalty/launch')
+  launchPenalty(@Payload() createPenaltyDto: CreatePenaltyDto) {
+    return this.penaltyService.launchPenalty(createPenaltyDto);
   }
 
-  @EventPattern('commands/penalty/vehiclePenalties')
-  showVehiclePenalties(@Payload() vehicleData: { sign: string }) {
-    return this.penaltyService.getVehiclePenalties(vehicleData.sign);
+  @MessagePattern('commands/penalty/vehiclePenalties')
+  showVehiclePenalties(
+    @Payload() vehiclePayload: { sign: string; year: string },
+  ) {
+    return this.penaltyService.getVehiclePenalties(vehiclePayload);
   }
 }
