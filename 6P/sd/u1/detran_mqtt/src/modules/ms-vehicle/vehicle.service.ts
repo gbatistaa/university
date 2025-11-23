@@ -53,9 +53,19 @@ export class VehicleService {
     updateVehicleDto: UpdateVehicleDto,
   ) {
     try {
-      const updatedVehicle = await this.repo.update({ sign }, updateVehicleDto);
+      const updatedVehicle = await this.repo.findOne({ where: { sign } });
 
+      if (!updatedVehicle) {
+        throw new NotFoundException(
+          `Vehicle with sign ${sign} does not exist on the database`,
+        );
+      }
+
+      updatedVehicle.conductorCpf = updateVehicleDto.conductorCpf as string;
+      await this.repo.save(updatedVehicle);
       this.mqttClient.emit('events/vehicle/updateConductor', updatedVehicle);
+
+      return updatedVehicle;
     } catch (error: unknown) {
       console.log(error);
       throw new InternalServerErrorException(

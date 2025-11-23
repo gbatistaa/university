@@ -1,6 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateConductorDto } from './dto/create-conductor.dto';
-import { UpdateConductorDto } from './dto/update-conductor.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conductor } from './entities/conductor.entity';
@@ -24,15 +23,13 @@ export class ConductorService {
     return createdConductor;
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} conductor`;
-  }
+  async findOneConductor(cpf: string) {
+    const conductor = await this.repo.findOne({ where: { cpf } });
 
-  update(cpf: string, updateConductorDto: UpdateConductorDto) {
-    return `This action updates a #${cpf} conductor`;
-  }
+    if (!conductor) {
+      throw new NotFoundException(`Conductor with CPF ${cpf} not found`);
+    }
 
-  remove(id: string) {
-    return `This action removes a #${id} conductor`;
+    return conductor;
   }
 }

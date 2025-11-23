@@ -26,3 +26,5 @@ import path from 'path';
   providers: [AppService],
 })
 export class AppModule {}
+
+console.log(path.join(__dirname, 'db', 'database.sqlite'));

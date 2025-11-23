@@ -24,8 +24,37 @@ export class GatewayService {
     return await lastValueFrom(event);
   }
 
+  async getConductorPenalties(payload: {
+    cpf: string;
+    year: string;
+  }): Promise<unknown> {
+    const event = this.mqttClient.send(
+      'commands/penalty/conductorPenalties',
+      payload,
+    );
+
+    return await lastValueFrom(event);
+  }
+
+  async getAllPenalties(payload: { year: string }): Promise<unknown> {
+    const event = this.mqttClient.send(
+      'commands/penalty/allPenalties',
+      payload,
+    );
+
+    return await lastValueFrom(event);
+  }
+
   async getVehiclesSignedThisYear(year: string): Promise<unknown> {
     const event = this.mqttClient.send('commands/vehicle/signedThisYear', year);
+
+    return await lastValueFrom(event);
+  }
+
+  async getTopConductorsByPenaltyScore(limit: string): Promise<unknown> {
+    const event = this.mqttClient.send('commands/penalty/topPenaltyScores', {
+      limit: parseInt(limit),
+    });
 
     return await lastValueFrom(event);
   }

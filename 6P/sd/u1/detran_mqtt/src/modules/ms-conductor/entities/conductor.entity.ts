@@ -1,4 +1,5 @@
 import { CommonEntity } from 'src/modules/common/entities/common.entity';
+import { Penalty } from 'src/modules/ms-penalty/entities/penalty.entity';
 import { Vehicle } from 'src/modules/ms-vehicle/entities/vehicle.entity';
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 
@@ -10,6 +11,9 @@ export class Conductor extends CommonEntity {
 
   @Column({ type: 'text', nullable: false })
   name: string;
+
+  @OneToMany(() => Penalty, (penalty) => penalty.conductor)
+  penalties: Penalty[];
 
   @OneToMany(() => Vehicle, (vehicle) => vehicle.conductor)
   veiculos: Vehicle[];

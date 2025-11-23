@@ -18,4 +18,21 @@ export class PenaltyController {
   ) {
     return this.penaltyService.getVehiclePenalties(vehiclePayload);
   }
+
+  @MessagePattern('commands/penalty/conductorPenalties')
+  showConductorPenalties(
+    @Payload() conductorPayload: { cpf: string; year: string },
+  ) {
+    return this.penaltyService.getConductorPenalties(conductorPayload);
+  }
+
+  @MessagePattern('commands/penalty/allPenalties')
+  showAllPenalties(@Payload() payload: { year: string }) {
+    return this.penaltyService.getAllPenalties(payload);
+  }
+
+  @MessagePattern('commands/penalty/topPenaltyScores')
+  getTopConductorsByPenaltyScore(@Payload() payload: { limit: number }) {
+    return this.penaltyService.getTopConductorsByPenaltyScore(payload);
+  }
 }

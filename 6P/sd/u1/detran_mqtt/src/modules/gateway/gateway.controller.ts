@@ -25,6 +25,24 @@ export class GatewayController {
     return this.gatewayService.getVehiclePenalties({ sign, year });
   }
 
+  @Get('penalty/conductorPenalties/:cpf')
+  getConductorPenalties(
+    @Param('cpf') cpf: string,
+    @Query('year') year: string,
+  ) {
+    return this.gatewayService.getConductorPenalties({ cpf, year });
+  }
+
+  @Get('penalty/allPenalties/')
+  getAllPenalties(@Query('year') year: string) {
+    return this.gatewayService.getAllPenalties({ year });
+  }
+
+  @Get('penalty/topPenaltyScores')
+  getTopConductorsByPenaltyScore(@Query('limit') limit: string) {
+    return this.gatewayService.getTopConductorsByPenaltyScore(limit);
+  }
+
   @Get('vehicle/signedThisYear/:year')
   getVehiclesSignedThisYear(@Param('year') year: string) {
     return this.gatewayService.getVehiclesSignedThisYear(year);
