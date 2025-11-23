@@ -30,9 +30,4 @@ export class PenaltyController {
   showAllPenalties(@Payload() payload: { year: string }) {
     return this.penaltyService.getAllPenalties(payload);
   }
-
-  @MessagePattern('commands/penalty/topPenaltyScores')
-  getTopConductorsByPenaltyScore(@Payload() payload: { limit: number }) {
-    return this.penaltyService.getTopConductorsByPenaltyScore(payload);
-  }
 }

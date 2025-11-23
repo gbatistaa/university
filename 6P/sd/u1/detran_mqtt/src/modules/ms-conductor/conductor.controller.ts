@@ -19,4 +19,9 @@ export class ConductorController {
   findOne(@Payload() cpf: string) {
     return this.conductorService.findOneConductor(cpf);
   }
+
+  @MessagePattern('commands/conductor/topPenaltyScores')
+  getTopConductorsByPenaltyScore(@Payload() payload: { limit: number }) {
+    return this.conductorService.getTopConductorsByPenaltyScore(payload);
+  }
 }

@@ -32,4 +32,27 @@ export class ConductorService {
 
     return conductor;
   }
+
+  async getTopConductorsByPenaltyScore(payload: {
+    limit: number;
+  }): Promise<
+    Array<{ c_name: string; c_cpf: string; totalPontuation: string }>
+  > {
+    const topConductors = await this.repo
+      .createQueryBuilder('c')
+      .innerJoin('c.penalties', 'p')
+      .select(['c.name', 'c.cpf'])
+      .addSelect('SUM(p.pontuation)', 'totalPontuation')
+      .groupBy('c.cpf')
+      .addGroupBy('c.name')
+      .orderBy('totalPontuation', 'DESC')
+      .limit(payload.limit)
+      .getRawMany();
+
+    return topConductors as Array<{
+      c_name: string;
+      c_cpf: string;
+      totalPontuation: string;
+    }>;
+  }
 }
