@@ -13,6 +13,11 @@ export class VehicleController {
     return await this.vehicleService.getVehiclesSignedThisYear(year);
   }
 
+  @EventPattern('commands/vehicle/calculateIPVA')
+  calculateIPVA(@Payload() calculateIPVAPayload: { sign: string }) {
+    return this.vehicleService.calculateIPVA(calculateIPVAPayload);
+  }
+
   @MessagePattern('commands/vehicle/signup')
   async signupVehicle(@Payload() createVehicleDto: CreateVehicleDto) {
     return await this.vehicleService.signupVehicle(createVehicleDto);
@@ -30,11 +35,6 @@ export class VehicleController {
       updateVehiclePayload.sign,
       updateVehiclePayload.updateVehicleDto,
     );
-  }
-
-  @EventPattern('commands/vehicle/calculateIPVA')
-  calculateIPVA(@Payload() calculateIPVAPayload: { sign: string }) {
-    return this.vehicleService.calculateIPVA(calculateIPVAPayload);
   }
 
   @MessagePattern('commands/vehicle/findOne')

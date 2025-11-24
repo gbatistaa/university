@@ -4,6 +4,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conductor } from './entities/conductor.entity';
 import { Repository } from 'typeorm';
+import { Penalty } from '../ms-penalty/entities/penalty.entity';
 
 @Injectable()
 export class ConductorService {
@@ -40,7 +41,7 @@ export class ConductorService {
   > {
     const topConductors = await this.repo
       .createQueryBuilder('c')
-      .innerJoin('c.penalties', 'p')
+      .leftJoin(Penalty, 'p', 'p.conductorCpf = c.cpf')
       .select(['c.name', 'c.cpf'])
       .addSelect('SUM(p.pontuation)', 'totalPontuation')
       .groupBy('c.cpf')
@@ -48,6 +49,8 @@ export class ConductorService {
       .orderBy('totalPontuation', 'DESC')
       .limit(payload.limit)
       .getRawMany();
+
+    console.log(payload);
 
     return topConductors as Array<{
       c_name: string;

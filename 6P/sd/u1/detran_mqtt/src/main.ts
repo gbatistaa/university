@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
-import path from 'path';
 
 async function bootstrap() {
   // 1. Cria a aplicação HTTP principal

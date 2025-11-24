@@ -24,6 +24,15 @@ export class GatewayService {
     return await lastValueFrom(event);
   }
 
+  async calculateIPVA(payload: { sign: string }): Promise<unknown> {
+    const event = this.mqttClient.send(
+      'commands/vehicle/calculateIPVA',
+      payload,
+    );
+
+    return await lastValueFrom(event);
+  }
+
   async getConductorPenalties(payload: {
     cpf: string;
     year: string;
@@ -52,7 +61,7 @@ export class GatewayService {
   }
 
   async getTopConductorsByPenaltyScore(limit: string): Promise<unknown> {
-    const event = this.mqttClient.send('commands/penalty/topPenaltyScores', {
+    const event = this.mqttClient.send('commands/conductor/topPenaltyScores', {
       limit: parseInt(limit),
     });
 

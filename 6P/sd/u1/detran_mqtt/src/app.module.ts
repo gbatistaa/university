@@ -15,7 +15,6 @@ import path from 'path';
       database: path.join(__dirname, 'db', 'database.sqlite'),
       autoLoadEntities: true,
       logging: true,
-      synchronize: true,
     }),
     ConductorModule,
     VehicleModule,
@@ -26,5 +25,3 @@ import path from 'path';
   providers: [AppService],
 })
 export class AppModule {}
-
-console.log(path.join(__dirname, 'db', 'database.sqlite'));

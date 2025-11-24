@@ -38,14 +38,20 @@ export class GatewayController {
     return this.gatewayService.getAllPenalties({ year });
   }
 
-  @Get('penalty/topPenaltyScores')
-  getTopConductorsByPenaltyScore(@Query('limit') limit: string) {
-    return this.gatewayService.getTopConductorsByPenaltyScore(limit);
-  }
-
   @Get('vehicle/signedThisYear/:year')
   getVehiclesSignedThisYear(@Param('year') year: string) {
     return this.gatewayService.getVehiclesSignedThisYear(year);
+  }
+
+  @Get('vehicle/calculateIPVA/:sign')
+  calculateIPVA(@Param('sign') sign: string) {
+    return this.gatewayService.calculateIPVA({ sign });
+  }
+
+  // @Get('vec')
+  @Get('conductor/topPenaltyScores')
+  getTopConductorsByPenaltyScore(@Query('limit') limit: string) {
+    return this.gatewayService.getTopConductorsByPenaltyScore(limit);
   }
 
   @Post('vehicle/signup')
